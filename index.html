@@ -3,34 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Puzzle — Built on what you'll never tolerate again.</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<title>Lune — Your resume tells half the story.</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0c0b0a; --surface: #161412; --surface2: #1c1a17;
-  --border: #252220; --text: #ede9e3; --muted: #6b6560;
-  --accent: #d4a853; --accent-soft: rgba(212,168,83,0.1);
-  --accent-dim: rgba(212,168,83,0.05); --bubble-ai: #161513;
+  --bg: #09090f; --surface: #0f0f1a; --surface2: #141422;
+  --border: #1e1e30; --text: #e8e8f0; --muted: #6b6b80;
+  --accent: #4A9EBF; --accent-soft: rgba(74,158,191,0.1);
+  --accent-dim: rgba(74,158,191,0.05); --bubble-ai: #0f0f1a;
 }
-body { background:var(--bg); color:var(--text); font-family:'DM Sans',system-ui,-apple-system,sans-serif; font-weight:300; line-height:1.7; min-height:100vh; }
+body { background:var(--bg); color:var(--text); font-family:'Sora',system-ui,-apple-system,sans-serif; font-weight:300; line-height:1.7; min-height:100vh; }
+body::before { content:''; position:fixed; top:-20vh; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(74,158,191,0.06) 0%, transparent 70%); pointer-events:none; z-index:0; }
 #pitchPage { display:block; }
 #convoPage { display:none; }
 nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(to bottom,var(--bg) 60%,transparent); }
 .nav-logo { font-family:'Instrument Serif',serif; font-size:18px; color:var(--accent); }
-.nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(212,168,83,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
+.nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(74,158,191,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
 .hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:100px 40px 60px; max-width:1000px; margin:0 auto; position:relative; z-index:1; }
 .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:36px; opacity:0; animation:rise 0.6s ease 0.1s forwards; }
 .eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
 .eyebrow-text { font-size:11px; font-weight:500; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
 .hero-title { font-family:'Instrument Serif',serif; font-size:clamp(48px,7.5vw,108px); font-weight:400; line-height:1.0; letter-spacing:-2px; margin-bottom:36px; opacity:0; animation:rise 0.7s ease 0.25s forwards; }
 .hero-title em { font-style:italic; color:var(--accent); }
+.hero-subhead { font-family:'Sora',sans-serif; font-size:clamp(18px,2.5vw,26px); font-weight:300; color:var(--muted); letter-spacing:0.2px; margin-bottom:36px; opacity:0; animation:rise 0.6s ease 0.4s forwards; }
 .hero-title .indent { display:block; padding-left:clamp(32px,6vw,96px); }
 .hero-mechanic { display:inline-flex; align-items:flex-start; gap:12px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px 20px; margin-bottom:48px; font-size:13px; color:var(--muted); line-height:1.55; max-width:500px; opacity:0; animation:rise 0.6s ease 0.45s forwards; }
-.mechanic-icon { font-size:15px; flex-shrink:0; padding-top:1px; }
+.mechanic-icon { font-size:18px; flex-shrink:0; padding-top:1px; }
 .mechanic-text strong { color:var(--text); font-weight:400; }
 .hero-cta { opacity:0; animation:rise 0.6s ease 0.6s forwards; }
-.cta-main { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; }
+.cta-main { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; }
 .cta-hint { display:block; margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; }
 .scroll-line { display:flex; align-items:center; gap:8px; margin-top:32px; opacity:0; animation:rise 0.6s ease 0.85s forwards; }
 .scroll-line-bar { width:40px; height:1px; background:linear-gradient(to right,var(--accent),transparent); }
@@ -39,7 +41,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 #profilePage { display:none; flex-direction:column; align-items:center; min-height:100vh; padding-bottom:80px; }
 .profile-nav { width:100%; max-width:640px; padding:32px 24px 0; display:flex; align-items:center; justify-content:space-between; }
 .profile-nav-logo { font-family:'Instrument Serif',serif; font-size:20px; color:var(--accent); }
-.profile-nav-back { font-size:12px; color:var(--muted); cursor:pointer; background:none; border:none; font-family:'DM Sans',sans-serif; padding:0; }
+.profile-nav-back { font-size:12px; color:var(--muted); cursor:pointer; background:none; border:none; font-family:'Sora',sans-serif; padding:0; }
 .profile-nav-back:hover { color:var(--accent); }
 .profile-body { width:100%; max-width:640px; padding:40px 24px; }
 .profile-header { margin-bottom:40px; }
@@ -47,7 +49,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .profile-meta { font-size:13px; color:var(--muted); }
 .profile-section-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:12px; }
 .profile-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
-.profile-summary-card { background:linear-gradient(150deg,#1d1a12 0%,#111009 100%); border:1px solid rgba(212,168,83,0.28); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; margin-bottom:12px; }
+.profile-summary-card { background:linear-gradient(150deg,#131320 0%,#0c0c18 100%); border:1px solid rgba(74,158,191,0.28); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; margin-bottom:12px; }
 .profile-summary-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .profile-summary-date { font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:14px; text-transform:uppercase; }
 .profile-summary-text { font-family:'Instrument Serif',serif; font-size:16px; line-height:1.75; color:var(--text); font-style:italic; }
@@ -56,48 +58,48 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .profile-empty { text-align:center; padding:60px 20px; }
 .profile-empty-title { font-family:'Instrument Serif',serif; font-size:24px; font-style:italic; color:var(--muted); margin-bottom:12px; }
 .profile-empty-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
-.profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
-.profile-retake { padding:11px 22px; background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
+.profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
+.profile-retake { padding:11px 22px; background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; cursor:pointer; }
 .profile-retake:hover { border-color:var(--accent); color:var(--accent); }
 .profile-modal-overlay { position:fixed; inset:0; background:rgba(12,11,10,0.85); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; }
-.profile-modal { background:var(--surface2); border:1px solid rgba(212,168,83,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
+.profile-modal { background:var(--surface2); border:1px solid rgba(74,158,191,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
 .profile-modal-title { font-family:'Instrument Serif',serif; font-size:28px; font-style:italic; color:var(--text); margin-bottom:8px; }
 .profile-modal-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
-.profile-modal input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; box-sizing:border-box; margin-bottom:12px; }
+.profile-modal input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; outline:none; box-sizing:border-box; margin-bottom:12px; }
 .profile-modal input:focus { border-color:var(--accent); }
 .profile-modal input::placeholder { color:var(--muted); }
-.profile-modal-save { width:100%; padding:13px; background:var(--accent); border:none; border-radius:10px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-bottom:10px; }
-.profile-modal-skip { width:100%; padding:10px; background:transparent; border:none; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
+.profile-modal-save { width:100%; padding:13px; background:var(--accent); border:none; border-radius:10px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-bottom:10px; }
+.profile-modal-skip { width:100%; padding:10px; background:transparent; border:none; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; cursor:pointer; }
 .profile-modal-skip:hover { color:var(--text); }
 .content { max-width:760px; margin:0 auto; padding:60px 40px 120px; position:relative; z-index:1; }
 .section { margin-bottom:100px; }
 .label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:24px; display:flex; align-items:center; gap:14px; }
 .label::after { content:''; flex:1; height:1px; background:var(--border); }
-.result-card { background:linear-gradient(150deg,#1d1a12 0%,#111009 100%); border:1px solid rgba(212,168,83,0.28); border-radius:20px; padding:40px 44px; position:relative; overflow:hidden; margin-bottom:16px; }
+.result-card { background:linear-gradient(150deg,#131320 0%,#0c0c18 100%); border:1px solid rgba(74,158,191,0.28); border-radius:20px; padding:40px 44px; position:relative; overflow:hidden; margin-bottom:16px; }
 .result-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .result-persona { display:flex; align-items:center; gap:14px; margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border); }
-.persona-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#2a2318,#1a150e); border:1px solid rgba(212,168,83,0.25); display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-size:16px; color:var(--accent); flex-shrink:0; }
+.persona-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#1a1a2e,#0f0f1e); border:1px solid rgba(74,158,191,0.25); display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-size:16px; color:var(--accent); flex-shrink:0; }
 .persona-info { flex:1; }
 .persona-name { font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px; }
 .persona-detail { font-size:12px; color:var(--muted); }
 .result-live-badge { display:flex; align-items:center; gap:6px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); font-weight:500; }
 .live-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:glow-dot 2s ease infinite; }
-@keyframes glow-dot { 0%,100%{box-shadow:0 0 0 0 rgba(212,168,83,0);opacity:0.6} 50%{box-shadow:0 0 0 5px rgba(212,168,83,0.15);opacity:1} }
-.result-text { font-family:'DM Sans',sans-serif; font-size:16px; line-height:1.8; color:var(--text); font-style:normal; font-weight:300; }
+@keyframes glow-dot { 0%,100%{box-shadow:0 0 0 0 rgba(212,168,83,0);opacity:0.6} 50%{box-shadow:0 0 0 5px rgba(74,158,191,0.15);opacity:1} }
+.result-text { font-family:'Sora',sans-serif; font-size:16px; line-height:1.8; color:var(--text); font-style:normal; font-weight:300; }
 .result-caption { font-size:12px; color:var(--muted); text-align:center; font-style:italic; margin-bottom:36px; }
-.voice-slot { background:var(--surface2); border:1px solid rgba(212,168,83,0.15); border-radius:14px; padding:28px 32px; display:flex; gap:18px; align-items:flex-start; position:relative; overflow:hidden; margin-bottom:40px; }
+.voice-slot { background:var(--surface2); border:1px solid rgba(74,158,191,0.15); border-radius:14px; padding:28px 32px; display:flex; gap:18px; align-items:flex-start; position:relative; overflow:hidden; margin-bottom:40px; }
 .voice-slot::before { content:'"'; font-family:'Instrument Serif',serif; font-size:80px; color:var(--accent); opacity:0.1; position:absolute; top:-10px; left:20px; line-height:1; pointer-events:none; }
 .voice-avatar { width:36px; height:36px; border-radius:50%; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; margin-top:2px; font-family:'Instrument Serif',serif; color:var(--accent); }
 .voice-body { flex:1; }
-.voice-quote { font-family:'DM Sans',sans-serif; font-size:15px; font-style:normal; font-weight:300; color:var(--text); line-height:1.65; margin-bottom:10px; opacity:0.85; }
+.voice-quote { font-family:'Sora',sans-serif; font-size:15px; font-style:normal; font-weight:300; color:var(--text); line-height:1.65; margin-bottom:10px; opacity:0.85; }
 .voice-attribution { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
-.try-it-block { background:linear-gradient(135deg,#1a1710 0%,#131109 100%); border:1px solid rgba(212,168,83,0.2); border-radius:18px; padding:40px 44px; text-align:center; position:relative; overflow:hidden; }
-.try-it-block::before { content:''; position:absolute; top:0; left:20%; right:20%; height:1px; background:linear-gradient(90deg,transparent,rgba(212,168,83,0.4),transparent); }
+.try-it-block { background:linear-gradient(135deg,#131320 0%,#0c0c18 100%); border:1px solid rgba(74,158,191,0.2); border-radius:18px; padding:40px 44px; text-align:center; position:relative; overflow:hidden; }
+.try-it-block::before { content:''; position:absolute; top:0; left:20%; right:20%; height:1px; background:linear-gradient(90deg,transparent,rgba(74,158,191,0.4),transparent); }
 .try-it-eyebrow { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; opacity:0.7; }
 .try-it-title { font-family:'Instrument Serif',serif; font-size:clamp(26px,4vw,40px); font-weight:400; line-height:1.15; letter-spacing:-0.5px; margin-bottom:14px; color:var(--text); }
 .try-it-title em { font-style:italic; color:var(--accent); }
 .try-it-sub { font-size:14px; color:var(--muted); max-width:380px; margin:0 auto 32px; line-height:1.65; }
-.try-it-btn { display:inline-flex; align-items:center; gap:10px; padding:15px 32px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; position:relative; z-index:1; }
+.try-it-btn { display:inline-flex; align-items:center; gap:10px; padding:15px 32px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; position:relative; z-index:1; }
 .try-it-note { display:block; margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; }
 .steps { display:flex; flex-direction:column; gap:2px; }
 .step { display:grid; grid-template-columns:44px 1fr; gap:20px; padding:24px 28px; background:var(--surface); align-items:start; border-left:2px solid transparent; transition:border-color 0.2s,background 0.2s; }
@@ -111,7 +113,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .profile-intro { font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:36px; max-width:560px; }
 .profile-intro strong { color:var(--text); font-weight:400; }
 .timeline { display:flex; flex-direction:column; position:relative; }
-.timeline::before { content:''; position:absolute; left:14px; top:8px; bottom:8px; width:1px; background:linear-gradient(to bottom,var(--accent) 0%,rgba(212,168,83,0.12) 100%); }
+.timeline::before { content:''; position:absolute; left:14px; top:8px; bottom:8px; width:1px; background:linear-gradient(to bottom,var(--accent) 0%,rgba(74,158,191,0.12) 100%); }
 .tl-item { display:grid; grid-template-columns:29px 1fr; gap:22px; padding:18px 0; }
 .tl-dot-wrap { display:flex; align-items:flex-start; justify-content:center; padding-top:6px; }
 .tl-dot { width:9px; height:9px; border-radius:50%; background:var(--accent); z-index:1; flex-shrink:0; }
@@ -130,7 +132,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .compare-check { color:var(--accent); }
 .vote-section { padding:100px 40px; text-align:center; border-top:1px solid var(--border); position:relative; z-index:1; overflow:hidden; }
 .vote-section::before { content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(circle,rgba(212,168,83,0.06) 0%,transparent 65%); pointer-events:none; }
-.urgency-bar { display:inline-flex; flex-direction:column; align-items:center; gap:8px; background:rgba(212,168,83,0.07); border:1px solid rgba(212,168,83,0.2); border-radius:16px; padding:16px 24px; margin-bottom:44px; max-width:480px; }
+.urgency-bar { display:inline-flex; flex-direction:column; align-items:center; gap:8px; background:rgba(212,168,83,0.07); border:1px solid rgba(74,158,191,0.2); border-radius:16px; padding:16px 24px; margin-bottom:44px; max-width:480px; }
 .urgency-top { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--accent); font-weight:500; }
 .urgency-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:glow-dot 1.5s ease infinite; flex-shrink:0; }
 .urgency-sub { font-size:13px; color:var(--muted); line-height:1.55; text-align:center; }
@@ -140,22 +142,22 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .price-inline { font-size:13px; color:var(--muted); margin-bottom:40px; font-style:italic; }
 .price-inline strong { color:var(--accent); font-style:normal; font-weight:400; }
 .vote-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
-.vote-btn { padding:13px 24px; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+.vote-btn { padding:13px 24px; border-radius:12px; font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text); }
 .vote-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
-.vote-btn.yes { background:var(--accent); border-color:var(--accent); color:#0c0b0a; font-weight:500; }
+.vote-btn.yes { background:var(--accent); border-color:var(--accent); color:#09090f; font-weight:500; }
 .vote-honest { font-size:12px; color:var(--muted); font-style:italic; }
 .response-block { display:none; flex-direction:column; align-items:center; gap:16px; }
 .response-block.active { display:flex; animation:rise 0.5s ease forwards; }
 .response-icon { font-size:40px; }
 .response-title { font-family:'Instrument Serif',serif; font-size:30px; font-style:italic; color:var(--text); }
 .response-text { font-size:14px; color:var(--muted); max-width:360px; text-align:center; line-height:1.7; }
-.response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
+.response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
 footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--border); position:relative; z-index:1; }
 .footer-logo { font-family:'Instrument Serif',serif; font-size:22px; color:var(--accent); margin-bottom:8px; }
 .footer-tagline { font-size:13px; color:var(--muted); letter-spacing:1px; font-style:italic; }
 #convoPage { flex-direction:column; align-items:center; min-height:100vh; }
 .convo-header { width:100%; max-width:640px; padding:32px 24px 0; display:flex; align-items:center; gap:12px; }
-.convo-back { font-size:12px; color:var(--muted); cursor:pointer; background:none; border:none; font-family:'DM Sans',sans-serif; padding:0; }
+.convo-back { font-size:12px; color:var(--muted); cursor:pointer; background:none; border:none; font-family:'Sora',sans-serif; padding:0; }
 .convo-back:hover { color:var(--accent); }
 .convo-logo { font-family:'Instrument Serif',serif; font-size:20px; color:var(--accent); flex:1; text-align:center; }
 .progress-bar { flex:1; height:2px; background:var(--border); border-radius:2px; overflow:hidden; }
@@ -168,18 +170,18 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .msg.user { align-items:flex-end; }
 .bubble { max-width:88%; padding:14px 18px; border-radius:18px; font-size:15px; line-height:1.65; }
 .msg.ai .bubble { background:var(--bubble-ai); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text); }
-.msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(212,168,83,0.2); border-bottom-right-radius:4px; color:var(--text); }
-.reveal-bubble { background:linear-gradient(135deg,#1e1b14 0%,#161410 100%); border:1px solid rgba(212,168,83,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
+.msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(74,158,191,0.2); border-bottom-right-radius:4px; color:var(--text); }
+.reveal-bubble { background:linear-gradient(135deg,#13132a 0%,#161410 100%); border:1px solid rgba(74,158,191,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
 .reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
-.option-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; cursor:pointer; text-align:left; line-height:1.4; }
+.option-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; text-align:left; line-height:1.4; }
 .option-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
 .option-btn.selected { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); pointer-events:none; }
 .option-btn.selected::after { content:' ✓'; }
-.convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 14px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:44px; outline:none; box-sizing:border-box; }
+.convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 14px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:44px; outline:none; box-sizing:border-box; }
 .convo-textarea:focus { border-color:var(--accent); }
 .convo-textarea::placeholder { color:var(--muted); }
-.submit-btn { margin-top:8px; background:var(--accent); border:none; border-radius:10px; padding:11px 20px; color:#0f0e0d; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; }
+.submit-btn { margin-top:8px; background:var(--accent); border:none; border-radius:10px; padding:11px 20px; color:#0f0e0d; font-family:'Sora',sans-serif; font-size:13px; font-weight:500; cursor:pointer; }
 .typing { display:flex; gap:5px; padding:16px 20px; background:var(--bubble-ai); border:1px solid var(--border); border-radius:18px; border-bottom-left-radius:4px; width:fit-content; opacity:0; animation:fadeUp 0.3s ease forwards; }
 .typing span { width:6px; height:6px; background:var(--muted); border-radius:50%; animation:bounce 1.2s infinite; }
 .typing span:nth-child(2){animation-delay:0.2s}.typing span:nth-child(3){animation-delay:0.4s}
@@ -190,7 +192,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .generating-dot { width:8px; height:8px; background:var(--accent); border-radius:50%; animation:gpulse 1.5s infinite; }
 @keyframes gpulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.1)}}
 .end-actions { display:flex; gap:10px; flex-wrap:wrap; opacity:0; animation:fadeUp 0.4s ease 0.4s forwards; }
-.end-btn { background:transparent; border:1px solid var(--border); border-radius:10px; padding:11px 18px; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
+.end-btn { background:transparent; border:1px solid var(--border); border-radius:10px; padding:11px 18px; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; cursor:pointer; }
 .end-btn:hover { border-color:var(--accent); color:var(--accent); }
 .end-btn.primary { background:var(--accent); border-color:var(--accent); color:#0f0e0d; font-weight:500; }
 @media(max-width:600px){
@@ -200,6 +202,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   .price-anchor{flex-direction:column;gap:16px;align-items:flex-start}
   .vote-section{padding:72px 20px}.vote-buttons{flex-direction:column;align-items:center}
   .vote-btn{width:100%;max-width:300px;text-align:center}.hero-title .indent{padding-left:0}
+  .option-btn{padding:14px 16px;font-size:15px;min-height:48px}
+  .convo-textarea{font-size:16px;min-height:80px}
+  .submit-btn{padding:14px 20px;font-size:15px;min-height:48px;width:100%}
+  .bubble{font-size:15px;padding:14px 16px}
+  .chat{padding:24px 16px 180px}
 }
 </style>
 </head>
@@ -208,9 +215,9 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 <!-- PITCH PAGE -->
 <div id="pitchPage">
   <nav>
-    <div class="nav-logo">Puzzle</div>
+    <div class="nav-logo">Lune</div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <button id="profileNavBtn" style="display:none;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">My Profile</button>
+      <button id="profileNavBtn" style="display:none;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:7px 14px;border-radius:100px;cursor:pointer;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">My Profile</button>
       <button class="nav-pill" id="navPill">Early Access Open</button>
     </div>
   </nav>
@@ -218,20 +225,20 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   <div class="hero">
     <div class="hero-eyebrow">
       <div class="eyebrow-dot"></div>
-      <div class="eyebrow-text">Built by someone who lived the problem</div>
+      <div class="eyebrow-text">The workforce, building itself.</div>
     </div>
     <h1 class="hero-title">
-      The job market asks<br>
-      <span class="indent">what you <em>want.</em></span><br>
-      <span class="indent" style="padding-left:0">We start with what you <em style="color:var(--accent);font-style:italic;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;">won't.</em></span>
+      For everyone the<br>
+      <span class="indent">algorithm <em>missed.</em></span>
     </h1>
+    <p class="hero-subhead">Your resume tells half the story.</p>
     <div class="hero-mechanic">
-      <div class="mechanic-icon">👤</div>
-      <div class="mechanic-text"><strong>Five years in education support.</strong> I kept getting told I wasn't qualified for the jobs I actually wanted, and every career tool I tried asked me the wrong questions. So I built the one that finally asked the right ones.</div>
+      <div class="mechanic-icon">◐</div>
+      <div class="mechanic-text"><strong>Lune is a conversation, not a form.</strong> Ten questions nobody else thought to ask. A summary that sounds like someone actually listened. Matches nobody saw coming.</div>
     </div>
     <div class="hero-cta">
       <button class="cta-main" id="heroBtn">See what it said to me first ↓</button>
-      <span class="cta-hint">No signup. No pitch. Just what Puzzle actually said — to me.</span>
+      <span class="cta-hint">The conversation is always free.</span>
     </div>
     <div class="scroll-line">
       <div class="scroll-line-bar"></div>
@@ -241,19 +248,19 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 
   <div class="content">
     <div class="section">
-      <div class="label">This is what Puzzle said to me — unedited</div>
+      <div class="label">This is what Lune said — unedited</div>
       <div class="result-card">
         <div class="result-persona">
           <div class="persona-avatar">J</div>
           <div class="persona-info">
-            <div class="persona-name">Joe — the person who built this</div>
+            <div class="persona-name">Joe — built Lune after five years in education support</div>
             <div class="persona-detail">5 years in education support · Columbus, OH · Ready for a change</div>
           </div>
           <div class="result-live-badge"><div class="live-dot"></div> Real output</div>
         </div>
         <div class="result-text">You've spent five years pouring energy into kids who light up when you show up, but the system keeps telling you that caring well and connecting naturally isn't enough without the right paperwork — and that's wearing on you more than the low pay. What I'm hearing is someone who thrives in structured-but-flexible rhythm, needs autonomy over how you solve problems, and wants to be valued for the impact you actually create, not the credentials you collect. The pattern I see: you're energized by relationships where you can be both helpful and human, you need movement and variety in your day, and you're done being locked out of growth because of arbitrary gates. The shape of work that fits you isn't "education" — it's something like community-facing coordination or client success in a values-driven organization that measures you on results, lets you build rapport your way, gives you ownership over your schedule, and doesn't require you to go back to school to prove you already know how to show up for people.</div>
       </div>
-      <div class="result-caption">This came from a 20-minute conversation I had with my own product. No resume. No job history form. Ten honest questions.</div>
+      <div class="result-caption">Twenty minutes. Ten questions nobody else thought to ask. This is what came back.</div>
 
       <div class="result-card" style="margin-top:32px;">
         <div class="result-persona">
@@ -284,9 +291,17 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
         </div>
       </div>
 
+      <div class="voice-slot">
+        <div class="voice-avatar">E</div>
+        <div class="voice-body">
+          <div class="voice-quote">I'm not unhappy at my job. I was just curious. But it gave me a picture of who I am professionally that I've never had before — and I saved it because I know I'll need it eventually.</div>
+          <div class="voice-attribution">— Ezra, 31 · UX Researcher · Austin, TX</div>
+        </div>
+      </div>
+
       <div class="try-it-block">
         <div class="try-it-eyebrow">That was me. Now it's your turn.</div>
-        <div class="try-it-title">What would Puzzle<br>say about <em>you?</em></div>
+        <div class="try-it-title">What would Lune<br>say about <em>you?</em></div>
         <div class="try-it-sub">Ten questions. Twenty minutes. A summary that sounds like it came from someone who actually listened — not a career tool.</div>
         <button class="try-it-btn" id="tryItBtn">Find out →</button>
         <span class="try-it-note">The conversation is always free. No resume required.</span>
@@ -294,11 +309,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     </div>
 
     <div class="section">
-      <div class="label">How Puzzle Works</div>
+      <div class="label">How Lune Works</div>
       <div class="steps">
         <div class="step"><div class="step-num">01</div><div><div class="step-title">A real conversation — not a form</div><div class="step-desc">Ten exchanges that feel like talking to someone who actually listens. No resume upload. No keyword matching. Just questions nobody else has ever thought to ask.</div></div></div>
-        <div class="step"><div class="step-num">02</div><div><div class="step-title">Elimination first. Then match.</div><div class="step-desc">Every other platform asks what you want. Puzzle starts with what you'll never tolerate again. That signal is more durable than aspiration — and it's always true.</div></div></div>
-        <div class="step"><div class="step-num">03</div><div><div class="step-title">A summary that sounds like a person wrote it</div><div class="step-desc">Not a list of job categories. A paragraph that names a pattern you haven't been able to articulate yourself — and reframes how you see your own career.</div></div></div>
+        <div class="step"><div class="step-num">02</div><div><div class="step-title">Elimination first. Then match.</div><div class="step-desc">If you're stuck, Lune starts with what you'll never tolerate again — a signal more durable than aspiration. If you're doing well, it maps what makes your current situation work. Either way, it learns what's actually true about you.</div></div></div>
+        <div class="step"><div class="step-num">03</div><div><div class="step-title">A summary that sounds like a person wrote it</div><div class="step-desc">If you're stuck, it names the pattern you haven't been able to articulate and reframes how you see your own career. If you're content, it gives you a portrait of who you are at your best — worth saving before anything changes.</div></div></div>
         <div class="step"><div class="step-num">04</div><div><div class="step-title">3 matches. Each one earns its place.</div><div class="step-desc">Not 300 listings. Three. Each one sourced from what real employees say the work actually feels like — not what HR wrote in the job description. One of them will surprise you. That's by design.</div></div></div>
       </div>
     </div>
@@ -306,12 +321,12 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <div class="section">
       <div class="label">The Bigger Idea</div>
       <div class="profile-card">
-        <p class="profile-intro">Puzzle doesn't just find you a job. It builds something nobody else is building — a <strong>living profile of who you actually are professionally.</strong> Not a resume. Not a LinkedIn page. Something that grows with you over years.</p>
+        <p class="profile-intro">Lune doesn't just find you a job. It builds something nobody else is building — a <strong>living profile of who you actually are professionally.</strong> Not a resume. Not a LinkedIn page. Something that grows with you over years.</p>
         <div class="timeline">
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 27</div><div class="tl-text"><strong>First real job. Something feels off.</strong> Puzzle learns who you are at this moment — what you can't tolerate, what energizes you, what you don't have words for yet.</div></div></div>
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 30</div><div class="tl-text"><strong>You tried something new. Some of it worked.</strong> Puzzle updates. The profile gets more accurate. Your matches get sharper.</div></div></div>
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 34</div><div class="tl-text"><strong>Life changed. Priorities shifted.</strong> Puzzle evolves with you. By now it's not just a job search tool — it's almost like a mirror.</div></div></div>
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot future"></div></div><div><div class="tl-age future">The gap nobody's filled</div><div class="tl-text">LinkedIn has your job history. Indeed has your resume. <strong>Nobody has your actual evolving professional identity tracked over time.</strong> That's what Puzzle builds. And it's yours — not ours.</div></div></div>
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 27</div><div class="tl-text"><strong>First real job. Something feels off.</strong> Lune learns who you are at this moment — what you can't tolerate, what energizes you, what you don't have words for yet.</div></div></div>
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 30</div><div class="tl-text"><strong>You tried something new. Some of it worked.</strong> Lune updates. The profile gets more accurate. Your matches get sharper.</div></div></div>
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 34</div><div class="tl-text"><strong>Life changed. Priorities shifted.</strong> Lune evolves with you. By now it's not just a job search tool — it's almost like a mirror.</div></div></div>
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot future"></div></div><div><div class="tl-age future">The gap nobody's filled</div><div class="tl-text">LinkedIn has your job history. Indeed has your resume. <strong>Nobody has your actual evolving professional identity tracked over time.</strong> That's what Lune builds. And it's yours — not ours.</div></div></div>
         </div>
       </div>
     </div>
@@ -336,11 +351,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   <div class="vote-section" id="voteSection">
     <div class="urgency-bar">
       <div class="urgency-top"><div class="urgency-dot"></div> Founding 500 — Early Access Open</div>
-      <div class="urgency-sub">Before we build anything else, we're having this conversation with 500 real people. What they tell us shapes what Puzzle becomes. Founding users get lifetime early-access pricing and a direct line to the product.</div>
+      <div class="urgency-sub">Before we build anything else, we're having this conversation with 500 real people. What they tell us shapes what Lune becomes. Founding users get lifetime early-access pricing and a direct line to the product.</div>
     </div>
     <div id="voteMain">
       <div class="vote-question">After seeing all of this —<br>would you pay <em>$12</em> for it?</div>
-      <div class="vote-sub">Not for a job board. For a conversation that finally got it right.</div>
+      <div class="vote-sub">Not for a job board. For the conversation job boards were never willing to have.</div>
       <div class="price-inline">Less than two coffees a week. <strong>No paywall before value. Ever.</strong></div>
       <div class="vote-buttons">
         <button class="vote-btn yes" id="voteYes">Yes — take my money</button>
@@ -352,7 +367,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <div class="response-block" id="r-yes">
       <div class="response-icon">🔥</div>
       <div class="response-title">That's the signal we needed.</div>
-      <div class="response-text">You're one of the founding 500. Lifetime early-access pricing and a direct line to shape what Puzzle becomes.</div>
+      <div class="response-text">You're one of the founding 500. Lifetime early-access pricing and a direct line to shape what Lune becomes.</div>
       <a href="/cdn-cgi/l/email-protection#82eae7eeeeedc2f2f7f8f8eee7e1e3f0e7e7f0f1ace1edef" class="response-cta">Claim your spot →</a>
     </div>
     <div class="response-block" id="r-maybe">
@@ -370,8 +385,8 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   </div>
 
   <footer>
-    <div class="footer-logo">Puzzle</div>
-    <div class="footer-tagline">Built on what you'll never tolerate again.</div>
+    <div class="footer-logo">Lune</div>
+    <div class="footer-tagline">Your resume tells half the story.</div>
   </footer>
 </div>
 
@@ -379,7 +394,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 <div id="convoPage">
   <div class="convo-header">
     <button class="convo-back" id="convoBack">← Back</button>
-    <div class="convo-logo">Puzzle</div>
+    <div class="convo-logo">Lune</div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
     <div class="step-count" id="stepCount">0 / 11</div>
   </div>
@@ -391,7 +406,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 <div id="profilePage">
   <div class="profile-nav">
     <button class="profile-nav-back" id="profileBack">← Back</button>
-    <div class="profile-nav-logo">Puzzle</div>
+    <div class="profile-nav-logo">Lune</div>
     <div style="width:60px"></div>
   </div>
   <div class="profile-body" id="profileBody">
@@ -402,8 +417,8 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 <!-- CREATE PROFILE MODAL -->
 <div id="profileModal" class="profile-modal-overlay" style="display:none;">
   <div class="profile-modal">
-    <div class="profile-modal-title">Save your summary.</div>
-    <div class="profile-modal-sub">Create a free Puzzle profile and your summary gets saved here. Come back anytime — Puzzle remembers who you are and how you've grown.</div>
+    <div class="profile-modal-title">Save your Lune summary.</div>
+    <div class="profile-modal-sub">Create a free profile and your summary is saved on this device. Come back anytime — and upgrade to sync your profile across all your devices.</div>
     <input type="text" id="profileNameInput" placeholder="Your first name" />
     <input type="email" id="profileEmailInput" placeholder="your@email.com" />
     <button class="profile-modal-save" id="profileModalSave">Create my profile →</button>
@@ -441,15 +456,15 @@ function showProfile() {
 }
 
 function getProfile() {
-  try { return JSON.parse(localStorage.getItem('puzzle_profile') || 'null'); } catch(e) { return null; }
+  try { return JSON.parse(localStorage.getItem('lune_profile') || 'null'); } catch(e) { return null; }
 }
 
 function saveProfile(data) {
-  try { localStorage.setItem('puzzle_profile', JSON.stringify(data)); } catch(e) {}
+  try { localStorage.setItem('lune_profile', JSON.stringify(data)); } catch(e) {}
 }
 
 function getSummaryHistory() {
-  try { return JSON.parse(localStorage.getItem('puzzle_summaries') || '[]'); } catch(e) { return []; }
+  try { return JSON.parse(localStorage.getItem('lune_summaries') || '[]'); } catch(e) { return []; }
 }
 
 function saveSummaryToHistory(summaryText, closingQuestion, responses) {
@@ -466,7 +481,7 @@ function saveSummaryToHistory(summaryText, closingQuestion, responses) {
     pace: responses.pace || ''
   });
   if (history.length > 10) history = history.slice(0, 10);
-  try { localStorage.setItem('puzzle_summaries', JSON.stringify(history)); } catch(e) {}
+  try { localStorage.setItem('lune_summaries', JSON.stringify(history)); } catch(e) {}
 }
 
 function initProfileUI() {
@@ -487,7 +502,7 @@ function renderProfilePage() {
     body.innerHTML =
       '<div class="profile-empty">' +
       '<div class="profile-empty-title">Nothing here yet.</div>' +
-      '<div class="profile-empty-sub">Complete the Puzzle conversation and save your summary to start building your profile.</div>' +
+      '<div class="profile-empty-sub">Complete the Lune conversation and save your summary to start building your profile.</div>' +
       '<button class="profile-cta" id="profileStartBtn">Take the conversation →</button>' +
       '</div>';
     document.getElementById('profileStartBtn').addEventListener('click', startConversation);
@@ -526,8 +541,8 @@ function renderProfilePage() {
   document.getElementById('profileRetakeBtn').addEventListener('click', startConversation);
   document.getElementById('profileClearBtn').addEventListener('click', function() {
     if (confirm('Clear your profile and all saved summaries?')) {
-      localStorage.removeItem('puzzle_profile');
-      localStorage.removeItem('puzzle_summaries');
+      localStorage.removeItem('lune_profile');
+      localStorage.removeItem('lune_summaries');
       initProfileUI();
       renderProfilePage();
     }
@@ -565,7 +580,7 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmMsg.style.animationDelay = '0s';
     var confirmBubble = document.createElement('div');
     confirmBubble.className = 'bubble';
-    confirmBubble.textContent = 'Profile created, ' + name + '. Your summary is saved. Come back anytime — Puzzle will remember you.';
+    confirmBubble.textContent = 'Profile created, ' + name + '. Your summary is saved. Come back anytime — Lune will remember you.';
     confirmMsg.appendChild(confirmBubble);
     document.getElementById('chat').appendChild(confirmMsg);
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
@@ -577,6 +592,18 @@ document.addEventListener('DOMContentLoaded', function() {
       pendingSummaryData = null;
     }
     document.getElementById('profileModal').style.display = 'none';
+    // Show a gentle note in the chat that summary is saved temporarily
+    var chat = document.getElementById('chat');
+    if (chat) {
+      var noteMsg = document.createElement('div');
+      noteMsg.className = 'msg ai';
+      var noteBubble = document.createElement('div');
+      noteBubble.className = 'bubble';
+      noteBubble.style.cssText = 'font-size:13px;color:var(--muted);font-style:italic;max-width:88%;padding:10px 14px;';
+      noteBubble.textContent = 'Your summary is saved on this device for now. Create a profile anytime to keep it permanently.';
+      noteMsg.appendChild(noteBubble);
+      chat.appendChild(noteMsg);
+    }
   });
 
   document.getElementById('profileNavBtn').addEventListener('click', showProfile);
@@ -657,7 +684,9 @@ function clearInput() { document.getElementById('inputArea').innerHTML = ''; }
 
 async function showAIMessage(text, ms) {
   var t = showTyping();
-  await delay(ms || 800);
+  // Crisis users get faster pacing — reduce wait time significantly
+  var baseMs = responses.crisisFlag ? Math.min((ms || 800) * 0.4, 500) : (ms || 800);
+  await delay(baseMs);
   removeTyping(t);
   addMessage(text, 'ai');
 }
@@ -708,7 +737,7 @@ function showOptions(options, onSelect, singleSelect) {
           if (!confirmBtn) {
             confirmBtn = document.createElement('button');
             confirmBtn.className = 'multi-confirm';
-            confirmBtn.style.cssText = 'margin-top:8px;padding:11px 22px;background:var(--accent);border:none;border-radius:10px;color:#0c0b0a;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;';
+            confirmBtn.style.cssText = 'margin-top:8px;padding:11px 22px;background:var(--accent);border:none;border-radius:10px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;';
             confirmBtn.textContent = 'Continue →';
             confirmBtn.addEventListener('click', function() {
               var val = selected.join(', ');
@@ -776,7 +805,7 @@ function getConvoSoFar() {
   return parts.join('\n');
 }
 
-var TONE_SYSTEM = 'You are the warm, human voice behind Puzzle — a career tool for people who feel stuck, overlooked, or unsure what comes next. Many of them are vulnerable. Some haven\'t told anyone they\'re thinking about leaving. Your job is to make them feel genuinely seen and safe — like texting a trusted friend who happens to know a lot about careers. Be warm, real, and encouraging. Never clinical. Never formal. No em dashes. No bullet points. Short sentences. Match their energy — if they\'re casual, be casual. If they\'re serious, be warm and direct. Always make them feel like their answer matters and that you\'re actually listening.';
+var TONE_SYSTEM = 'You are the warm, human voice behind Lune — a career tool for people who feel stuck, overlooked, or unsure what comes next. Many of them are vulnerable. Some haven\'t told anyone they\'re thinking about leaving. Your job is to make them feel genuinely seen and safe — like texting a trusted friend who happens to know a lot about careers. Be warm, real, and encouraging. Never clinical. Never formal. No em dashes. No bullet points. Short sentences. Match their energy — if they\'re casual, be casual. If they\'re serious, be warm and direct. Always make them feel like their answer matters and that you\'re actually listening.';
 
 // Gets an adaptive question AND matching answer options in one AI call
 async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
@@ -822,19 +851,65 @@ async function getAdaptiveQuestion(goal, fallback, placeholder) {
   }
 }
 
+function isHappyUser() {
+  return (responses.why || '').toLowerCase().includes('pretty good') ||
+         (responses.happyFlag === true);
+}
+
+// Generates a one-sentence acknowledgment after someone shares something real
+// Proves the product was listening before asking the next question
+async function getAcknowledgment(whatTheyShared) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 80,
+      messages: [{ role: 'user', content:
+        TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail — a person, moment, or phrase they used. NEVER write anything generic like that sounds tough. (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) If no specific detail exists return empty string — silence beats generic.\n\nWhat they shared: ' + whatTheyShared
+      }]
+    });
+    var text = data.content && data.content[0] && data.content[0].text;
+    return (text && text.trim()) || null;
+  } catch(e) {
+    return null;
+  }
+}
+
 async function step1() {
   updateProgress(1);
   await showAIMessage("Hey. You're not here by accident.\n\nWhat's going on?", 600);
   showOptions([
     "😤 Something feels off but I can't name it",
     "🔄 Ready for a change, just not sure where",
-    "🤷 Honestly just curious, no pressure",
-    "😓 I know what I want, just not how to get there"
-  ], function(val) { responses.why = val; addMessage(val, 'user'); step2(); }, true);
+    "😊 Honestly things are good — just exploring",
+    "😓 I know what I want, just not how to get there",
+    "🚨 Things are urgent — I need to move fast"
+  ], function(val) {
+    responses.why = val;
+    if (val.toLowerCase().includes('good') || val.toLowerCase().includes('exploring')) {
+      responses.happyFlag = true;
+    }
+    if (val.toLowerCase().includes('urgent') || val.toLowerCase().includes('fast')) {
+      responses.crisisFlag = true;
+    }
+    addMessage(val, 'user');
+    if (responses.crisisFlag) {
+      // For urgent users: acknowledge the urgency immediately before proceeding
+      showAIMessage("Got it. Let's move quickly. I'll ask what I need to know and get you to matches as fast as possible.", 400).then(function() { step2(); });
+    } else {
+      step2();
+    }
+  }, true);
 }
 
 async function step2() {
   updateProgress(2);
+
+  // Detect crisis signals from step 1 selection
+  var isCrisis = (responses.why || '').toLowerCase().includes('desperate') ||
+                 (responses.why || '').toLowerCase().includes('unemployed') ||
+                 (responses.why || '').toLowerCase().includes('laid off') ||
+                 (responses.why || '').toLowerCase().includes('fired');
+  responses.crisisFlag = isCrisis;
 
   var goal, seeds, fallbackQ, fallbackOpts;
 
@@ -931,36 +1006,73 @@ async function step4() {
     "It was when…"
   );
   await showAIMessage(q);
-  showTextInput("It was when…", function(val) { responses.bestDay = val; addMessage(val, 'user'); step5(); });
+  showTextInput("It was when…", async function(val) {
+    responses.bestDay = val;
+    addMessage(val, 'user');
+    // Acknowledge what they shared before moving on
+    var ack = await getAcknowledgment(val);
+    if (ack && ack.trim().length > 5) await showAIMessage(ack, 600);
+    step5();
+  });
 }
 
 async function step5() {
   updateProgress(5);
-  var result = await getAdaptiveStep(
-    "what work situations they are completely done with and never want to deal with again",
-    [
-      "Feeling like just a number",
-      "No space to think or be creative",
-      "Constant chaos, no structure",
-      "All meetings, nothing actually getting done",
-      "Micromanagement — I need to be trusted",
-      "🎯 Something specific I want to describe"
-    ],
-    "What are you totally done with?",
-    [
-      "Feeling like a number, not a person",
-      "No room to think or create",
-      "Constant chaos with no structure",
-      "Endless meetings, nothing gets done",
-      "Micromanagement — I need autonomy",
-      "🎯 Something specific — let me describe it"
-    ]
-  );
-  await showAIMessage(result.q);
-  showOptions(result.opts, function(val) {
-    if (val.toLowerCase().includes("something specific") || val.toLowerCase().includes("let me describe")) { step5b(); }
-    else { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); }
-  });
+
+  if (isHappyUser()) {
+    // Happy path — flip the frame: what MAKES it work, not what's broken
+    var result = await getAdaptiveStep(
+      "what makes their current work situation actually work for them — what conditions, environment, or type of work fits them well right now",
+      [
+        "I have real autonomy over how I work",
+        "The people I work with actually care",
+        "The work itself is genuinely interesting",
+        "I feel like I'm growing and learning",
+        "It fits my life outside of work too",
+        "✨ Something specific I want to say"
+      ],
+      "What makes your current situation actually work for you?",
+      [
+        "I have real autonomy",
+        "The people around me are great",
+        "The work itself is interesting",
+        "I'm genuinely growing here",
+        "It fits my life well",
+        "✨ Something specific"
+      ]
+    );
+    await showAIMessage(result.q);
+    showOptions(result.opts, function(val) {
+      if (val.toLowerCase().includes("something specific")) { step5b_happy(); }
+      else { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); }
+    });
+  } else {
+    var result = await getAdaptiveStep(
+      "what work situations they are completely done with and never want to deal with again",
+      [
+        "Feeling like just a number",
+        "No space to think or be creative",
+        "Constant chaos, no structure",
+        "All meetings, nothing actually getting done",
+        "Micromanagement — I need to be trusted",
+        "🎯 Something specific I want to describe"
+      ],
+      "What are you totally done with?",
+      [
+        "Feeling like a number, not a person",
+        "No room to think or create",
+        "Constant chaos with no structure",
+        "Endless meetings, nothing gets done",
+        "Micromanagement — I need autonomy",
+        "🎯 Something specific — let me describe it"
+      ]
+    );
+    await showAIMessage(result.q);
+    showOptions(result.opts, function(val) {
+      if (val.toLowerCase().includes("something specific") || val.toLowerCase().includes("let me describe")) { step5b(); }
+      else { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); }
+    });
+  }
 }
 
 async function step5b() {
@@ -970,40 +1082,90 @@ async function step5b() {
     "The thing I'm done with is…"
   );
   await showAIMessage(q);
-  showTextInput("The thing I'm done with is…", function(val) { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); });
+  showTextInput("The thing I'm done with is…", async function(val) {
+    responses.neverAgain1 = val;
+    addMessage(val, 'user');
+    var ack = await getAcknowledgment(val);
+    if (ack && ack.trim().length > 5) await showAIMessage(ack, 600);
+    step6();
+  });
+}
+
+async function step5b_happy() {
+  var q = await getAdaptiveQuestion(
+    "what specific thing makes their current situation work well for them",
+    "What is it specifically?",
+    "What makes it work is…"
+  );
+  await showAIMessage(q);
+  showTextInput("What makes it work is…", function(val) { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); });
 }
 
 async function step6() {
   updateProgress(6);
-  var result = await getAdaptiveStep(
-    "anything else they want to add to their never-again list",
-    [
-      "No direction from leadership",
-      "A team that never talks to each other",
-      "Being expected to be on 24/7",
-      "Work that leads nowhere",
-      "A team that doesn't care about quality",
-      "🎯 Something else I want to add"
-    ],
-    "Anything else on that list?",
-    [
-      "No real direction from leadership",
-      "A team that doesn't communicate",
-      "Always being expected to be available",
-      "Work that feels pointless",
-      "A team that doesn't care about doing it right",
-      "🎯 Something else"
-    ]
-  );
-  await showAIMessage(result.q);
-  showOptions(result.opts, function(val) {
-    if (val.toLowerCase().includes("something else") || val.toLowerCase().includes("want to add")) { step6b(); }
-    else { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); }
-  });
+
+  if (isHappyUser()) {
+    // Happy path — what would have to change for this to stop working
+    var result = await getAdaptiveStep(
+      "what would have to change for their current situation to stop working — what conditions would break the spell",
+      [
+        "If I lost the autonomy I have now",
+        "If the team or culture shifted",
+        "If the work stopped being interesting",
+        "If there was no room left to grow",
+        "If it stopped fitting my life outside work",
+        "✨ Something else"
+      ],
+      "What would have to change for this to stop working?",
+      [
+        "Losing the autonomy I have now",
+        "The team or culture changing",
+        "The work becoming boring or pointless",
+        "No more room to grow",
+        "It stops fitting my life",
+        "✨ Something else"
+      ]
+    );
+    await showAIMessage(result.q);
+    showOptions(result.opts, function(val) {
+      if (val.toLowerCase().includes("something else")) { step6b_happy(); }
+      else { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); }
+    });
+  } else {
+    var result = await getAdaptiveStep(
+      "anything else they want to add to their never-again list",
+      [
+        "No direction from leadership",
+        "A team that never talks to each other",
+        "Being expected to be on 24/7",
+        "Work that leads nowhere",
+        "A team that doesn't care about quality",
+        "🎯 Something else I want to add"
+      ],
+      "Anything else on that list?",
+      [
+        "No real direction from leadership",
+        "A team that doesn't communicate",
+        "Always being expected to be available",
+        "Work that feels pointless",
+        "A team that doesn't care about doing it right",
+        "🎯 Something else"
+      ]
+    );
+    await showAIMessage(result.q);
+    showOptions(result.opts, function(val) {
+      if (val.toLowerCase().includes("something else") || val.toLowerCase().includes("want to add")) { step6b(); }
+      else { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); }
+    });
+  }
 }
 
 async function step6b() {
   showTextInput("One more thing I'd add…", function(val) { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); });
+}
+
+async function step6b_happy() {
+  showTextInput("The thing that would break it is…", function(val) { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); });
 }
 
 async function step7() {
@@ -1014,7 +1176,14 @@ async function step7() {
     "Most of my day is actually…"
   );
   await showAIMessage(q);
-  showTextInput("Most of my day is actually…", function(val) { responses.background = val; addMessage(val, 'user'); step8(); }, 3);
+  showTextInput("Most of my day is actually…", async function(val) {
+    responses.background = val;
+    addMessage(val, 'user');
+    // Acknowledge what they shared before moving on
+    var ack = await getAcknowledgment(val);
+    if (ack && ack.trim().length > 5) await showAIMessage(ack, 600);
+    step8();
+  }, 3);
 }
 
 async function step8() {
@@ -1119,10 +1288,14 @@ async function step10() {
 
 async function generateReveal() {
   var inputArea = document.getElementById('inputArea');
-  inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Puzzle is thinking about you specifically…</span></div>';
+  inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Lune is reading everything you shared……</span></div>';
   var t = showTyping();
 
-  var prompt = "You are the core AI behind Puzzle, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says 'the moment with Maya' is worth ten that say 'you care about people's growth'\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- If their location is a smaller or mid-size city (not NYC/SF/LA/Chicago/Seattle), briefly acknowledge the geographic reality in one sentence — name whether the shape of work you're describing is primarily remote-accessible, exists regionally, or would realistically require relocating. Don't make it the focus. Don't skip it either.\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified");
+  var happyMode = isHappyUser();
+
+  var prompt = happyMode
+    ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven't been able to say themselves — not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically — not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said — a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a warm invitation to save this profile — framed as capturing who they are now, while things are good, before anything changes\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified")
+    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- If their location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified");
 
   try {
     var data = await callAI({
@@ -1151,12 +1324,12 @@ async function generateReveal() {
     saveRow.style.cssText = 'display:flex;gap:10px;margin-top:10px;max-width:92%;flex-wrap:wrap;opacity:0;animation:fadeUp 0.4s ease 0.3s forwards;';
 
     var copyBtn = document.createElement('button');
-    copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(212,168,83,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
     copyBtn.textContent = 'Copy my summary';
     copyBtn.addEventListener('click', function() {
       navigator.clipboard.writeText(summaryText).then(function() {
         copyBtn.textContent = 'Copied ✓';
-        copyBtn.style.background = 'rgba(212,168,83,0.1)';
+        copyBtn.style.background = 'rgba(74,158,191,0.1)';
         setTimeout(function() { copyBtn.textContent = 'Copy my summary'; copyBtn.style.background = 'transparent'; }, 2000);
       }).catch(function() {
         var ta = document.createElement('textarea');
@@ -1173,16 +1346,16 @@ async function generateReveal() {
     });
 
     var emailSaveBtn = document.createElement('button');
-    emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(212,168,83,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
     emailSaveBtn.textContent = 'Email it to me';
     emailSaveBtn.addEventListener('click', function() {
       saveRow.style.display = 'none';
       var emailSaveCard = document.createElement('div');
-      emailSaveCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(212,168,83,0.2);border-radius:12px;padding:18px 20px;max-width:92%;margin-top:10px;';
+      emailSaveCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(74,158,191,0.2);border-radius:12px;padding:18px 20px;max-width:92%;margin-top:10px;';
       emailSaveCard.innerHTML =
         '<div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Where should we send this?</div>' +
         '<input id="saveEmailInput" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
-        '<button id="saveEmailSubmit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#0c0b0a;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Send it →</button>';
+        '<button id="saveEmailSubmit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Send it →</button>';
       msg.appendChild(emailSaveCard);
       setTimeout(function() {
         var se = document.getElementById('saveEmailSubmit');
@@ -1199,8 +1372,8 @@ async function generateReveal() {
 
             var tonePrompt = "You are writing a single transactional email that will be sent to someone immediately after they completed a career alignment conversation. Your job is to calibrate the tone of this email to match how THIS SPECIFIC PERSON writes — not a generic template.\n\nHere is how they write in their own words:\n\nStep 4 (best day at work): " + (responses.bestDay || '') + "\nStep 7 (background, their words): " + (responses.background || '') + "\n\nBased on their writing style — their sentence length, vocabulary, whether they're direct or reflective, formal or casual — generate:\n1. A subject line (under 10 words) that would make THIS person open the email. Not generic. Written for them.\n2. A two-sentence opening paragraph that feels like it was written for this specific human, not a mass email.\n\nRespond ONLY with valid JSON, no markdown:\n{\"subject\": \"subject line here\", \"opening\": \"Two sentence opening here.\"}";
 
-            var subject = 'This is what Puzzle saw when it listened to you';
-            var opening = 'This summary came from a 20-minute conversation with Puzzle. No resume. No job history. Just ten questions nobody else thought to ask.';
+            var subject = 'This is what Lune saw when it listened to you';
+            var opening = 'This summary came from a 20-minute conversation with Lune. No resume. No job history. Just ten questions nobody else thought to ask.';
 
             try {
               var toneData = await callAI({
@@ -1218,7 +1391,7 @@ async function generateReveal() {
             emailSaveCard.innerHTML =
               '<div style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;opacity:0.7;">✓ Sent — here\'s what landed in your inbox</div>' +
               '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;font-size:13px;line-height:1.7;">' +
-                '<div style="color:var(--muted);margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">From: Puzzle &lt;hello@puzzlecareers.com&gt;</div>' +
+                '<div style="color:var(--muted);margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">From: Lune &lt;hello@trylune.app&gt;</div>' +
                 '<div style="color:var(--muted);margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">To: ' + email + '</div>' +
                 '<div style="color:var(--accent);margin-bottom:16px;font-size:12px;font-weight:500;">Subject: ' + subject + '</div>' +
                 '<div style="border-top:1px solid var(--border);padding-top:16px;">' +
@@ -1230,8 +1403,8 @@ async function generateReveal() {
                     '<div style="font-size:13px;color:var(--muted);">— ' + (responses.neverAgain2 || '') + '</div>' +
                   '</div>' +
                   '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;">We\'re building the full match database right now. You\'ll be first to know when roles that match your profile open up.</div>' +
-                  '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#0c0b0a;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
-                  '<div style="margin-top:20px;font-size:11px;color:var(--muted);">Puzzle · Built on what you\'ll never tolerate again · <a href="#" style="color:var(--muted);">Unsubscribe</a></div>' +
+                  '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#09090f;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
+                  '<div style="margin-top:20px;font-size:11px;color:var(--muted);">Lune · Your resume tells half the story<a href="#" style="color:var(--muted);">Unsubscribe</a></div>' +
                 '</div>' +
               '</div>';
             scrollToBottom();
@@ -1250,13 +1423,145 @@ async function generateReveal() {
 
     var responsesSnap = Object.assign({}, responses);
     showProfileModal(mainText, lastLine, responsesSnap);
-    showEndActions();
+
+    if (isHappyUser()) {
+      // Happy path — don't show job matches, show data contribution + profile save
+      await delay(1200);
+      showHappyEndActions(summaryText);
+    } else {
+      showEndActions();
+    }
   } catch(err) {
     removeTyping(t);
     clearInput();
-    addMessage("Something went wrong. Please try again.", 'ai');
-    showEndActions();
+    var chat = document.getElementById('chat');
+    var errMsg = document.createElement('div');
+    errMsg.className = 'msg ai';
+    var errBubble = document.createElement('div');
+    errBubble.className = 'bubble';
+    errBubble.style.cssText = 'max-width:92%;';
+    errBubble.innerHTML = '<div style="margin-bottom:12px;color:var(--muted);font-size:14px;">Something went wrong generating your summary. Your answers are saved — just try again.</div><button id="retryBtn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Try again →</button>';
+    errMsg.appendChild(errBubble);
+    chat.appendChild(errMsg);
+    scrollToBottom();
+    setTimeout(function() {
+      var rb = document.getElementById('retryBtn');
+      if (rb) rb.addEventListener('click', function() { errMsg.remove(); generateReveal(); });
+    }, 200);
   }
+}
+
+async function showHappyEndActions(summaryText) {
+  var chat = document.getElementById('chat');
+
+  // Warm invite to save profile
+  await showAIMessage("That's a really clear picture of someone who knows what works for them. Worth keeping.");
+  await delay(600);
+
+  // Profile save CTA
+  var saveMsg = document.createElement('div');
+  saveMsg.className = 'msg ai';
+  saveMsg.style.animationDelay = '0s';
+  var saveCard = document.createElement('div');
+  saveCard.style.cssText = 'background:linear-gradient(135deg,#131320,#0c0c18);border:1px solid rgba(74,158,191,0.3);border-radius:16px;padding:24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
+  saveCard.innerHTML =
+    '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
+    '<div style="font-family:\'Instrument Serif\',serif;font-size:18px;color:var(--text);margin-bottom:8px;line-height:1.3;">Save this while it's accurate.</div>' +
+    '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">Most people only do this when things fall apart. You get to do it from clarity — which means the profile is actually true.</div>' +
+    '<button id="happySaveBtn" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:10px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;">Save my profile →</button>' +
+    '<div style="font-size:11px;color:var(--muted);font-style:italic;">Free. No resume required. Come back anytime things change.</div>';
+  saveMsg.appendChild(saveCard);
+  chat.appendChild(saveMsg);
+  scrollToBottom();
+
+  setTimeout(function() {
+    var saveBtn = document.getElementById('happySaveBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        document.getElementById('profileModal').style.display = 'flex';
+        setTimeout(function() {
+          var nameInput = document.getElementById('profileNameInput');
+          if (nameInput) nameInput.focus();
+        }, 100);
+      });
+    }
+  }, 300);
+
+  await delay(1000);
+
+  // Data contribution ask — voluntary, framed as helping others
+  var contribMsg = document.createElement('div');
+  contribMsg.className = 'msg ai';
+  contribMsg.style.animationDelay = '0s';
+  var contribCard = document.createElement('div');
+  contribCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(74,158,191,0.15);border-radius:14px;padding:22px 24px;max-width:92%;';
+  contribCard.innerHTML =
+    '<div style="font-size:14px;color:var(--text);margin-bottom:8px;line-height:1.5;">One optional thing, if you're open to it.</div>' +
+    '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">We're building a database of what good work actually looks like from the inside — not from HR job descriptions, but from people who are genuinely thriving. If you'd share your job title and one thing you like about your work, you'd be helping us show other people what great looks like in your field.</div>' +
+    '<input id="contribTitle" type="text" placeholder="Your job title" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
+    '<textarea id="contribLikes" placeholder="What I actually like about it…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;resize:none;min-height:60px;margin-bottom:10px;"></textarea>' +
+    '<div style="display:flex;gap:8px;">' +
+      '<button id="contribSubmit" style="flex:1;padding:10px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Share it →</button>' +
+      '<button id="contribSkip" style="padding:10px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;">Skip</button>' +
+    '</div>';
+  contribMsg.appendChild(contribCard);
+  chat.appendChild(contribMsg);
+  scrollToBottom();
+
+  setTimeout(function() {
+    var submitBtn = document.getElementById('contribSubmit');
+    var skipBtn = document.getElementById('contribSkip');
+    var titleInput = document.getElementById('contribTitle');
+    var likesInput = document.getElementById('contribLikes');
+
+    function handleContrib(submitted) {
+      if (submitted && titleInput && likesInput) {
+        var title = titleInput.value.trim();
+        var likes = likesInput.value.trim();
+        if (title) {
+          // Store in localStorage as community data
+          try {
+            var existing = JSON.parse(localStorage.getItem('lune_community') || '[]');
+            existing.push({
+              title: title,
+              likes: likes,
+              loves: responses.loves || '',
+              environment: responses.environment || '',
+              pace: responses.pace || '',
+              date: new Date().toISOString()
+            });
+            localStorage.setItem('lune_community', JSON.stringify(existing));
+          } catch(e) {}
+          contribCard.innerHTML = '<div style="font-size:14px;font-family:\'Instrument Serif\',serif;font-style:italic;color:var(--accent);text-align:center;padding:8px 0;">Thank you. That helps more than you know.</div>';
+        } else {
+          contribCard.innerHTML = '<div style="font-size:14px;color:var(--muted);text-align:center;padding:8px 0;">No worries. Come back anytime.</div>';
+        }
+      } else {
+        contribCard.innerHTML = '<div style="font-size:14px;color:var(--muted);text-align:center;padding:8px 0;">No worries. Come back anytime.</div>';
+      }
+
+      // Show end actions
+      setTimeout(function() {
+        var endWrap = document.createElement('div');
+        endWrap.className = 'end-actions';
+        var againBtn = document.createElement('button');
+        againBtn.className = 'end-btn';
+        againBtn.textContent = "Run it again";
+        againBtn.addEventListener('click', function() { initConvo(); });
+        var backBtn = document.createElement('button');
+        backBtn.className = 'end-btn';
+        backBtn.textContent = "← Back to Lune";
+        backBtn.addEventListener('click', function() { backToPitch(); });
+        endWrap.appendChild(againBtn);
+        endWrap.appendChild(backBtn);
+        chat.appendChild(endWrap);
+        scrollToBottom();
+      }, 600);
+    }
+
+    if (submitBtn) submitBtn.addEventListener('click', function() { handleContrib(true); });
+    if (skipBtn) skipBtn.addEventListener('click', function() { handleContrib(false); });
+  }, 300);
 }
 
 var SALARY_RANGES = {
@@ -1300,7 +1605,7 @@ async function showMatches() {
   var chat = document.getElementById('chat');
   var inputArea = document.getElementById('inputArea');
 
-  inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Finding your matches…</span></div>';
+  inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Lune is finding your matches…</span></div>';
   var t = showTyping();
 
   var selfReportedTranslation = (responses.duration || '').includes('translate') || (responses.duration || '').includes("language they'll understand");
@@ -1317,12 +1622,12 @@ async function showMatches() {
   var userLocation = responses.location || 'not specified';
   var isRemoteOk = (responses.environment || '').toLowerCase().includes('remote');
 
-  var matchPrompt = 'You are Puzzle\'s matching engine. Based on everything this person shared, generate exactly 3 job matches.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight matches toward companies with regional/distributed presence or genuinely remote-first roles') + '\n\nRULES:\n- Match 1 and 2 must come from DIFFERENT conceptual categories. Force variety.\n- Match 3 is THE UNEXPECTED MATCH — genuinely surprising direction that still connects their skills.\n- Pick REAL companies. If not remote-friendly, favor companies with national or regional reach over SF/NYC-only offices.\n- Write a 2-sentence description of what the job feels like day to day. Human. Specific. Not HR-speak.\n- Write ONE reason sentence naming the specific moment or detail they gave.\n' + (needsTranslation ? '- CRITICAL — BRIDGE SENTENCE: For each card, include a bridge field: one sentence showing them exactly how to describe their current experience in an interview for this role. Example: \"In an interview, describe your dialysis work as \'high-stakes patient communication and crisis de-escalation in a clinical setting\' — that phrasing maps directly to this job description.\"\n' : '') + '- Pick a salary_category: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n- Do NOT invent URLs.\n\nBackground weighting:\n- Healthcare/clinical: weight toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: weight toward advocacy, crisis counseling, program coordination\n- Restaurant/hospitality/operations: weight toward operations, startup ops, RevOps, program management\n- Creative: weight toward UX research, content design, community programs\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "operations",\n    "surprise": false\n  },\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "people_ops",\n    "surprise": false\n  },\n  {\n    "title": "Unexpected Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "community",\n    "surprise": true\n  }\n]';
+  var matchPrompt = 'You are Lune\'s matching engine. Generate exactly 3 job matches for this person.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight toward companies with regional presence or remote-first roles') + '\n\nRULES FOR MATCHES 1 AND 2:\n- Must come from DIFFERENT conceptual categories. Force variety.\n- Real companies. Geographically accessible.\n- 2-sentence day-to-day description. Human, not HR-speak.\n- ONE reason sentence referencing a specific moment or detail they gave.\n' + (needsTranslation ? '- Include a bridge sentence: exactly how to describe their background in an interview for this role.\n' : '') + '\nRULE FOR MATCH 3 — THIS IS THE ONLY ONE THAT SHOWS FREE. EVERYTHING DEPENDS ON IT:\\nSTRICT REQUIREMENTS: (1) MUST cross an industry line completely — if healthcare background give no healthcare role; if restaurant background give no food/hospitality role; reframe skills into a different industry entirely. (2) The reason sentence MUST name a specific story, moment, or exact phrase from their answers — never a generic background summary. (3) A title upgrade from their current role is NOT surprising enough — find a different direction. (4) Must feel slightly uncomfortable — like someone saw something they had not named yet. This card shows free. The other two are locked. The surprise match is the only reason people pay.\n\nBackground weighting:\n- Healthcare/clinical: toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: toward advocacy, crisis work, program coordination\n- Restaurant/hospitality/ops: toward operations, startup ops, RevOps, program management\n- Creative: toward UX research, content design, community programs\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"operations","surprise":false},\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"people_ops","surprise":false},\n  {"title":"Unexpected Job Title","company":"Real Company","description":"Two sentences that explain what makes this surprising but right.","reason":"One sentence connecting their specific story to why this works.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"community","surprise":true}\n]';
 
   try {
     var data = await callAI({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
+      max_tokens: 1200,
       messages: [{ role: 'user', content: matchPrompt }]
     });
     var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
@@ -1348,111 +1653,187 @@ async function showMatches() {
       return;
     }
 
-    var intro = document.createElement('div');
-    intro.className = 'msg ai';
-    var introBubble = document.createElement('div');
-    introBubble.className = 'bubble';
-    introBubble.textContent = 'Based on everything you just shared, here are 3 roles worth looking at. Each one was chosen for a specific reason — and the last one might surprise you.';
-    intro.appendChild(introBubble);
-    chat.appendChild(intro);
+    // Separate surprise from regular matches
+    var surpriseJob = jobs.find(function(j) { return j.surprise; }) || jobs[2];
+    var lockedJobs = jobs.filter(function(j) { return !j.surprise; });
+    if (lockedJobs.length === 0) lockedJobs = [jobs[0], jobs[1]];
 
-    var disclaimer = document.createElement('div');
-    disclaimer.className = 'msg ai';
-    var disclaimerBubble = document.createElement('div');
-    disclaimerBubble.className = 'bubble';
-    disclaimerBubble.style.cssText = 'font-size:12px;color:var(--muted);font-style:italic;max-width:88%;padding:10px 14px;';
-    disclaimerBubble.textContent = 'These roles are real. The links go to live job searches filtered to your title — not a homepage you have to navigate. Salary ranges are based on current market data. Set a job alert on any that fit.';
-    disclaimer.appendChild(disclaimerBubble);
-    chat.appendChild(disclaimer);
+    // Intro
+    // Check if location is likely a small market and warn appropriately
+    var locationNote = '';
+    var loc = (responses.location || '').toLowerCase();
+    var majorCities = ['new york','los angeles','chicago','houston','phoenix','philadelphia','san antonio','san diego','dallas','san jose','austin','jacksonville','fort worth','columbus','charlotte','san francisco','seattle','denver','boston','nashville','baltimore','oklahoma city','portland','las vegas','memphis','louisville','milwaukee','albuquerque','tucson','fresno','mesa','sacramento','atlanta','kansas city','miami','minneapolis','new orleans'];
+    var isMajorCity = majorCities.some(function(c) { return loc.includes(c); });
+    var hasLocation = responses.location && responses.location.trim().length > 2;
+
+    await showAIMessage("Found something. This one stood out — I want you to see it before anything else.");
+    await delay(500);
+
+    // Render the FREE surprise card — clean, no label, no badge
+    var cardMsg = document.createElement('div');
+    cardMsg.className = 'msg ai';
+    cardMsg.style.animationDelay = '0s';
+    var card = document.createElement('div');
+    card.style.cssText = 'background:linear-gradient(135deg,#131320,#0c0c18);border:1px solid rgba(74,158,191,0.4);border-radius:16px;padding:22px 24px;max-width:92%;position:relative;overflow:hidden;';
+    card.innerHTML =
+      '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
+      '<div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;">' + surpriseJob.title + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">' + surpriseJob.company + ' · ' + surpriseJob.type + '</div>' +
+      '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:14px;">' + surpriseJob.description + '</div>' +
+      (surpriseJob.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(74,158,191,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + surpriseJob.reason + '"</div>' : '') +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
+      '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#09090f;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
+      '<a href="' + surpriseJob.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--muted);background:rgba(74,158,191,0.04);border:1px solid rgba(74,158,191,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;">' +
+        '<span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">🔒 How to say this in an interview</span>' +
+        'Unlocked with your full matches — exactly how to describe your background for this role in language hiring managers search for.' +
+      '</div>' +
+      '<button id="saveMatchBtn" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.5px;">Save this match →</button>';
+    cardMsg.appendChild(card);
+    chat.appendChild(cardMsg);
     scrollToBottom();
-    await delay(800);
 
-    jobs.slice(0, 3).forEach(function(job, i) {
+    // Save match button opens profile modal
+    setTimeout(function() {
+      var saveBtn = document.getElementById('saveMatchBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          saveBtn.textContent = 'Saved ✓';
+          saveBtn.style.background = 'rgba(74,158,191,0.1)';
+          saveBtn.style.pointerEvents = 'none';
+          document.getElementById('profileModal').style.display = 'flex';
+          setTimeout(function() {
+            var nameInput = document.getElementById('profileNameInput');
+            if (nameInput) nameInput.focus();
+          }, 100);
+        });
+      }
+    }, 300);
+
+    await delay(1400);
+
+    // EMAIL CAPTURE — catch the midnight browser before the paywall
+    var emailCapMsg = document.createElement('div');
+    emailCapMsg.className = 'msg ai';
+    emailCapMsg.style.animationDelay = '0s';
+    var emailCapCard = document.createElement('div');
+    emailCapCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(74,158,191,0.15);border-radius:12px;padding:18px 20px;max-width:92%;';
+    emailCapCard.innerHTML =
+      '<div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.55;">Drop your email and we'll send your summary so you don't lose it. We'll also let you know when your full matches unlock.</div>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<input id="earlyEmailInput" type="email" placeholder="your@email.com" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box;" />' +
+        '<button id="earlyEmailBtn" style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Save it →</button>' +
+        '<button id="earlyEmailSkip" style="padding:9px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;">Skip</button>' +
+      '</div>';
+    emailCapMsg.appendChild(emailCapCard);
+    chat.appendChild(emailCapMsg);
+    scrollToBottom();
+
+    await new Promise(function(resolve) {
       setTimeout(function() {
-        var cardMsg = document.createElement('div');
-        cardMsg.className = 'msg ai';
-        cardMsg.style.animationDelay = '0s';
-        var card = document.createElement('div');
-        var borderColor = job.surprise ? 'rgba(212,168,83,0.45)' : 'rgba(212,168,83,0.22)';
-        var topLine = job.surprise ? 'background: linear-gradient(90deg, transparent, var(--accent), transparent);' : 'background: linear-gradient(90deg, transparent, rgba(212,168,83,0.4), transparent);';
-        card.style.cssText = 'background:linear-gradient(135deg,#1a1710,#111009);border:1px solid ' + borderColor + ';border-radius:16px;padding:22px 24px;max-width:92%;position:relative;overflow:hidden;';
-        var surpriseBadge = job.surprise ? '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#0c0b0a;background:var(--accent);border-radius:100px;padding:3px 10px;margin-bottom:10px;">The Unexpected Match</div><br>' : '';
-        var matchLabel = job.surprise ? '' : '<div style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;opacity:0.7;">Match ' + (i+1) + ' of 3</div>';
-        card.innerHTML =
-          '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;' + topLine + '"></div>' +
-          matchLabel +
-          surpriseBadge +
-          '<div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;">' + job.title + '</div>' +
-          '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">' + job.company + ' · ' + job.type + '</div>' +
-          '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:14px;">' + job.description + '</div>' +
-          (job.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(212,168,83,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + job.reason + '"</div>' : '') +
-          (job.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(212,168,83,0.05);border:1px solid rgba(212,168,83,0.12);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to say it in an interview</span>' + job.bridge + '</div>' : '') +
-          '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-          '<a href="' + job.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0c0b0a;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
-          '<a href="' + job.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(212,168,83,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
-          '</div>';
-        cardMsg.appendChild(card);
-        chat.appendChild(cardMsg);
-        scrollToBottom();
-      }, i * 700);
+        var emailBtn = document.getElementById('earlyEmailBtn');
+        var emailSkip = document.getElementById('earlyEmailSkip');
+        var emailInput = document.getElementById('earlyEmailInput');
+        function captureEmail() {
+          var email = emailInput ? emailInput.value.trim() : '';
+          if (email && email.includes('@')) {
+            try { localStorage.setItem('lune_email', email); } catch(e) {}
+            emailCapCard.innerHTML = '<div style="font-size:13px;color:var(--accent);font-style:italic;">Got it. Your summary is saved.</div>';
+          } else {
+            emailCapCard.style.display = 'none';
+          }
+          resolve();
+        }
+        if (emailBtn) emailBtn.addEventListener('click', captureEmail);
+        if (emailSkip) emailSkip.addEventListener('click', function() { emailCapCard.style.display='none'; resolve(); });
+        // Auto-resolve after 30 seconds if they don't interact
+        setTimeout(resolve, 30000);
+      }, 300);
     });
 
-    setTimeout(function() {
-      var outro = document.createElement('div');
-      outro.className = 'msg ai';
-      var outroBubble = document.createElement('div');
-      outroBubble.className = 'bubble';
-      outroBubble.textContent = "None of these require you to go back to school. All three measure you on impact — not credentials. Want us to keep an eye out for more?";
-      outro.appendChild(outroBubble);
-      chat.appendChild(outro);
-      scrollToBottom();
+    await delay(600);
 
-      setTimeout(function() {
-        var emailMsg = document.createElement('div');
-        emailMsg.className = 'msg ai';
-        emailMsg.style.animationDelay = '0s';
-        var emailCard = document.createElement('div');
-        emailCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(212,168,83,0.2);border-radius:14px;padding:22px 24px;max-width:92%;';
-        emailCard.innerHTML =
-          '<div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.65;">We\'re building the full match database right now. Drop your email and you\'ll be first when roles like these open up — and first to get matched when they do.</div>' +
-          '<input id="emailInput" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:10px;" />' +
-          '<button id="emailSubmit" style="padding:11px 22px;background:var(--accent);border:none;border-radius:8px;color:#0c0b0a;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Keep me posted →</button>';
-        emailMsg.appendChild(emailCard);
-        chat.appendChild(emailMsg);
+    // Show the two locked cards
+    var lockedMsg = document.createElement('div');
+    lockedMsg.className = 'msg ai';
+    lockedMsg.style.animationDelay = '0s';
+    var lockedWrap = document.createElement('div');
+    lockedWrap.style.cssText = 'max-width:92%;display:flex;flex-direction:column;gap:10px;';
 
-        setTimeout(function() {
-          var submitBtn = document.getElementById('emailSubmit');
-          var emailInput = document.getElementById('emailInput');
-          if (submitBtn && emailInput) {
-            submitBtn.addEventListener('click', function() {
-              var email = emailInput.value.trim();
-              if (!email || !email.includes('@')) return;
-              emailCard.innerHTML = '<div style="font-size:15px;font-family:\'Instrument Serif\',serif;font-style:italic;color:var(--accent);">You\'re on the list. We\'ll be in touch.</div>';
-              addMessage(email, 'user');
-            });
-          }
-        }, 200);
-        scrollToBottom();
-      }, 600);
+    lockedJobs.slice(0, 2).forEach(function(lj) {
+      var lockedCard = document.createElement('div');
+      lockedCard.style.cssText = 'background:linear-gradient(135deg,#0f0f1c,#09090f);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px 22px;position:relative;overflow:hidden;';
+      lockedCard.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+          '<div>' +
+            '<div style="font-size:15px;font-weight:500;color:rgba(237,233,227,0.35);margin-bottom:3px;filter:blur(3px);">' + lj.title + '</div>' +
+            '<div style="font-size:12px;color:rgba(107,101,96,0.5);filter:blur(2px);">' + lj.company + ' · ' + lj.type + '</div>' +
+          '</div>' +
+          '<div style="font-size:16px;opacity:0.4;">🔒</div>' +
+        '</div>' +
+        '<div style="font-size:13px;color:rgba(196,191,184,0.2);line-height:1.5;filter:blur(4px);">' + lj.description + '</div>';
+      lockedWrap.appendChild(lockedCard);
+    });
 
-      setTimeout(function() {
-        var endWrap = document.createElement('div');
-        endWrap.className = 'end-actions';
-        var againBtn2 = document.createElement('button');
-        againBtn2.className = 'end-btn';
-        againBtn2.textContent = "Run it again";
-        againBtn2.addEventListener('click', function() { initConvo(); });
-        var backBtn2 = document.createElement('button');
-        backBtn2.className = 'end-btn';
-        backBtn2.textContent = "← Back to Puzzle";
-        backBtn2.addEventListener('click', function() { backToPitch(); });
-        endWrap.appendChild(againBtn2);
-        endWrap.appendChild(backBtn2);
-        chat.appendChild(endWrap);
-        scrollToBottom();
-      }, 1400);
+    lockedMsg.appendChild(lockedWrap);
+    chat.appendChild(lockedMsg);
 
-    }, jobs.length * 700 + 800);
+    // Fix 3 — Geographic reality note for smaller markets
+    var loc = (responses.location || '').toLowerCase();
+    var majorCities = ['new york','los angeles','chicago','houston','phoenix','philadelphia','san antonio','san diego','dallas','san jose','austin','jacksonville','fort worth','columbus','charlotte','san francisco','seattle','denver','boston','nashville','atlanta','miami','minneapolis','portland','las vegas','sacramento'];
+    var isMajorCity = majorCities.some(function(c) { return loc.includes(c); });
+    var isRemoteUser = (responses.environment || '').toLowerCase().includes('remote');
+    if (responses.location && !isMajorCity && !isRemoteUser) {
+      var geoMsg = document.createElement('div');
+      geoMsg.className = 'msg ai';
+      var geoBubble = document.createElement('div');
+      geoBubble.className = 'bubble';
+      geoBubble.style.cssText = 'font-size:12px;color:var(--muted);font-style:italic;max-width:88%;padding:10px 14px;';
+      geoBubble.textContent = 'These matches are filtered to your area. Some roles may be hybrid or remote-eligible — the full cards show which ones travel well and which ones are truly local.';
+      geoMsg.appendChild(geoBubble);
+      chat.appendChild(geoMsg);
+    }
+    scrollToBottom();
+
+    await delay(800);
+
+    // Paywall prompt
+    var paywallMsg = document.createElement('div');
+    paywallMsg.className = 'msg ai';
+    paywallMsg.style.animationDelay = '0s';
+    var paywallCard = document.createElement('div');
+    paywallCard.style.cssText = 'background:linear-gradient(135deg,#13132a,#0c0c1a);border:1px solid rgba(74,158,191,0.25);border-radius:16px;padding:28px 24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
+    paywallCard.innerHTML =
+      '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
+      '<div style="font-family:\'Instrument Serif\',serif;font-size:19px;color:var(--text);margin-bottom:8px;line-height:1.3;">Two more roles are waiting.</div>' +
+      '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">Unlock your full matches, the interview coaching, and a profile that remembers you every time you come back.</div>' +
+      '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;">' +
+        '<span style="font-family:\'Instrument Serif\',serif;font-size:38px;color:var(--accent);line-height:1;">$12</span>' +
+        '<span style="font-size:12px;color:var(--muted);text-align:left;line-height:1.5;">per month<br>cancel anytime</span>' +
+      '</div>' +
+      '<a href="STRIPE_LINK" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">Unlock my matches →</a>' +
+      '<div style="font-size:11px;color:var(--muted);font-style:italic;">The conversation is always free. No resume required.</div>';
+    paywallMsg.appendChild(paywallCard);
+    chat.appendChild(paywallMsg);
+    scrollToBottom();
+
+    await delay(600);
+
+    var endWrap = document.createElement('div');
+    endWrap.className = 'end-actions';
+    var againBtn2 = document.createElement('button');
+    againBtn2.className = 'end-btn';
+    againBtn2.textContent = "Run it again";
+    againBtn2.addEventListener('click', function() { initConvo(); });
+    var backBtn2 = document.createElement('button');
+    backBtn2.className = 'end-btn';
+    backBtn2.textContent = "← Back to Lune";
+    backBtn2.addEventListener('click', function() { backToPitch(); });
+    endWrap.appendChild(againBtn2);
+    endWrap.appendChild(backBtn2);
+    chat.appendChild(endWrap);
+    scrollToBottom();
 
   } catch(err) {
     removeTyping(t);
@@ -1483,7 +1864,7 @@ function showEndActions() {
 
   var backBtn = document.createElement('button');
   backBtn.className = 'end-btn';
-  backBtn.textContent = "← Back to Puzzle";
+  backBtn.textContent = "← Back to Lune";
   backBtn.addEventListener('click', function() { backToPitch(); });
 
   wrap.appendChild(yesBtn);
