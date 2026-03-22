@@ -176,7 +176,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .option-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
 .option-btn.selected { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); pointer-events:none; }
 .option-btn.selected::after { content:' ✓'; }
-.convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:60px; outline:none; box-sizing:border-box; }
+.convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 14px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:44px; outline:none; box-sizing:border-box; }
 .convo-textarea:focus { border-color:var(--accent); }
 .convo-textarea::placeholder { color:var(--muted); }
 .submit-btn { margin-top:8px; background:var(--accent); border:none; border-radius:10px; padding:11px 20px; color:#0f0e0d; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; }
@@ -741,7 +741,7 @@ function showTextInput(placeholder, onSubmit, rows) {
   var ta = document.createElement('textarea');
   ta.className = 'convo-textarea';
   ta.placeholder = placeholder;
-  ta.rows = rows || 2;
+  ta.rows = rows || 1;
   var btn = document.createElement('button');
   btn.className = 'submit-btn';
   btn.textContent = 'Continue →';
@@ -831,8 +831,8 @@ async function step3b() {
 
 async function step4() {
   updateProgress(4);
-  await showAIMessage("You're giving us a really good picture already.\n\n\"The best I ever felt after a day of work was when I…\"\n\nDon't perform. Just tell me what actually happened — the more specific the better.");
-  showTextInput("…finished something that actually mattered…", function(val) { responses.bestDay = val; addMessage(val, 'user'); step5(); });
+  await showAIMessage("Tell me about a moment at work that stuck with you. Could be small. What made it feel like it mattered?");
+  showTextInput("It was when…", function(val) { responses.bestDay = val; addMessage(val, 'user'); step5(); });
 }
 
 async function step5() {
