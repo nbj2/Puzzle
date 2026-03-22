@@ -36,7 +36,6 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .scroll-line-bar { width:40px; height:1px; background:linear-gradient(to right,var(--accent),transparent); }
 .scroll-line-text { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
 @keyframes rise { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-/* ── PROFILE PAGE ── */
 #profilePage { display:none; flex-direction:column; align-items:center; min-height:100vh; padding-bottom:80px; }
 .profile-nav { width:100%; max-width:640px; padding:32px 24px 0; display:flex; align-items:center; justify-content:space-between; }
 .profile-nav-logo { font-family:'Instrument Serif',serif; font-size:20px; color:var(--accent); }
@@ -60,7 +59,6 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
 .profile-retake { padding:11px 22px; background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
 .profile-retake:hover { border-color:var(--accent); color:var(--accent); }
-/* Create profile modal */
 .profile-modal-overlay { position:fixed; inset:0; background:rgba(12,11,10,0.85); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; }
 .profile-modal { background:var(--surface2); border:1px solid rgba(212,168,83,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
 .profile-modal-title { font-family:'Instrument Serif',serif; font-size:28px; font-style:italic; color:var(--text); margin-bottom:8px; }
@@ -355,7 +353,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="response-icon">🔥</div>
       <div class="response-title">That's the signal we needed.</div>
       <div class="response-text">You're one of the founding 500. Lifetime early-access pricing and a direct line to shape what Puzzle becomes.</div>
-      <a href="/cdn-cgi/l/email-protection#640c0108080b2414111e1e0801070516010116174a070b095b1711060e01071059220b110a000d0a03445154544486e4f0442d4309440d0a" class="response-cta">Claim your spot →</a>
+      <a href="mailto:hello@puzzlecareers.com" class="response-cta">Claim your spot →</a>
     </div>
     <div class="response-block" id="r-maybe">
       <div class="response-icon">👀</div>
@@ -367,7 +365,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="response-icon">💬</div>
       <div class="response-title">Tell us why.</div>
       <div class="response-text">The honest "no" is more valuable than a polite maybe.</div>
-      <a href="/cdn-cgi/l/email-protection#731b161f1f1c33030609091f16101201161601005d101c1e4c000611191610074e3b1c1d160007531516161711121018531c1d53230609091f16" class="response-cta">Tell us directly →</a>
+      <a href="mailto:hello@puzzlecareers.com" class="response-cta">Tell us directly →</a>
     </div>
   </div>
 
@@ -383,7 +381,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <button class="convo-back" id="convoBack">← Back</button>
     <div class="convo-logo">Puzzle</div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-    <div class="step-count" id="stepCount">0 / 10</div>
+    <div class="step-count" id="stepCount">0 / 11</div>
   </div>
   <div class="chat" id="chat"></div>
   <div class="input-area"><div class="input-inner" id="inputArea"></div></div>
@@ -413,7 +411,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // PAGE SWITCHING
 function startConversation() {
   document.getElementById('pitchPage').style.display = 'none';
@@ -442,7 +440,6 @@ function showProfile() {
   window.scrollTo(0, 0);
 }
 
-// ── PROFILE STORAGE ──────────────────────────────────────────
 function getProfile() {
   try { return JSON.parse(localStorage.getItem('puzzle_profile') || 'null'); } catch(e) { return null; }
 }
@@ -468,7 +465,6 @@ function saveSummaryToHistory(summaryText, closingQuestion, responses) {
     environment: responses.environment || '',
     pace: responses.pace || ''
   });
-  // Keep last 10 summaries
   if (history.length > 10) history = history.slice(0, 10);
   try { localStorage.setItem('puzzle_summaries', JSON.stringify(history)); } catch(e) {}
 }
@@ -482,7 +478,6 @@ function initProfileUI() {
   }
 }
 
-// ── PROFILE PAGE RENDERER ─────────────────────────────────────
 function renderProfilePage() {
   var profile = getProfile();
   var history = getSummaryHistory();
@@ -519,13 +514,10 @@ function renderProfilePage() {
     '<div class="profile-name">' + (profile.name || 'Your Profile') + '</div>' +
     '<div class="profile-meta">' + (profile.email || '') + (history.length > 1 ? ' · ' + history.length + ' conversations' : ' · 1 conversation') + '</div>' +
     '</div>' +
-
     '<div class="profile-section-label">What drives you</div>' +
     '<div class="profile-tags">' + tags.map(function(t) { return '<span class="profile-tag">' + t + '</span>'; }).join('') + '</div>' +
-
     '<div class="profile-section-label">Your summaries</div>' +
     historyHTML +
-
     '<div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">' +
     '<button class="profile-cta" id="profileRetakeBtn" style="font-size:13px;padding:11px 22px;">Take it again →</button>' +
     '<button class="profile-retake" id="profileClearBtn">Clear profile</button>' +
@@ -542,14 +534,12 @@ function renderProfilePage() {
   });
 }
 
-// ── PROFILE MODAL ─────────────────────────────────────────────
 var pendingSummaryData = null;
 
 function showProfileModal(summaryText, closingQuestion, responsesSnap) {
   pendingSummaryData = { summaryText: summaryText, closingQuestion: closingQuestion, responsesSnap: responsesSnap };
   var profile = getProfile();
   if (profile) {
-    // Already has a profile — just save silently
     saveSummaryToHistory(summaryText, closingQuestion, responsesSnap);
     initProfileUI();
     return;
@@ -570,7 +560,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.getElementById('profileModal').style.display = 'none';
     initProfileUI();
-    // Show a confirmation in chat
     var confirmMsg = document.createElement('div');
     confirmMsg.className = 'msg ai';
     confirmMsg.style.animationDelay = '0s';
@@ -614,9 +603,6 @@ function vote(type) {
   setTimeout(function() { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
 }
 
-// BUTTON WIRING — inside DOMContentLoaded above
-
-// CONVERSATION ENGINE
 var responses = {};
 var TOTAL_STEPS = 11;
 
@@ -676,12 +662,20 @@ async function showAIMessage(text, ms) {
   addMessage(text, 'ai');
 }
 
+async function callAI(body) {
+  var res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return await res.json();
+}
+
 function showOptions(options, onSelect, singleSelect) {
   var chat = document.getElementById('chat');
   var wrap = document.createElement('div');
   wrap.className = 'options';
 
-  // hint label
   if (!singleSelect) {
     var hint = document.createElement('div');
     hint.style.cssText = 'font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;font-style:italic;';
@@ -697,12 +691,10 @@ function showOptions(options, onSelect, singleSelect) {
     btn.textContent = opt;
     btn.addEventListener('click', function() {
       if (singleSelect) {
-        // Single select — immediate confirm
         wrap.querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('selected'); });
         btn.classList.add('selected');
         setTimeout(function() { wrap.remove(); onSelect(opt); }, 300);
       } else {
-        // Multi select — toggle
         var idx = selected.indexOf(opt);
         if (idx === -1) {
           selected.push(opt);
@@ -711,7 +703,6 @@ function showOptions(options, onSelect, singleSelect) {
           selected.splice(idx, 1);
           btn.classList.remove('selected');
         }
-        // Show or hide confirm button
         var confirmBtn = wrap.querySelector('.multi-confirm');
         if (selected.length > 0) {
           if (!confirmBtn) {
@@ -769,7 +760,6 @@ function showTextInput(placeholder, onSubmit, rows) {
   setTimeout(function() { ta.focus(); }, 100);
 }
 
-// CONVERSATION FLOW
 async function step1() {
   updateProgress(1);
   await showAIMessage("Hey. You're not here by accident.\n\nWhat's going on?", 600);
@@ -827,7 +817,7 @@ async function step3() {
   ], function(val) {
     responses.loves = val; addMessage(val, 'user');
     if (val.includes("Something else") && val.split(',').length === 1) {
-      step3b(); // only go to free text if Something Else was their ONLY pick
+      step3b();
     } else {
       step4();
     }
@@ -968,16 +958,11 @@ async function generateReveal() {
   var prompt = "You are the core AI behind Puzzle, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says 'the moment with Maya' is worth ten that say 'you care about people's growth'\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- If their location is a smaller or mid-size city (not NYC/SF/LA/Chicago/Seattle), briefly acknowledge the geographic reality in one sentence — name whether the shape of work you're describing is primarily remote-accessible, exists regionally, or would realistically require relocating. Don't make it the focus. Don't skip it either.\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified");
 
   try {
-    var res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
-      })
+    var data = await callAI({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }]
     });
-    var data = await res.json();
     var text = (data.content && data.content[0] && data.content[0].text) || "Having trouble generating your summary right now. Please try again.";
     removeTyping(t);
     clearInput();
@@ -995,7 +980,6 @@ async function generateReveal() {
     bubble.innerHTML = '<p style="margin-bottom:16px">' + mainText + '</p><p style="color:var(--accent);font-family:\'Instrument Serif\',serif;font-size:17px;font-style:italic">' + lastLine + '</p>';
     msg.appendChild(bubble);
 
-    // Save summary button
     var saveRow = document.createElement('div');
     saveRow.style.cssText = 'display:flex;gap:10px;margin-top:10px;max-width:92%;flex-wrap:wrap;opacity:0;animation:fadeUp 0.4s ease 0.3s forwards;';
 
@@ -1008,7 +992,6 @@ async function generateReveal() {
         copyBtn.style.background = 'rgba(212,168,83,0.1)';
         setTimeout(function() { copyBtn.textContent = 'Copy my summary'; copyBtn.style.background = 'transparent'; }, 2000);
       }).catch(function() {
-        // Fallback for browsers that block clipboard
         var ta = document.createElement('textarea');
         ta.value = summaryText;
         ta.style.position = 'fixed';
@@ -1045,38 +1028,26 @@ async function generateReveal() {
               return;
             }
             addMessage(email, 'user');
+            emailSaveCard.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0;">Writing your email…</div>';
 
-            // Show loading state
-            emailSaveCard.innerHTML =
-              '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0;">Writing your email…</div>';
-
-            // Generate tone-calibrated subject + opening from how they actually write
             var tonePrompt = "You are writing a single transactional email that will be sent to someone immediately after they completed a career alignment conversation. Your job is to calibrate the tone of this email to match how THIS SPECIFIC PERSON writes — not a generic template.\n\nHere is how they write in their own words:\n\nStep 4 (best day at work): " + (responses.bestDay || '') + "\nStep 7 (background, their words): " + (responses.background || '') + "\n\nBased on their writing style — their sentence length, vocabulary, whether they're direct or reflective, formal or casual — generate:\n1. A subject line (under 10 words) that would make THIS person open the email. Not generic. Written for them.\n2. A two-sentence opening paragraph that feels like it was written for this specific human, not a mass email.\n\nRespond ONLY with valid JSON, no markdown:\n{\"subject\": \"subject line here\", \"opening\": \"Two sentence opening here.\"}";
 
             var subject = 'This is what Puzzle saw when it listened to you';
             var opening = 'This summary came from a 20-minute conversation with Puzzle. No resume. No job history. Just ten questions nobody else thought to ask.';
 
             try {
-              var toneRes = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  model: 'claude-sonnet-4-6',
-                  max_tokens: 200,
-                  messages: [{ role: 'user', content: tonePrompt }]
-                })
+              var toneData = await callAI({
+                model: 'claude-sonnet-4-6',
+                max_tokens: 200,
+                messages: [{ role: 'user', content: tonePrompt }]
               });
-              var toneData = await toneRes.json();
               var toneRaw = (toneData.content && toneData.content[0] && toneData.content[0].text) || '{}';
               var toneClean = toneRaw.replace(/```json|```/g, '').trim();
               var toneResult = JSON.parse(toneClean);
               if (toneResult.subject) subject = toneResult.subject;
               if (toneResult.opening) opening = toneResult.opening;
-            } catch(e) {
-              // Falls back to defaults above
-            }
+            } catch(e) {}
 
-            // Render the calibrated email preview
             emailSaveCard.innerHTML =
               '<div style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;opacity:0.7;">✓ Sent — here\'s what landed in your inbox</div>' +
               '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;font-size:13px;line-height:1.7;">' +
@@ -1110,10 +1081,8 @@ async function generateReveal() {
     scrollToBottom();
     await delay(1000);
 
-    // Trigger profile save modal
     var responsesSnap = Object.assign({}, responses);
     showProfileModal(mainText, lastLine, responsesSnap);
-
     showEndActions();
   } catch(err) {
     removeTyping(t);
@@ -1123,7 +1092,6 @@ async function generateReveal() {
   }
 }
 
-// SALARY LOOKUP TABLE — verified ranges by role category, zero hallucination
 var SALARY_RANGES = {
   'operations':       { range: '$55K–$85K',  remote: 'Remote · Full-time' },
   'people_ops':       { range: '$50K–$70K',  remote: 'Remote · Full-time' },
@@ -1168,49 +1136,33 @@ async function showMatches() {
   inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Finding your matches…</span></div>';
   var t = showTyping();
 
-  // DYNAMIC MATCH GENERATION
-  // Claude generates: role titles, company types, category tags, descriptions, reasons, surprise
-  // Salary ranges come from verified lookup table — zero hallucination
-  // Links go to LinkedIn/Indeed filtered searches — always work, always relevant
-
-  // Translation gap detection — self-reported OR inferred from background
-  // Don't require people to name their own problem. Detect it from what they wrote.
   var selfReportedTranslation = (responses.duration || '').includes('translate') || (responses.duration || '').includes("language they'll understand");
-
   var bgText = (responses.background || '').toLowerCase();
   var translationIndustries = [
     'restaurant','kitchen','cook','chef','line cook','gm','general manager','hospitality','catering','hotel','front of house','back of house',
-    'dialysis','patient','clinical','hospital','medical','healthcare','nurse','technician','dialysis tech',
+    'dialysis','patient','clinical','hospital','medical','healthcare','nurse','technician',
     'probation','juvenile','social work','case worker','case manager','nonprofit','shelter','court','corrections',
     'warehouse','factory','manufacturing','forklift','logistics','freight','dispatch',
-    'construction','trades','electrician','plumber','hvac','mechanic','technician',
+    'construction','trades','electrician','plumber','hvac','mechanic',
     'retail','floor','store','associate','cashier','customer service'
   ];
-  var hasTranslationGap = selfReportedTranslation || translationIndustries.some(function(k) { return bgText.includes(k); });
-  var needsTranslation = hasTranslationGap;
+  var needsTranslation = selfReportedTranslation || translationIndustries.some(function(k) { return bgText.includes(k); });
   var userLocation = responses.location || 'not specified';
   var isRemoteOk = (responses.environment || '').toLowerCase().includes('remote');
-  var bridgeField = needsTranslation ? '"One sentence on how to describe their background in an interview for this specific role."' : 'null';
 
-  var matchPrompt = 'You are Puzzle\'s matching engine. Based on everything this person shared, generate exactly 3 job matches.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight matches toward companies with regional/distributed presence or genuinely remote-first roles') + '\n\nRULES:\n- Match 1 and 2 must come from DIFFERENT conceptual categories. Force variety.\n- Match 3 is THE UNEXPECTED MATCH — genuinely surprising direction that still connects their skills.\n- Pick REAL companies. If not remote-friendly, favor companies with national or regional reach over SF/NYC-only offices.\n- Write a 2-sentence description of what the job feels like day to day. Human. Specific. Not HR-speak.\n- Write ONE reason sentence naming the specific moment or detail they gave. "The November you described" beats "your operational experience" every time.\n' + (needsTranslation ? '- CRITICAL — BRIDGE SENTENCE: This person said they struggle to translate their background into language employers understand. For each card, include a bridge field: one sentence showing them exactly how to describe their current experience in an interview for this role. Example: \"In an interview, describe your dialysis work as \'high-stakes patient communication and crisis de-escalation in a clinical setting\' — that phrasing maps directly to this job description.\"\n' : '') + '- Pick a salary_category: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n- Do NOT invent URLs.\n\nBackground weighting:\n- Healthcare/clinical: weight toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: weight toward advocacy, crisis counseling, program coordination\n- Restaurant/hospitality/operations: weight toward operations, startup ops, RevOps, program management\n- Creative: weight toward UX research, content design, community programs\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "operations",\n    "surprise": false\n  },\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "people_ops",\n    "surprise": false\n  },\n  {\n    "title": "Unexpected Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "community",\n    "surprise": true\n  }\n]';
+  var matchPrompt = 'You are Puzzle\'s matching engine. Based on everything this person shared, generate exactly 3 job matches.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight matches toward companies with regional/distributed presence or genuinely remote-first roles') + '\n\nRULES:\n- Match 1 and 2 must come from DIFFERENT conceptual categories. Force variety.\n- Match 3 is THE UNEXPECTED MATCH — genuinely surprising direction that still connects their skills.\n- Pick REAL companies. If not remote-friendly, favor companies with national or regional reach over SF/NYC-only offices.\n- Write a 2-sentence description of what the job feels like day to day. Human. Specific. Not HR-speak.\n- Write ONE reason sentence naming the specific moment or detail they gave.\n' + (needsTranslation ? '- CRITICAL — BRIDGE SENTENCE: For each card, include a bridge field: one sentence showing them exactly how to describe their current experience in an interview for this role. Example: \"In an interview, describe your dialysis work as \'high-stakes patient communication and crisis de-escalation in a clinical setting\' — that phrasing maps directly to this job description.\"\n' : '') + '- Pick a salary_category: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n- Do NOT invent URLs.\n\nBackground weighting:\n- Healthcare/clinical: weight toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: weight toward advocacy, crisis counseling, program coordination\n- Restaurant/hospitality/operations: weight toward operations, startup ops, RevOps, program management\n- Creative: weight toward UX research, content design, community programs\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "operations",\n    "surprise": false\n  },\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "people_ops",\n    "surprise": false\n  },\n  {\n    "title": "Unexpected Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "community",\n    "surprise": true\n  }\n]';
 
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: matchPrompt }]
-      })
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: matchPrompt }]
     });
-    var data = await res.json();
     var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
     var clean = raw.replace(/```json|```/g, '').trim();
     var jobs;
     try { jobs = JSON.parse(clean); } catch(e) { jobs = []; }
 
-    // Attach verified salary ranges and working search links — no hallucination possible
     jobs = jobs.map(function(job) {
       var salaryData = getSalaryType(job.salary_category);
       return Object.assign({}, job, {
@@ -1229,7 +1181,6 @@ async function showMatches() {
       return;
     }
 
-    // Intro
     var intro = document.createElement('div');
     intro.className = 'msg ai';
     var introBubble = document.createElement('div');
@@ -1249,7 +1200,6 @@ async function showMatches() {
     scrollToBottom();
     await delay(800);
 
-    // Render job cards
     jobs.slice(0, 3).forEach(function(job, i) {
       setTimeout(function() {
         var cardMsg = document.createElement('div');
@@ -1280,7 +1230,6 @@ async function showMatches() {
       }, i * 700);
     });
 
-        // Outro + email capture
     setTimeout(function() {
       var outro = document.createElement('div');
       outro.className = 'msg ai';
@@ -1368,4 +1317,14 @@ function showEndActions() {
   var backBtn = document.createElement('button');
   backBtn.className = 'end-btn';
   backBtn.textContent = "← Back to Puzzle";
-  backBtn.addEventL
+  backBtn.addEventListener('click', function() { backToPitch(); });
+
+  wrap.appendChild(yesBtn);
+  wrap.appendChild(againBtn);
+  wrap.appendChild(backBtn);
+  chat.appendChild(wrap);
+  scrollToBottom();
+}
+</script>
+</body>
+</html>
