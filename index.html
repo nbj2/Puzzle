@@ -8,18 +8,18 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #09090f; --surface: #0f0f1a; --surface2: #141422;
-  --border: #1e1e30; --text: #e8e8f0; --muted: #6b6b80;
-  --accent: #4A9EBF; --accent-soft: rgba(74,158,191,0.1);
-  --accent-dim: rgba(74,158,191,0.05); --bubble-ai: #0f0f1a;
+  --bg: #f5f0e8; --surface: #faf7f2; --surface2: #ede8df;
+  --border: #ddd7ce; --text: #1a1916; --muted: #7a756e;
+  --accent: #18706C; --accent-soft: rgba(24,112,108,0.08);
+  --accent-dim: rgba(24,112,108,0.04); --bubble-ai: #faf7f2;
 }
 body { background:var(--bg); color:var(--text); font-family:'Sora',system-ui,-apple-system,sans-serif; font-weight:300; line-height:1.7; min-height:100vh; }
-body::before { content:''; position:fixed; top:-20vh; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(74,158,191,0.06) 0%, transparent 70%); pointer-events:none; z-index:0; }
+body::before { content:''; position:fixed; top:-20vh; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(24,112,108,0.04) 0%, transparent 70%); pointer-events:none; z-index:0; }
 #pitchPage { display:block; }
 #convoPage { display:none; }
-nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(to bottom,var(--bg) 60%,transparent); }
-.nav-logo { font-family:'Instrument Serif',serif; font-size:18px; color:var(--accent); }
-.nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(74,158,191,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
+nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(to bottom,var(--bg) 70%,transparent); }
+.nav-logo { font-family:'Instrument Serif',serif; font-size:26px; font-weight:700; color:var(--accent); letter-spacing:-0.5px; }
+.nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(24,112,108,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
 .hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:100px 40px 60px; max-width:1000px; margin:0 auto; position:relative; z-index:1; }
 .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:36px; opacity:0; animation:rise 0.6s ease 0.1s forwards; }
 .eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
@@ -32,7 +32,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .mechanic-icon { font-size:18px; flex-shrink:0; padding-top:1px; }
 .mechanic-text strong { color:var(--text); font-weight:400; }
 .hero-cta { opacity:0; animation:rise 0.6s ease 0.6s forwards; }
-.cta-main { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; }
+.cta-main { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; background:var(--accent); border:none; border-radius:12px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; }
 .cta-hint { display:block; margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; }
 .scroll-line { display:flex; align-items:center; gap:8px; margin-top:32px; opacity:0; animation:rise 0.6s ease 0.85s forwards; }
 .scroll-line-bar { width:40px; height:1px; background:linear-gradient(to right,var(--accent),transparent); }
@@ -49,7 +49,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .profile-meta { font-size:13px; color:var(--muted); }
 .profile-section-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:12px; }
 .profile-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
-.profile-summary-card { background:linear-gradient(150deg,#131320 0%,#0c0c18 100%); border:1px solid rgba(74,158,191,0.28); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; margin-bottom:12px; }
+.profile-summary-card { background:linear-gradient(150deg,#ffffff 0%,#f5f3ef 100%); border:1px solid rgba(24,112,108,0.28); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; margin-bottom:12px; }
 .profile-summary-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .profile-summary-date { font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:14px; text-transform:uppercase; }
 .profile-summary-text { font-family:'Instrument Serif',serif; font-size:16px; line-height:1.75; color:var(--text); font-style:italic; }
@@ -58,100 +58,142 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .profile-empty { text-align:center; padding:60px 20px; }
 .profile-empty-title { font-family:'Instrument Serif',serif; font-size:24px; font-style:italic; color:var(--muted); margin-bottom:12px; }
 .profile-empty-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
-.profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
+.profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
 .profile-retake { padding:11px 22px; background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; cursor:pointer; }
 .profile-retake:hover { border-color:var(--accent); color:var(--accent); }
-.profile-modal-overlay { position:fixed; inset:0; background:rgba(12,11,10,0.85); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; }
-.profile-modal { background:var(--surface2); border:1px solid rgba(74,158,191,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
+/* ── Enhanced profile sections ── */
+.profile-chapter { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px 28px; margin-bottom:16px; position:relative; }
+.profile-chapter-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; opacity:0.7; }
+.profile-chapter-title { font-family:'Instrument Serif',serif; font-size:20px; color:var(--text); margin-bottom:6px; line-height:1.3; }
+.profile-chapter-meta { font-size:12px; color:var(--muted); margin-bottom:12px; }
+.profile-chapter-reflection { font-size:14px; color:var(--muted); line-height:1.7; font-style:italic; }
+.profile-chapter-edit { position:absolute; top:16px; right:16px; font-size:11px; color:var(--muted); cursor:pointer; background:none; border:none; font-family:'Sora',sans-serif; padding:4px 8px; border-radius:6px; }
+.profile-chapter-edit:hover { color:var(--accent); background:var(--accent-soft); }
+.profile-resume-zone { border:1.5px dashed var(--border); border-radius:14px; padding:28px; text-align:center; margin-bottom:24px; cursor:pointer; transition:all 0.2s; }
+.profile-resume-zone:hover { border-color:var(--accent); background:var(--accent-soft); }
+.profile-resume-zone.has-resume { border-style:solid; border-color:rgba(24,112,108,0.3); background:rgba(24,112,108,0.04); cursor:default; }
+.profile-resume-title { font-size:14px; color:var(--text); margin-bottom:4px; font-weight:400; }
+.profile-resume-sub { font-size:12px; color:var(--muted); line-height:1.5; }
+.profile-mood-badge { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); border:1px solid var(--border); border-radius:100px; padding:4px 12px; margin-bottom:20px; }
+.profile-mood-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.profile-promotion-card { background:linear-gradient(135deg,rgba(24,112,108,0.06),rgba(24,112,108,0.02)); border:1px solid rgba(24,112,108,0.2); border-radius:14px; padding:20px 24px; margin-bottom:16px; }
+.profile-promotion-title { font-size:14px; font-weight:500; color:var(--text); margin-bottom:4px; }
+.profile-promotion-reflection { font-size:13px; color:var(--muted); font-style:italic; line-height:1.6; }
+.profile-modal-overlay { position:fixed; inset:0; background:rgba(26,25,22,0.6); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; }
+.profile-modal { background:var(--surface2); border:1px solid rgba(24,112,108,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
 .profile-modal-title { font-family:'Instrument Serif',serif; font-size:28px; font-style:italic; color:var(--text); margin-bottom:8px; }
 .profile-modal-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
 .profile-modal input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; outline:none; box-sizing:border-box; margin-bottom:12px; }
 .profile-modal input:focus { border-color:var(--accent); }
 .profile-modal input::placeholder { color:var(--muted); }
-.profile-modal-save { width:100%; padding:13px; background:var(--accent); border:none; border-radius:10px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-bottom:10px; }
+.profile-modal-save { width:100%; padding:13px; background:var(--accent); border:none; border-radius:10px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-bottom:10px; }
 .profile-modal-skip { width:100%; padding:10px; background:transparent; border:none; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; cursor:pointer; }
 .profile-modal-skip:hover { color:var(--text); }
-.content { max-width:760px; margin:0 auto; padding:60px 40px 120px; position:relative; z-index:1; }
-.section { margin-bottom:100px; }
+.content { max-width:860px; margin:0 auto; padding:40px 40px 120px; position:relative; z-index:1; }
+.section { margin-bottom:120px; }
+.section-eyebrow { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:32px; opacity:0.7; }
 .label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:24px; display:flex; align-items:center; gap:14px; }
 .label::after { content:''; flex:1; height:1px; background:var(--border); }
-.result-card { background:linear-gradient(150deg,#131320 0%,#0c0c18 100%); border:1px solid rgba(74,158,191,0.28); border-radius:20px; padding:40px 44px; position:relative; overflow:hidden; margin-bottom:16px; }
-.result-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
-.result-persona { display:flex; align-items:center; gap:14px; margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border); }
-.persona-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#1a1a2e,#0f0f1e); border:1px solid rgba(74,158,191,0.25); display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-size:16px; color:var(--accent); flex-shrink:0; }
+/* ── RESULT CARDS — editorial, open layout ── */
+.result-card { position:relative; margin-bottom:80px; padding-top:20px; }
+.result-card::before { content:''; position:absolute; top:0; left:0; width:40px; height:2px; background:var(--accent); border-radius:2px; }
+.result-persona { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.persona-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#dde8ee,#c8dbe6); border:1px solid rgba(24,112,108,0.25); display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-size:15px; color:var(--accent); flex-shrink:0; }
 .persona-info { flex:1; }
-.persona-name { font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px; }
-.persona-detail { font-size:12px; color:var(--muted); }
-.result-live-badge { display:flex; align-items:center; gap:6px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); font-weight:500; }
-.live-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:glow-dot 2s ease infinite; }
-@keyframes glow-dot { 0%,100%{box-shadow:0 0 0 0 rgba(212,168,83,0);opacity:0.6} 50%{box-shadow:0 0 0 5px rgba(74,158,191,0.15);opacity:1} }
-.result-text { font-family:'Sora',sans-serif; font-size:16px; line-height:1.8; color:var(--text); font-style:normal; font-weight:300; }
-.result-caption { font-size:12px; color:var(--muted); text-align:center; font-style:italic; margin-bottom:36px; }
-.voice-slot { background:var(--surface2); border:1px solid rgba(74,158,191,0.15); border-radius:14px; padding:28px 32px; display:flex; gap:18px; align-items:flex-start; position:relative; overflow:hidden; margin-bottom:40px; }
-.voice-slot::before { content:'"'; font-family:'Instrument Serif',serif; font-size:80px; color:var(--accent); opacity:0.1; position:absolute; top:-10px; left:20px; line-height:1; pointer-events:none; }
-.voice-avatar { width:36px; height:36px; border-radius:50%; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; margin-top:2px; font-family:'Instrument Serif',serif; color:var(--accent); }
-.voice-body { flex:1; }
-.voice-quote { font-family:'Sora',sans-serif; font-size:15px; font-style:normal; font-weight:300; color:var(--text); line-height:1.65; margin-bottom:10px; opacity:0.85; }
-.voice-attribution { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
-.try-it-block { background:linear-gradient(135deg,#131320 0%,#0c0c18 100%); border:1px solid rgba(74,158,191,0.2); border-radius:18px; padding:40px 44px; text-align:center; position:relative; overflow:hidden; }
-.try-it-block::before { content:''; position:absolute; top:0; left:20%; right:20%; height:1px; background:linear-gradient(90deg,transparent,rgba(74,158,191,0.4),transparent); }
-.try-it-eyebrow { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; opacity:0.7; }
-.try-it-title { font-family:'Instrument Serif',serif; font-size:clamp(26px,4vw,40px); font-weight:400; line-height:1.15; letter-spacing:-0.5px; margin-bottom:14px; color:var(--text); }
+.persona-name { font-size:13px; font-weight:500; color:var(--text); margin-bottom:1px; }
+.persona-detail { font-size:11px; color:var(--muted); }
+.result-live-badge { display:flex; align-items:center; gap:5px; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); font-weight:500; opacity:0.7; }
+.live-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:glow-dot 2s ease infinite; }
+@keyframes glow-dot { 0%,100%{opacity:0.5} 50%{opacity:1;box-shadow:0 0 0 4px rgba(24,112,108,0.15)} }
+/* Pull quote — the big punchy line */
+.result-pull-quote { font-family:'Instrument Serif',serif; font-size:clamp(20px,3vw,32px); font-weight:400; line-height:1.3; color:var(--text); margin-bottom:20px; letter-spacing:-0.3px; }
+.result-pull-quote em { font-style:italic; color:var(--accent); }
+/* Rest of the summary — smaller, de-emphasized */
+.result-text { font-size:15px; line-height:1.85; color:var(--muted); font-weight:300; border-left:1px solid var(--border); padding-left:20px; }
+.result-caption { font-size:12px; color:var(--muted); opacity:0.6; margin-top:16px; font-style:italic; }
+
+/* ── TESTIMONIALS — staggered, airy ── */
+.testimonials { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:60px; }
+.testimonial { padding:28px; border-radius:16px; border:1px solid var(--border); background:var(--surface); position:relative; }
+.testimonial:nth-child(2) { margin-top:32px; }
+.testimonial:nth-child(3) { margin-top:-16px; }
+.testimonial-quote { font-size:15px; line-height:1.7; color:var(--text); font-weight:300; margin-bottom:16px; }
+.testimonial-mark { font-family:'Instrument Serif',serif; font-size:48px; color:var(--accent); opacity:0.15; position:absolute; top:12px; right:20px; line-height:1; }
+.testimonial-attr { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+/* ── TRY IT BLOCK — centered, spacious ── */
+.try-it-block { text-align:center; padding:80px 40px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); position:relative; }
+.try-it-block::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; height:500px; background:radial-gradient(circle,rgba(24,112,108,0.05) 0%,transparent 70%); pointer-events:none; }
+.try-it-eyebrow { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:20px; opacity:0.6; }
+.try-it-title { font-family:'Instrument Serif',serif; font-size:clamp(32px,5vw,60px); font-weight:400; line-height:1.1; letter-spacing:-1px; margin-bottom:16px; color:var(--text); }
 .try-it-title em { font-style:italic; color:var(--accent); }
-.try-it-sub { font-size:14px; color:var(--muted); max-width:380px; margin:0 auto 32px; line-height:1.65; }
-.try-it-btn { display:inline-flex; align-items:center; gap:10px; padding:15px 32px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; position:relative; z-index:1; }
-.try-it-note { display:block; margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; }
-.steps { display:flex; flex-direction:column; gap:2px; }
-.step { display:grid; grid-template-columns:44px 1fr; gap:20px; padding:24px 28px; background:var(--surface); align-items:start; border-left:2px solid transparent; transition:border-color 0.2s,background 0.2s; }
-.step:first-child { border-radius:14px 14px 0 0; }
-.step:last-child { border-radius:0 0 14px 14px; }
-.step:hover { border-left-color:var(--accent); background:var(--accent-dim); }
-.step-num { font-family:'Instrument Serif',serif; font-size:26px; color:var(--accent); opacity:0.35; line-height:1; padding-top:3px; }
-.step-title { font-size:13px; font-weight:500; margin-bottom:5px; color:var(--text); }
-.step-desc { font-size:14px; color:var(--muted); line-height:1.6; }
-.profile-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:36px 40px; }
-.profile-intro { font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:36px; max-width:560px; }
-.profile-intro strong { color:var(--text); font-weight:400; }
-.timeline { display:flex; flex-direction:column; position:relative; }
-.timeline::before { content:''; position:absolute; left:14px; top:8px; bottom:8px; width:1px; background:linear-gradient(to bottom,var(--accent) 0%,rgba(74,158,191,0.12) 100%); }
-.tl-item { display:grid; grid-template-columns:29px 1fr; gap:22px; padding:18px 0; }
-.tl-dot-wrap { display:flex; align-items:flex-start; justify-content:center; padding-top:6px; }
+.try-it-sub { font-size:15px; color:var(--muted); max-width:420px; margin:0 auto 36px; line-height:1.7; }
+.try-it-btn { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:var(--accent); border:none; border-radius:100px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; position:relative; z-index:1; transition:transform 0.15s,box-shadow 0.15s; }
+.try-it-btn:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(24,112,108,0.25); }
+.try-it-note { display:block; margin-top:16px; font-size:12px; color:var(--muted); font-style:italic; }
+
+/* ── HOW IT WORKS — flowing story layout ── */
+.how-it-works { display:flex; flex-direction:column; gap:0; }
+.how-step { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; padding:60px 0; border-bottom:1px solid var(--border); }
+.how-step:last-child { border-bottom:none; }
+.how-step.flip { direction:rtl; }
+.how-step.flip > * { direction:ltr; }
+.how-step-num { font-family:'Instrument Serif',serif; font-size:80px; color:var(--accent); opacity:0.08; line-height:1; margin-bottom:-16px; }
+.how-step-title { font-family:'Instrument Serif',serif; font-size:clamp(22px,3vw,32px); font-weight:400; color:var(--text); margin-bottom:12px; letter-spacing:-0.3px; line-height:1.2; }
+.how-step-desc { font-size:14px; color:var(--muted); line-height:1.75; }
+.how-step-visual { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px; min-height:140px; display:flex; align-items:center; justify-content:center; }
+.how-step-icon { font-size:48px; opacity:0.6; }
+
+/* ── BIGGER IDEA — timeline ── */
+.bigger-idea { padding:0; }
+.bigger-idea-intro { font-size:clamp(18px,2.5vw,24px); color:var(--muted); line-height:1.75; margin-bottom:60px; max-width:600px; font-weight:300; }
+.bigger-idea-intro strong { color:var(--text); font-weight:400; }
+.timeline { display:flex; flex-direction:column; gap:0; position:relative; }
+.timeline::before { content:''; position:absolute; left:14px; top:12px; bottom:12px; width:1px; background:linear-gradient(to bottom,var(--accent),rgba(24,112,108,0.08)); }
+.tl-item { display:grid; grid-template-columns:29px 1fr; gap:28px; padding:28px 0; border-bottom:1px solid rgba(24,112,108,0.06); }
+.tl-item:last-child { border-bottom:none; }
+.tl-dot-wrap { display:flex; align-items:flex-start; justify-content:center; padding-top:8px; }
 .tl-dot { width:9px; height:9px; border-radius:50%; background:var(--accent); z-index:1; flex-shrink:0; }
-.tl-dot.future { background:transparent; border:1px solid var(--muted); }
-.tl-age { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+.tl-dot.future { background:transparent; border:1px solid rgba(24,112,108,0.3); }
+.tl-age { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
 .tl-age.future { color:var(--muted); }
-.tl-text { font-size:14px; color:var(--muted); line-height:1.6; }
-.tl-text strong { color:var(--text); font-weight:400; display:block; margin-bottom:3px; }
-.price-anchor { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:28px 32px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
-.price-anchor-amount { font-family:'Instrument Serif',serif; font-size:52px; color:var(--accent); line-height:1; flex-shrink:0; }
-.price-anchor-details { flex:1; min-width:200px; }
-.price-anchor-label { font-size:14px; color:var(--text); font-weight:400; margin-bottom:6px; }
-.price-anchor-sub { font-size:13px; color:var(--muted); line-height:1.55; }
-.price-anchor-compare { display:flex; flex-direction:column; gap:7px; flex-shrink:0; }
-.compare-item { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
-.compare-check { color:var(--accent); }
+.tl-text { font-size:15px; color:var(--muted); line-height:1.7; }
+.tl-text strong { color:var(--text); font-weight:500; display:block; margin-bottom:4px; font-size:16px; }
+
+/* ── PRICING — centered, big ── */
+.pricing-block { text-align:center; padding:60px 0; }
+.pricing-amount { font-family:'Instrument Serif',serif; font-size:clamp(72px,10vw,120px); color:var(--text); line-height:1; margin-bottom:8px; letter-spacing:-3px; }
+.pricing-amount span { color:var(--accent); }
+.pricing-label { font-size:16px; color:var(--muted); margin-bottom:32px; }
+.pricing-features { display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-bottom:40px; }
+.pricing-feature { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+.pricing-feature::before { content:'◐'; color:var(--accent); font-size:10px; }
+.pricing-cta { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:var(--accent); border:none; border-radius:100px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; transition:transform 0.15s,box-shadow 0.15s; }
+.pricing-cta:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(24,112,108,0.25); }
+
+/* ── VOTE SECTION ── */
 .vote-section { padding:100px 40px; text-align:center; border-top:1px solid var(--border); position:relative; z-index:1; overflow:hidden; }
-.vote-section::before { content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(circle,rgba(212,168,83,0.06) 0%,transparent 65%); pointer-events:none; }
-.urgency-bar { display:inline-flex; flex-direction:column; align-items:center; gap:8px; background:rgba(212,168,83,0.07); border:1px solid rgba(74,158,191,0.2); border-radius:16px; padding:16px 24px; margin-bottom:44px; max-width:480px; }
-.urgency-top { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--accent); font-weight:500; }
-.urgency-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:glow-dot 1.5s ease infinite; flex-shrink:0; }
-.urgency-sub { font-size:13px; color:var(--muted); line-height:1.55; text-align:center; }
-.vote-question { font-family:'Instrument Serif',serif; font-size:clamp(32px,5vw,58px); font-weight:400; line-height:1.1; letter-spacing:-0.8px; margin-bottom:18px; max-width:600px; margin-left:auto; margin-right:auto; }
+.vote-section::before { content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(circle,rgba(24,112,108,0.05) 0%,transparent 65%); pointer-events:none; }
+.urgency-bar { display:inline-flex; flex-direction:column; align-items:center; gap:8px; background:rgba(24,112,108,0.05); border:1px solid rgba(24,112,108,0.15); border-radius:16px; padding:14px 24px; margin-bottom:48px; max-width:480px; }
+.urgency-top { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--accent); font-weight:500; letter-spacing:1px; text-transform:uppercase; }
+.urgency-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:glow-dot 1.5s ease infinite; flex-shrink:0; }
+.urgency-sub { font-size:13px; color:var(--muted); line-height:1.6; text-align:center; max-width:400px; }
+.vote-question { font-family:'Instrument Serif',serif; font-size:clamp(32px,5vw,58px); font-weight:400; line-height:1.1; letter-spacing:-0.8px; margin-bottom:16px; }
 .vote-question em { font-style:italic; color:var(--accent); }
-.vote-sub { font-size:14px; color:var(--muted); max-width:400px; margin:0 auto 12px; line-height:1.7; }
-.price-inline { font-size:13px; color:var(--muted); margin-bottom:40px; font-style:italic; }
+.vote-sub { font-size:15px; color:var(--muted); max-width:440px; margin:0 auto 40px; line-height:1.7; }
+.price-inline { font-size:13px; color:var(--muted); margin-bottom:40px; font-style:italic; display:none; }
 .price-inline strong { color:var(--accent); font-style:normal; font-weight:400; }
-.vote-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
-.vote-btn { padding:13px 24px; border-radius:12px; font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text); }
-.vote-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
-.vote-btn.yes { background:var(--accent); border-color:var(--accent); color:#09090f; font-weight:500; }
-.vote-honest { font-size:12px; color:var(--muted); font-style:italic; }
+.vote-buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+.vote-btn { padding:14px 28px; border-radius:100px; font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.15s; }
+.vote-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
+.vote-btn.yes { background:var(--accent); border-color:var(--accent); color:#f7f6f3; font-weight:500; }
+.vote-honest { font-size:12px; color:var(--muted); opacity:0.5; font-style:italic; }
 .response-block { display:none; flex-direction:column; align-items:center; gap:16px; }
 .response-block.active { display:flex; animation:rise 0.5s ease forwards; }
 .response-icon { font-size:40px; }
 .response-title { font-family:'Instrument Serif',serif; font-size:30px; font-style:italic; color:var(--text); }
 .response-text { font-size:14px; color:var(--muted); max-width:360px; text-align:center; line-height:1.7; }
-.response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#09090f; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
+.response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
 footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--border); position:relative; z-index:1; }
 .footer-logo { font-family:'Instrument Serif',serif; font-size:22px; color:var(--accent); margin-bottom:8px; }
 .footer-tagline { font-size:13px; color:var(--muted); letter-spacing:1px; font-style:italic; }
@@ -170,8 +212,8 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .msg.user { align-items:flex-end; }
 .bubble { max-width:88%; padding:14px 18px; border-radius:18px; font-size:15px; line-height:1.65; }
 .msg.ai .bubble { background:var(--bubble-ai); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text); }
-.msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(74,158,191,0.2); border-bottom-right-radius:4px; color:var(--text); }
-.reveal-bubble { background:linear-gradient(135deg,#13132a 0%,#161410 100%); border:1px solid rgba(74,158,191,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
+.msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(24,112,108,0.2); border-bottom-right-radius:4px; color:var(--text); }
+.reveal-bubble { background:linear-gradient(135deg,#f0eeea 0%,#161410 100%); border:1px solid rgba(24,112,108,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
 .reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
 .option-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; text-align:left; line-height:1.4; }
@@ -196,17 +238,28 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .end-btn:hover { border-color:var(--accent); color:var(--accent); }
 .end-btn.primary { background:var(--accent); border-color:var(--accent); color:#0f0e0d; font-weight:500; }
 @media(max-width:600px){
-  nav{padding:16px 20px}.hero{padding:100px 20px 60px}.content{padding:40px 20px 80px}
-  .result-card{padding:28px 22px}.result-text{font-size:17px}.try-it-block{padding:32px 24px}
-  .step{grid-template-columns:36px 1fr;padding:20px 18px}.profile-card{padding:28px 22px}
-  .price-anchor{flex-direction:column;gap:16px;align-items:flex-start}
-  .vote-section{padding:72px 20px}.vote-buttons{flex-direction:column;align-items:center}
-  .vote-btn{width:100%;max-width:300px;text-align:center}.hero-title .indent{padding-left:0}
+  nav{padding:16px 20px}
+  .hero{padding:100px 20px 60px}
+  .content{padding:40px 20px 80px}
+  .hero-title .indent{padding-left:0}
+  .how-step{grid-template-columns:1fr;gap:24px}
+  .how-step.flip{direction:ltr}
+  .how-step-visual{display:none}
+  .testimonials{grid-template-columns:1fr}
+  .testimonial:nth-child(2){margin-top:0}
+  .testimonial:nth-child(3){margin-top:0}
+  .try-it-block{padding:60px 24px}
+  .pricing-amount{font-size:72px}
+  .pricing-features{flex-direction:column;gap:12px;align-items:center}
+  .vote-section{padding:72px 20px}
+  .vote-buttons{flex-direction:column;align-items:center}
+  .vote-btn{width:100%;max-width:300px;text-align:center}
   .option-btn{padding:14px 16px;font-size:15px;min-height:48px}
   .convo-textarea{font-size:16px;min-height:80px}
   .submit-btn{padding:14px 20px;font-size:15px;min-height:48px;width:100%}
   .bubble{font-size:15px;padding:14px 16px}
   .chat{padding:24px 16px 180px}
+  .result-pull-quote{font-size:20px}
 }
 </style>
 </head>
@@ -215,7 +268,15 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 <!-- PITCH PAGE -->
 <div id="pitchPage">
   <nav>
-    <div class="nav-logo">Lune</div>
+    <div class="nav-logo" style="display:flex;align-items:center;">
+      <svg width="108" height="32" viewBox="0 0 108 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+        <circle cx="13" cy="16" r="13" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.3"/>
+        <circle cx="22" cy="16" r="13" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.3"/>
+        <path d="M 13.7,3.1 A 13,13 0 1,0 13.7,28.9 A 13,13 0 0,1 13.7,3.1 Z"
+          fill="rgba(24,112,108,0.2)" stroke="#18706C" stroke-width="1.4"/>
+        <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-0.5px;" x="40" y="22" dominant-baseline="auto">Lune</text>
+      </svg>
+    </div>
     <div style="display:flex;align-items:center;gap:10px;">
       <button id="profileNavBtn" style="display:none;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:7px 14px;border-radius:100px;cursor:pointer;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">My Profile</button>
       <button class="nav-pill" id="navPill">Early Access Open</button>
@@ -246,106 +307,195 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     </div>
   </div>
 
+      <!-- LUNE HERO VISUAL -->
+  <div style="width:100%;display:flex;justify-content:center;padding:0 40px 80px;position:relative;z-index:1;opacity:0;animation:rise 0.8s ease 1s forwards;">
+    <svg viewBox="0 0 560 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;height:auto;">
+
+      <!-- Left pill: Your Story -->
+      <rect x="0" y="30" width="200" height="80" rx="40" fill="rgba(24,112,108,0.06)" stroke="#18706C" stroke-width="1.2" opacity="0.6"/>
+      <text font-family="Instrument Serif, serif" font-size="15" font-style="italic" fill="#18706C" x="76" y="62" text-anchor="middle" opacity="0.9">Your story.</text>
+      <text font-family="Sora, sans-serif" font-size="10" fill="#7a756e" x="76" y="80" text-anchor="middle" opacity="0.7">who you actually are</text>
+
+      <!-- Right pill: The Role -->
+      <rect x="360" y="30" width="200" height="80" rx="40" fill="rgba(24,112,108,0.06)" stroke="#18706C" stroke-width="1.2" opacity="0.6"/>
+      <text font-family="Instrument Serif, serif" font-size="15" font-style="italic" fill="#18706C" x="484" y="62" text-anchor="middle" opacity="0.9">The role.</text>
+      <text font-family="Sora, sans-serif" font-size="10" fill="#7a756e" x="484" y="80" text-anchor="middle" opacity="0.7">what it actually needs</text>
+
+      <!-- Connector lines from both sides meeting in the middle -->
+      <line x1="200" y1="70" x2="260" y2="70" stroke="#18706C" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
+      <line x1="300" y1="70" x2="360" y2="70" stroke="#18706C" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
+
+      <!-- Center lune mark — the overlap -->
+      <circle cx="267" cy="70" r="30" fill="none" stroke="#18706C" stroke-width="1" opacity="0.25"/>
+      <circle cx="293" cy="70" r="30" fill="none" stroke="#18706C" stroke-width="1" opacity="0.25"/>
+      <path d="M 279.5,40.5 A 30,30 0 1,0 279.5,99.5 A 30,30 0 0,1 279.5,40.5 Z"
+        fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="1.5"/>
+      <text font-family="Instrument Serif, serif" font-size="9" font-style="italic" fill="#18706C" x="272" y="67" text-anchor="middle" opacity="0.9">the</text>
+      <text font-family="Instrument Serif, serif" font-size="9" font-style="italic" fill="#18706C" x="272" y="78" text-anchor="middle" opacity="0.9">match</text>
+
+    </svg>
+  </div>
+
   <div class="content">
+
+    <!-- SECTION 1: PROOF — what Lune actually said -->
     <div class="section">
-      <div class="label">This is what Lune said — unedited</div>
+      <div class="section-eyebrow">Real output — unedited</div>
+
       <div class="result-card">
         <div class="result-persona">
           <div class="persona-avatar">J</div>
           <div class="persona-info">
-            <div class="persona-name">Joe — built Lune after five years in education support</div>
-            <div class="persona-detail">5 years in education support · Columbus, OH · Ready for a change</div>
+            <div class="persona-name">Joe, 28 · Education support · Columbus, OH</div>
+            <div class="persona-detail">Five years in the work. Ready for a change.</div>
           </div>
-          <div class="result-live-badge"><div class="live-dot"></div> Real output</div>
+          <div class="result-live-badge"><div class="live-dot"></div> Real</div>
         </div>
-        <div class="result-text">You've spent five years pouring energy into kids who light up when you show up, but the system keeps telling you that caring well and connecting naturally isn't enough without the right paperwork — and that's wearing on you more than the low pay. What I'm hearing is someone who thrives in structured-but-flexible rhythm, needs autonomy over how you solve problems, and wants to be valued for the impact you actually create, not the credentials you collect. The pattern I see: you're energized by relationships where you can be both helpful and human, you need movement and variety in your day, and you're done being locked out of growth because of arbitrary gates. The shape of work that fits you isn't "education" — it's something like community-facing coordination or client success in a values-driven organization that measures you on results, lets you build rapport your way, gives you ownership over your schedule, and doesn't require you to go back to school to prove you already know how to show up for people.</div>
+        <div class="result-pull-quote">The shape of work that fits you isn't <em>"education"</em> — it's anywhere your presence is the product.</div>
+        <div class="result-text">You've spent five years pouring energy into kids who light up when you show up, but the system keeps telling you that caring well isn't enough without the right paperwork. You're energized by relationships where you can be both helpful and human, you need movement and variety in your day, and you're done being locked out of growth because of arbitrary gates. The shape of work that fits you lets you build rapport your way, gives you ownership over your schedule, and doesn't require you to go back to school to prove you already know how to show up for people.</div>
+        <div class="result-caption">Twenty minutes. Ten questions. This is what came back.</div>
       </div>
-      <div class="result-caption">Twenty minutes. Ten questions nobody else thought to ask. This is what came back.</div>
 
-      <div class="result-card" style="margin-top:32px;">
+      <div class="result-card">
         <div class="result-persona">
           <div class="persona-avatar">T</div>
           <div class="persona-info">
-            <div class="persona-name">Terrell — restaurant GM, 4 years</div>
-            <div class="persona-detail">Independent restaurant · Knoxville, TN · Owner just announced a sale</div>
+            <div class="persona-name">Terrell, 33 · Restaurant GM · Knoxville, TN</div>
+            <div class="persona-detail">Four years. Owner just announced a sale.</div>
           </div>
-          <div class="result-live-badge"><div class="live-dot"></div> Real output</div>
+          <div class="result-live-badge"><div class="live-dot"></div> Real</div>
         </div>
-        <div class="result-text">What you did in November — the quiet three weeks, the small moves, the profitable quarter you solved before the owner knew there was a problem — that isn't restaurant management. That's what people with MBAs pay to learn how to do and still often can't. You've been running operations strategy, team architecture, and P&L stewardship for four years inside a context that only has one word for all of it: "manager." The pattern I keep seeing is someone who is energized by the gap between how things are running and how they could be running — someone who builds systems instead of patching problems, and who needs real stakes and real trust to do their best work, not a checklist and a check-in. The story you've been handed — that ambition in your world means owning a place someday — isn't your story, and you're starting to know it. You don't need a credential to do what you already did in November. You need an environment that has a name for it and bigger problems waiting.</div>
-      </div>
-      <div class="result-caption" style="margin-bottom:40px;">Terrell hadn't told anyone about November until this conversation. He screenshots this summary.</div>
-
-      <div class="voice-slot">
-        <div class="voice-avatar">S</div>
-        <div class="voice-body">
-          <div class="voice-quote">I've never had anything describe my work life that accurately. I read it twice and sent it to my sister.</div>
-          <div class="voice-attribution">— Sarah, 29 · Marketing coordinator · Columbus, OH</div>
-        </div>
-      </div>
-
-      <div class="voice-slot" style="margin-top:-24px;">
-        <div class="voice-avatar">R</div>
-        <div class="voice-body">
-          <div class="voice-quote">I've worked in kitchens for six years. I didn't think something like this was even made for people like me. It named something I didn't have words for.</div>
-          <div class="voice-attribution">— Rico, 31 · Line cook · Chicago, IL</div>
-        </div>
-      </div>
-
-      <div class="voice-slot">
-        <div class="voice-avatar">E</div>
-        <div class="voice-body">
-          <div class="voice-quote">I'm not unhappy at my job. I was just curious. But it gave me a picture of who I am professionally that I've never had before — and I saved it because I know I'll need it eventually.</div>
-          <div class="voice-attribution">— Ezra, 31 · UX Researcher · Austin, TX</div>
-        </div>
-      </div>
-
-      <div class="try-it-block">
-        <div class="try-it-eyebrow">That was me. Now it's your turn.</div>
-        <div class="try-it-title">What would Lune<br>say about <em>you?</em></div>
-        <div class="try-it-sub">Ten questions. Twenty minutes. A summary that sounds like it came from someone who actually listened — not a career tool.</div>
-        <button class="try-it-btn" id="tryItBtn">Find out →</button>
-        <span class="try-it-note">The conversation is always free. No resume required.</span>
+        <div class="result-pull-quote">What you did in November <em>isn't restaurant management.</em> That's what people with MBAs pay to learn.</div>
+        <div class="result-text">You've been running operations strategy, team architecture, and P&amp;L stewardship for four years inside a context that only has one word for all of it: manager. The story you've been handed — that ambition in your world means owning a place someday — isn't your story. You don't need a credential to do what you already did in November. You need an environment that has a name for it and bigger problems waiting.</div>
+        <div class="result-caption">Terrell hadn't told anyone about November until this conversation.</div>
       </div>
     </div>
 
+    <!-- SECTION 2: TESTIMONIALS — staggered grid -->
     <div class="section">
-      <div class="label">How Lune Works</div>
-      <div class="steps">
-        <div class="step"><div class="step-num">01</div><div><div class="step-title">A real conversation — not a form</div><div class="step-desc">Ten exchanges that feel like talking to someone who actually listens. No resume upload. No keyword matching. Just questions nobody else has ever thought to ask.</div></div></div>
-        <div class="step"><div class="step-num">02</div><div><div class="step-title">Elimination first. Then match.</div><div class="step-desc">If you're stuck, Lune starts with what you'll never tolerate again — a signal more durable than aspiration. If you're doing well, it maps what makes your current situation work. Either way, it learns what's actually true about you.</div></div></div>
-        <div class="step"><div class="step-num">03</div><div><div class="step-title">A summary that sounds like a person wrote it</div><div class="step-desc">If you're stuck, it names the pattern you haven't been able to articulate and reframes how you see your own career. If you're content, it gives you a portrait of who you are at your best — worth saving before anything changes.</div></div></div>
-        <div class="step"><div class="step-num">04</div><div><div class="step-title">3 matches. Each one earns its place.</div><div class="step-desc">Not 300 listings. Three. Each one sourced from what real employees say the work actually feels like — not what HR wrote in the job description. One of them will surprise you. That's by design.</div></div></div>
+      <div class="section-eyebrow">What people said after</div>
+      <div class="testimonials">
+        <div class="testimonial">
+          <div class="testimonial-mark">"</div>
+          <div class="testimonial-quote">I've never had anything describe my work life that accurately. I read it twice and sent it to my sister.</div>
+          <div class="testimonial-attr">Sarah, 29 · Marketing coordinator · Columbus, OH</div>
+        </div>
+        <div class="testimonial">
+          <div class="testimonial-mark">"</div>
+          <div class="testimonial-quote">I've worked in kitchens for six years. I didn't think something like this was even made for people like me. It named something I didn't have words for.</div>
+          <div class="testimonial-attr">Rico, 31 · Line cook · Chicago, IL</div>
+        </div>
+        <div class="testimonial">
+          <div class="testimonial-mark">"</div>
+          <div class="testimonial-quote">I'm not unhappy at my job. I was just curious. But it gave me a picture of who I am professionally that I've never had before — and I saved it.</div>
+          <div class="testimonial-attr">Ezra, 31 · UX Researcher · Austin, TX</div>
+        </div>
       </div>
     </div>
 
+    <!-- SECTION 3: TRY IT -->
+    <div class="try-it-block">
+      <div class="try-it-eyebrow">Your turn</div>
+      <div class="try-it-title">What would Lune<br>say about <em>you?</em></div>
+      <div class="try-it-sub">Ten questions nobody else thought to ask. A summary that sounds like someone actually listened.</div>
+      <button class="try-it-btn" id="tryItBtn">Start the conversation →</button>
+      <span class="try-it-note">Always free. No resume required.</span>
+    </div>
+
+    <!-- SECTION 4: HOW IT WORKS — flowing layout -->
+    <div class="section" style="margin-top:120px;">
+      <div class="section-eyebrow">How it works</div>
+      <div class="how-it-works">
+        <div class="how-step">
+          <div>
+            <div class="how-step-num">01</div>
+            <div class="how-step-title">A real conversation,<br>not a form</div>
+            <div class="how-step-desc">Ten exchanges that feel like talking to someone who actually listens. No resume upload. No keyword matching. Questions nobody else has thought to ask — and they adapt to what you say.</div>
+          </div>
+          <div class="how-step-visual"><div class="how-step-icon">◐</div></div>
+        </div>
+        <div class="how-step flip">
+          <div>
+            <div class="how-step-num">02</div>
+            <div class="how-step-title">Elimination first.<br>Then match.</div>
+            <div class="how-step-desc">If you're stuck, Lune starts with what you'll never tolerate again — a signal more durable than aspiration. If you're doing well, it maps what makes your current situation work. Either way, it learns what's actually true about you.</div>
+          </div>
+          <div class="how-step-visual"><div class="how-step-icon">◑</div></div>
+        </div>
+        <div class="how-step">
+          <div>
+            <div class="how-step-num">03</div>
+            <div class="how-step-title">A summary that sounds<br>like a person wrote it</div>
+            <div class="how-step-desc">Not a list of job categories. A paragraph that names a pattern you haven't been able to articulate yourself — and one match that will make you think: how did it know that about me?</div>
+          </div>
+          <div class="how-step-visual"><div class="how-step-icon">●</div></div>
+        </div>
+        <div class="how-step flip">
+          <div>
+            <div class="how-step-num">04</div>
+            <div class="how-step-title">Gets better<br>every time</div>
+            <div class="how-step-desc">The more people use Lune honestly, the sharper the matches get for everyone. People who love their jobs describe what makes them good from the inside. People looking for their next thing get matches built from that real signal — not HR copy.</div>
+          </div>
+          <div class="how-step-visual"><div class="how-step-icon">◎</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: THE BIGGER IDEA — timeline -->
     <div class="section">
-      <div class="label">The Bigger Idea</div>
-      <div class="profile-card">
-        <p class="profile-intro">Lune doesn't just find you a job. It builds something nobody else is building — a <strong>living profile of who you actually are professionally.</strong> Not a resume. Not a LinkedIn page. Something that grows with you over years.</p>
+      <div class="section-eyebrow">The bigger idea</div>
+      <div class="bigger-idea">
+        <p class="bigger-idea-intro">Lune isn't a job search tool. It's the first time anyone has tried to build a <strong>living record of who you actually are professionally</strong> — one that grows with you, not just a snapshot of your last job title.</p>
         <div class="timeline">
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 27</div><div class="tl-text"><strong>First real job. Something feels off.</strong> Lune learns who you are at this moment — what you can't tolerate, what energizes you, what you don't have words for yet.</div></div></div>
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 30</div><div class="tl-text"><strong>You tried something new. Some of it worked.</strong> Lune updates. The profile gets more accurate. Your matches get sharper.</div></div></div>
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 34</div><div class="tl-text"><strong>Life changed. Priorities shifted.</strong> Lune evolves with you. By now it's not just a job search tool — it's almost like a mirror.</div></div></div>
-          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot future"></div></div><div><div class="tl-age future">The gap nobody's filled</div><div class="tl-text">LinkedIn has your job history. Indeed has your resume. <strong>Nobody has your actual evolving professional identity tracked over time.</strong> That's what Lune builds. And it's yours — not ours.</div></div></div>
+          <div class="tl-item">
+            <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+            <div>
+              <div class="tl-age">Age 27</div>
+              <div class="tl-text"><strong>First real job. Something feels off.</strong> Lune learns who you are at this moment — what you can't tolerate, what energizes you, what you don't have words for yet.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+            <div>
+              <div class="tl-age">Age 30</div>
+              <div class="tl-text"><strong>You tried something new. Some of it worked.</strong> Lune updates. The profile gets more accurate. Your matches get sharper.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+            <div>
+              <div class="tl-age">Age 34</div>
+              <div class="tl-text"><strong>Life changed. Priorities shifted.</strong> Lune evolves with you. By now it's not just a career tool — it's almost like a mirror.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-wrap"><div class="tl-dot future"></div></div>
+            <div>
+              <div class="tl-age future">The gap nobody has filled</div>
+              <div class="tl-text">LinkedIn has your job history. Indeed has your resume. <strong>Nobody has your actual evolving professional identity tracked over time.</strong> That's what Lune builds. And it's yours — not ours.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- SECTION 6: PRICING — big, centered -->
     <div class="section">
-      <div class="label">What It Costs</div>
-      <div class="price-anchor">
-        <div class="price-anchor-amount">$12</div>
-        <div class="price-anchor-details">
-          <div class="price-anchor-label">Per month. Cancel anytime. No paywall before value — ever.</div>
-          <div class="price-anchor-sub">The conversation, the summary, and your first matches are always free. What you pay for is the ongoing relationship — a profile that remembers you, gets smarter about you, and gets more useful every time you come back.</div>
+      <div class="section-eyebrow">What it costs</div>
+      <div class="pricing-block">
+        <div class="pricing-amount"><span>$</span>12</div>
+        <div class="pricing-label">per month · cancel anytime</div>
+        <div class="pricing-features">
+          <div class="pricing-feature">Free conversation, always</div>
+          <div class="pricing-feature">Full summary included</div>
+          <div class="pricing-feature">Profile that remembers you</div>
+          <div class="pricing-feature">Matches that get sharper over time</div>
         </div>
-        <div class="price-anchor-compare">
-          <div class="compare-item"><span class="compare-check">✓</span> Less than 2 coffees a week</div>
-          <div class="compare-item"><span class="compare-check">✓</span> Free conversation, always</div>
-          <div class="compare-item"><span class="compare-check">✓</span> Yours to cancel anytime</div>
-        </div>
+        <button class="pricing-cta" onclick="startConversation()">Try it free first →</button>
+        <div style="margin-top:16px;font-size:12px;color:var(--muted);font-style:italic;">No paywall before value. Ever.</div>
       </div>
     </div>
+
   </div>
 
   <div class="vote-section" id="voteSection">
@@ -385,7 +535,16 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   </div>
 
   <footer>
-    <div class="footer-logo">Lune</div>
+    <div class="footer-logo" style="display:flex;justify-content:center;align-items:center;margin-bottom:12px;">
+    <svg width="160" height="52" viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="34" r="28" fill="none" stroke="#18706C" stroke-width="1.5" opacity="0.25"/>
+      <circle cx="47" cy="34" r="28" fill="none" stroke="#18706C" stroke-width="1.5" opacity="0.25"/>
+      <path d="M 29.8,6.5 A 28,28 0 1,0 29.8,61.5 A 28,28 0 0,1 29.8,6.5 Z"
+        fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="2"/>
+      <text style="font-family:'Instrument Serif',serif;font-size:34px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-1px;"
+        x="84" y="44" text-anchor="start">Lune</text>
+    </svg>
+  </div>
     <div class="footer-tagline">Your resume tells half the story.</div>
   </footer>
 </div>
@@ -394,7 +553,16 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 <div id="convoPage">
   <div class="convo-header">
     <button class="convo-back" id="convoBack">← Back</button>
-    <div class="convo-logo">Lune</div>
+    <div class="convo-logo" style="display:flex;align-items:center;justify-content:center;">
+    <svg width="100" height="32" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="17" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
+      <circle cx="29" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
+      <path d="M 18.2,5.2 A 17,17 0 1,0 18.2,38.8 A 17,17 0 0,1 18.2,5.2 Z"
+        fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="1.5"/>
+      <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-0.5px;"
+        x="50" y="29" text-anchor="start">Lune</text>
+    </svg>
+  </div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
     <div class="step-count" id="stepCount">0 / 11</div>
   </div>
@@ -406,7 +574,16 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 <div id="profilePage">
   <div class="profile-nav">
     <button class="profile-nav-back" id="profileBack">← Back</button>
-    <div class="profile-nav-logo">Lune</div>
+    <div class="profile-nav-logo" style="display:flex;align-items:center;">
+      <svg width="100" height="32" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="17" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
+        <circle cx="29" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
+        <path d="M 18.2,5.2 A 17,17 0 1,0 18.2,38.8 A 17,17 0 0,1 18.2,5.2 Z"
+          fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="1.5"/>
+        <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-0.5px;"
+          x="50" y="29" text-anchor="start">Lune</text>
+      </svg>
+    </div>
     <div style="width:60px"></div>
   </div>
   <div class="profile-body" id="profileBody">
@@ -493,6 +670,15 @@ function initProfileUI() {
   }
 }
 
+function getMoodLabel(profile) {
+  var why = (profile.whyFirst || '').toLowerCase();
+  if (why.includes('urgent') || why.includes('fast')) return { label: 'Came in urgently', dot: '#e05a3a', type: 'urgent' };
+  if (why.includes('feels off') || why.includes('stuck') || why.includes('change')) return { label: 'Came in searching', dot: '#18706C', type: 'stuck' };
+  if (why.includes('good') || why.includes('exploring') || why.includes('curious')) return { label: 'Came in curious', dot: '#5a9e6f', type: 'happy' };
+  if (why.includes('know what') || why.includes('direction')) return { label: 'Came in with direction', dot: '#7a6bbf', type: 'directed' };
+  return { label: 'Came in open', dot: '#18706C', type: 'open' };
+}
+
 function renderProfilePage() {
   var profile = getProfile();
   var history = getSummaryHistory();
@@ -510,43 +696,401 @@ function renderProfilePage() {
   }
 
   var latest = history[0];
+  var mood = getMoodLabel(profile);
+  var conversationCount = history.length;
+
+  // ── Build tags from latest responses ──
   var tags = [];
   if (latest.loves) tags.push(latest.loves.replace(/^[^\w]*/, '').split('—')[0].trim().split(' ').slice(0,4).join(' '));
   if (latest.environment) tags.push(latest.environment.split('—')[0].trim().split(' ').slice(0,3).join(' '));
   if (latest.pace) tags.push(latest.pace.split('—')[0].trim().split(' ').slice(0,3).join(' '));
   if (latest.neverAgain && latest.neverAgain[0]) tags.push('Never again: ' + latest.neverAgain[0].split(',')[0].trim().split(' ').slice(0,4).join(' '));
 
+  // ── Build summaries history ──
   var historyHTML = history.map(function(s, i) {
     var isLatest = i === 0;
-    return '<div class="profile-summary-card" style="' + (isLatest ? '' : 'opacity:0.6;') + '">' +
+    return '<div class="profile-summary-card" style="' + (isLatest ? '' : 'opacity:0.65;') + '">' +
       '<div class="profile-summary-date">' + s.date + (isLatest ? ' · Most recent' : '') + '</div>' +
       '<div class="profile-summary-text">' + s.summary + '</div>' +
       '</div>';
   }).join('');
 
+  // ── Build job chapters ──
+  var chapters = profile.chapters || [];
+  var chaptersHTML = chapters.length > 0
+    ? chapters.map(function(ch, i) {
+        return '<div class="profile-chapter">' +
+          '<div class="profile-chapter-label">' + (ch.type === 'promotion' ? 'Promotion' : 'Chapter ' + (chapters.length - i)) + '</div>' +
+          '<div class="profile-chapter-title">' + (ch.title || '') + '</div>' +
+          '<div class="profile-chapter-meta">' + (ch.company || '') + (ch.dates ? ' · ' + ch.dates : '') + '</div>' +
+          (ch.reflection ? '<div class="profile-chapter-reflection">' + ch.reflection + '</div>' : '') +
+          (ch.whatChanged ? '<div class="profile-promotion-reflection" style="margin-top:10px;font-size:13px;color:var(--accent);">What changed: ' + ch.whatChanged + '</div>' : '') +
+          '</div>';
+      }).join('')
+    : '';
+
+  // ── Build promotions ──
+  var promotions = profile.promotions || [];
+  var promotionsHTML = promotions.length > 0
+    ? '<div class="profile-section-label" style="margin-top:32px;">Milestones</div>' +
+      promotions.map(function(p) {
+        return '<div class="profile-promotion-card">' +
+          '<div class="profile-promotion-title">→ ' + (p.newTitle || 'New role') + (p.date ? ' · ' + p.date : '') + '</div>' +
+          (p.whatChanged ? '<div class="profile-promotion-reflection">"' + p.whatChanged + '"</div>' : '') +
+          (p.whatLearned ? '<div class="profile-promotion-reflection" style="margin-top:6px;">"' + p.whatLearned + '"</div>' : '') +
+          '</div>';
+      }).join('')
+    : '';
+
+  // ── Build resume section ──
+  var hasResume = profile.resumeUploaded && profile.resumeName;
+  var resumeHTML = '<div class="profile-section-label" style="margin-top:32px;">Resume</div>' +
+    (hasResume
+      ? '<div class="profile-resume-zone has-resume">' +
+        '<div class="profile-resume-title">📄 ' + profile.resumeName + '</div>' +
+        '<div class="profile-resume-sub" style="margin-top:6px;">' +
+          '<button id="removeResumeBtn" style="font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;">Remove</button>' +
+          ' · <label for="reuploadResume" style="font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;">Replace</label>' +
+          '<input type="file" id="reuploadResume" accept=".pdf,.doc,.docx" style="display:none;">' +
+        '</div>' +
+        '</div>'
+      : '<div class="profile-resume-zone" id="resumeZone">' +
+        '<div class="profile-resume-title">Add your resume</div>' +
+        '<div class="profile-resume-sub">Optional. Helps Lune see where your experience and your pattern overlap — and where they don't.</div>' +
+        '<input type="file" id="resumeUpload" accept=".pdf,.doc,.docx" style="display:none;">' +
+        '<button class="profile-cta" id="resumeUploadBtn" style="margin-top:16px;font-size:13px;padding:10px 20px;">Add resume</button>' +
+        '<div style="margin-top:8px;font-size:11px;color:var(--muted);">Or <button id="resumeSkipBtn" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;">skip for now</button> — you can always add it later.</div>' +
+        '</div>');
+
+  // ── Assemble the full page ──
   body.innerHTML =
     '<div class="profile-header">' +
     '<div class="profile-name">' + (profile.name || 'Your Profile') + '</div>' +
-    '<div class="profile-meta">' + (profile.email || '') + (history.length > 1 ? ' · ' + history.length + ' conversations' : ' · 1 conversation') + '</div>' +
+    '<div class="profile-meta">' + (profile.email || '') + (conversationCount > 1 ? ' · ' + conversationCount + ' conversations' : ' · 1 conversation') + '</div>' +
     '</div>' +
-    '<div class="profile-section-label">What drives you</div>' +
+
+    '<div class="profile-mood-badge"><div class="profile-mood-dot" style="background:' + mood.dot + ';"></div>' + mood.label + '</div>' +
+
+    '<div class="profile-section-label">Your pattern</div>' +
     '<div class="profile-tags">' + tags.map(function(t) { return '<span class="profile-tag">' + t + '</span>'; }).join('') + '</div>' +
-    '<div class="profile-section-label">Your summaries</div>' +
+
+    '<div class="profile-section-label" style="margin-top:32px;">Your summaries</div>' +
     historyHTML +
-    '<div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">' +
-    '<button class="profile-cta" id="profileRetakeBtn" style="font-size:13px;padding:11px 22px;">Take it again →</button>' +
-    '<button class="profile-retake" id="profileClearBtn">Clear profile</button>' +
+
+    (chaptersHTML ? '<div class="profile-section-label" style="margin-top:32px;">Your chapters</div>' + chaptersHTML : '') +
+    promotionsHTML +
+    resumeHTML +
+
+    '<div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center;">' +
+    '<button class="profile-cta" id="profileRetakeBtn" style="font-size:13px;padding:11px 22px;">Take the conversation again →</button>' +
+    '<button class="profile-cta" id="addPromotionBtn" style="font-size:13px;padding:11px 22px;background:transparent;border:1px solid var(--border);color:var(--muted);">Log a promotion or new role</button>' +
+    '<button class="profile-retake" id="profileClearBtn" style="margin-left:auto;">Clear profile</button>' +
     '</div>';
 
+  // ── Event listeners ──
   document.getElementById('profileRetakeBtn').addEventListener('click', startConversation);
+
+  // Resume upload
+  var resumeUploadBtn = document.getElementById('resumeUploadBtn');
+  var resumeUpload = document.getElementById('resumeUpload');
+  if (resumeUploadBtn && resumeUpload) {
+    resumeUploadBtn.addEventListener('click', function() { resumeUpload.click(); });
+    resumeUpload.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var p = getProfile();
+      p.resumeUploaded = true;
+      p.resumeName = file.name;
+      p.resumeUploadedAt = new Date().toISOString();
+      setProfile(p);
+      renderProfilePage();
+    });
+  }
+
+  var resumeSkipBtn = document.getElementById('resumeSkipBtn');
+  if (resumeSkipBtn) {
+    resumeSkipBtn.addEventListener('click', function() {
+      var p = getProfile();
+      p.resumeDeclinedAt = new Date().toISOString();
+      setProfile(p);
+      var zone = document.getElementById('resumeZone');
+      if (zone) {
+        zone.innerHTML = '<div class="profile-resume-sub" style="text-align:left;">No problem. You can add it anytime from your profile. <button id="resumeAddLaterBtn" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;">Add later</button></div>';
+        var addLaterBtn = document.getElementById('resumeAddLaterBtn');
+        if (addLaterBtn) addLaterBtn.addEventListener('click', function() { renderProfilePage(); });
+      }
+    });
+  }
+
+  var removeResumeBtn = document.getElementById('removeResumeBtn');
+  if (removeResumeBtn) {
+    removeResumeBtn.addEventListener('click', function() {
+      if (confirm('Remove your resume from Lune?')) {
+        var p = getProfile();
+        delete p.resumeUploaded;
+        delete p.resumeName;
+        delete p.resumeUploadedAt;
+        setProfile(p);
+        renderProfilePage();
+      }
+    });
+  }
+
+  var reuploadResume = document.getElementById('reuploadResume');
+  if (reuploadResume) {
+    reuploadResume.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var p = getProfile();
+      p.resumeName = file.name;
+      p.resumeUploadedAt = new Date().toISOString();
+      setProfile(p);
+      renderProfilePage();
+    });
+  }
+
+  // Log promotion / new role
+  var addPromotionBtn = document.getElementById('addPromotionBtn');
+  if (addPromotionBtn) {
+    addPromotionBtn.addEventListener('click', function() {
+      showPromotionFlow();
+    });
+  }
+
+  // Clear profile
   document.getElementById('profileClearBtn').addEventListener('click', function() {
-    if (confirm('Clear your profile and all saved summaries?')) {
+    if (confirm('Clear your profile and all saved summaries? This cannot be undone.')) {
       localStorage.removeItem('lune_profile');
       localStorage.removeItem('lune_summaries');
       initProfileUI();
       renderProfilePage();
     }
   });
+}
+
+// ── PROMOTION / NEW ROLE FLOW ─────────────────────────────────────────────────
+// Fires when user logs a promotion or new role from their profile
+// Asks 3-4 warm feeler questions based on their answers
+// Updates profile.promotions and profile.chapters
+// Tailored to their mood/history
+
+async function showPromotionFlow() {
+  // Show the profile page as a conversation-style flow
+  var page = document.getElementById('profilePage');
+  var body = document.getElementById('profileBody');
+
+  // Build a mini conversation UI inside the profile body
+  var profile = getProfile();
+  var moodType = getMoodLabel(profile).type;
+
+  body.innerHTML =
+    '<div style="max-width:520px;margin:0 auto;padding:20px 0;">' +
+    '<div style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:8px;">Something changed.</div>' +
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6;">Tell me about it — a few questions and your profile will reflect where you are now.</div>' +
+    '<div id="promotionFlow"></div>' +
+    '</div>';
+
+  var flowEl = document.getElementById('promotionFlow');
+  var promotionData = {};
+
+  // Q1: What changed — new title, promotion, new company, or role shift
+  await addFlowMessage(flowEl, "What happened?");
+  var changeType = await askFlowOptions(flowEl, [
+    "Got promoted — same company",
+    "Started somewhere new",
+    "My role shifted without a title change",
+    "Something else changed"
+  ]);
+  promotionData.type = changeType;
+
+  // Q2: New title / role name
+  await addFlowMessage(flowEl, changeType.includes("promoted") ? "What's the new title?" : "What's the role?");
+  promotionData.newTitle = await askFlowText(flowEl, "My new title is…");
+
+  // Q3: Tailored feeler based on mood type and change type
+  var q3;
+  if (moodType === 'urgent') {
+    q3 = "Did this solve what was urgent — or is something still unresolved?";
+  } else if (moodType === 'happy') {
+    q3 = "What's still working the way you hoped?";
+  } else if (changeType.includes("new company")) {
+    q3 = "What made you say yes to this one?";
+  } else {
+    q3 = "What do you know now that you didn't know before you had this title?";
+  }
+  await addFlowMessage(flowEl, q3);
+  promotionData.whatChanged = await askFlowText(flowEl, "What changed is…");
+
+  // Q4: One more — what would make you come back to Lune
+  await addFlowMessage(flowEl, "What would have to happen for you to be back here looking again?");
+  promotionData.whatNext = await askFlowText(flowEl, "I'd come back if…");
+
+  // Store it
+  var p = getProfile();
+  if (!p.promotions) p.promotions = [];
+  promotionData.date = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  p.promotions.unshift(promotionData);
+
+  // Update whyFirst mood signal if something changed
+  if (changeType.includes("promoted") || changeType.includes("new")) {
+    p.lastUpdated = new Date().toISOString();
+    p.lastUpdateType = promotionData.type;
+  }
+
+  setProfile(p);
+
+  // Warm close
+  await addFlowMessage(flowEl, "Got it. Your profile is updated — and Lune will remember this the next time something feels off.");
+  await new Promise(function(r) { setTimeout(r, 800); });
+
+  // Return to profile
+  await new Promise(function(r) { setTimeout(r, 1200); });
+  renderProfilePage();
+}
+
+function addFlowMessage(container, text) {
+  return new Promise(function(resolve) {
+    var msg = document.createElement('div');
+    msg.style.cssText = 'font-size:15px;color:var(--text);margin-bottom:20px;opacity:0;transform:translateY(8px);transition:all 0.3s ease;';
+    msg.textContent = text;
+    container.appendChild(msg);
+    setTimeout(function() {
+      msg.style.opacity = '1';
+      msg.style.transform = 'translateY(0)';
+      resolve();
+    }, 200);
+  });
+}
+
+function askFlowOptions(container, options) {
+  return new Promise(function(resolve) {
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:24px;';
+    options.forEach(function(opt) {
+      var btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', function() {
+        wrap.querySelectorAll('.option-btn').forEach(function(b) { b.disabled = true; b.style.opacity = '0.5'; });
+        btn.style.opacity = '1';
+        btn.classList.add('selected');
+        var ans = document.createElement('div');
+        ans.style.cssText = 'font-size:14px;color:var(--muted);font-style:italic;margin-bottom:24px;padding-left:4px;';
+        ans.textContent = opt;
+        container.appendChild(ans);
+        wrap.remove();
+        resolve(opt);
+      });
+      wrap.appendChild(btn);
+    });
+    container.appendChild(wrap);
+  });
+}
+
+function askFlowText(container, placeholder) {
+  return new Promise(function(resolve) {
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'margin-bottom:24px;';
+    var ta = document.createElement('textarea');
+    ta.className = 'convo-textarea';
+    ta.placeholder = placeholder;
+    ta.style.cssText = 'width:100%;min-height:60px;box-sizing:border-box;';
+    var btn = document.createElement('button');
+    btn.className = 'submit-btn';
+    btn.textContent = 'Continue →';
+    btn.style.cssText = 'margin-top:8px;display:block;';
+    btn.addEventListener('click', function() {
+      var val = ta.value.trim();
+      if (!val) return;
+      wrap.remove();
+      var ans = document.createElement('div');
+      ans.style.cssText = 'font-size:14px;color:var(--muted);font-style:italic;margin-bottom:24px;padding-left:4px;';
+      ans.textContent = val;
+      container.appendChild(ans);
+      resolve(val);
+    });
+    wrap.appendChild(ta);
+    wrap.appendChild(btn);
+    container.appendChild(wrap);
+    setTimeout(function() { ta.focus(); }, 100);
+  });
+}
+
+// ── TAILORED EMAIL SYSTEM ─────────────────────────────────────────────────────
+// Generates the right check-in email content based on user mood and state
+// This runs client-side to build the mailto link / copy text
+// In production: replace with Resend API call
+
+function buildCheckInEmail(profile, conversationCount, daysSinceLast) {
+  var mood = getMoodLabel(profile);
+  var name = profile.name ? profile.name.split(' ')[0] : 'there';
+  var subject, opening, question, closing;
+
+  // Subject lines tailored to mood
+  var subjects = {
+    urgent:   'still urgent? let us know how we can help',
+    stuck:    'checking in — has anything shifted?',
+    happy:    'still loving it? tell us what's been going right',
+    directed: 'did you find the path? we'd love to know',
+    open:     'a quick check-in from Lune'
+  };
+
+  // Opening lines tailored to mood and time
+  var openings = {
+    urgent:   'Last time you came to Lune things felt urgent. That was ' + daysSinceLast + ' days ago.',
+    stuck:    'It's been ' + daysSinceLast + ' days since your Lune conversation. You came in searching for something.',
+    happy:    'You came to Lune curious — not stuck, just wondering. It's been ' + daysSinceLast + ' days.',
+    directed: 'You came in knowing the direction, just not the steps. That was ' + daysSinceLast + ' days ago.',
+    open:     'It's been ' + daysSinceLast + ' days since your Lune conversation.'
+  };
+
+  // Check-in questions tailored to mood
+  var questions = {
+    urgent:   'Has the urgency resolved — or is something still pressing? One update helps Lune find better matches for where you actually are right now.',
+    stuck:    'Has anything shifted since then? Even small things — a conversation, a realization, something that changed how you see it.',
+    happy:    'Is it still working the way you hoped? What's been going right?',
+    directed: 'Did you find the steps — or did the direction itself change?',
+    open:     'Where are you now compared to where you were?'
+  };
+
+  // Closings tailored to conversation count
+  var closings = conversationCount > 1
+    ? 'Your profile holds everything from ' + conversationCount + ' conversations. One reply keeps it current.'
+    : 'Your profile is waiting for you. One reply keeps it accurate.';
+
+  subject = subjects[mood.type] || subjects.open;
+  opening = openings[mood.type] || openings.open;
+  question = questions[mood.type] || questions.open;
+
+  return {
+    subject: subject,
+    body: 'Hi ' + name + ',
+
+' + opening + '
+
+' + question + '
+
+' + closings + '
+
+Just reply to this email — or update your profile at trylune.app.
+
+Lune'
+  };
+}
+
+// Store the user mood when they complete the conversation
+// so email engine knows who it's talking to
+function storeConversationMood() {
+  var p = getProfile();
+  if (!p) return;
+  if (!p.whyFirst && responses.why) {
+    p.whyFirst = responses.why;
+    p.firstConversationDate = new Date().toISOString();
+  }
+  p.lastConversationDate = new Date().toISOString();
+  p.lastWhy = responses.why;
+  p.conversationCount = (p.conversationCount || 0) + 1;
+  setProfile(p);
 }
 
 var pendingSummaryData = null;
@@ -568,7 +1112,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var name = document.getElementById('profileNameInput').value.trim();
     var email = document.getElementById('profileEmailInput').value.trim();
     if (!name) { document.getElementById('profileNameInput').style.borderColor = 'var(--accent)'; return; }
-    saveProfile({ name: name, email: email, created: new Date().toISOString() });
+    saveProfile({ name: name, email: email, created: new Date().toISOString(), relocationType: responses.relocationType || null, relocationMemory: responses.relocationMemory || null, targetLocation: responses.targetLocation || null, currentLocation: responses.currentLocation || null, whyFirst: responses.why || null });
+    storeConversationMood();
     if (pendingSummaryData) {
       saveSummaryToHistory(pendingSummaryData.summaryText, pendingSummaryData.closingQuestion, pendingSummaryData.responsesSnap);
       pendingSummaryData = null;
@@ -580,10 +1125,83 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmMsg.style.animationDelay = '0s';
     var confirmBubble = document.createElement('div');
     confirmBubble.className = 'bubble';
-    confirmBubble.textContent = 'Profile created, ' + name + '. Your summary is saved. Come back anytime — Lune will remember you.';
+    var relocationNote = (responses.relocationType === 'eventual' && responses.targetLocation)
+      ? " And when " + responses.targetLocation + " stops being eventually, come back — we'll have matches waiting."
+      : "";
+    confirmBubble.textContent = 'Profile created, ' + name + '. Your summary is saved. Come back anytime — Lune will remember you.' + relocationNote;
     confirmMsg.appendChild(confirmBubble);
     document.getElementById('chat').appendChild(confirmMsg);
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+    // ── REFERRAL QUESTION — fires after profile save ──────────────────────────
+    // Warmest moment in the product. They just committed. Ask naturally.
+    setTimeout(async function() {
+      await delay(1200);
+      await showAIMessage("One last thing — is there someone in your life who needs this conversation?", 500);
+      await delay(600);
+
+      // Two-option response — keeps it light, no pressure
+      var chat = document.getElementById('chat');
+      var refWrap = document.createElement('div');
+      refWrap.className = 'options';
+      refWrap.style.cssText = 'opacity:0;animation:fadeUp 0.4s ease 0.2s forwards;max-width:88%;';
+
+      var refYes = document.createElement('button');
+      refYes.className = 'option-btn';
+      refYes.textContent = 'Actually yes — I know someone';
+
+      var refNo = document.createElement('button');
+      refNo.className = 'option-btn';
+      refNo.textContent = 'Not right now';
+
+      refYes.addEventListener('click', async function() {
+        refWrap.remove();
+        addMessage('Actually yes — I know someone', 'user');
+        await delay(400);
+        await showAIMessage("Tell me about them — just enough so I know who to look out for.", 400);
+        await delay(300);
+
+        showTextInput("Someone I know who needs this…", async function(refVal) {
+          addMessage(refVal, 'user');
+
+          // Store referral in profile
+          var profile = getProfile();
+          if (profile) {
+            profile.referredSomeone = refVal;
+            profile.referredAt = new Date().toISOString();
+            setProfile(profile);
+          }
+
+          // Also store in localStorage for the community layer
+          try {
+            var referrals = JSON.parse(localStorage.getItem('lune_referrals') || '[]');
+            referrals.push({
+              from: name,
+              description: refVal,
+              date: new Date().toISOString()
+            });
+            localStorage.setItem('lune_referrals', JSON.stringify(referrals));
+          } catch(e) {}
+
+          // Store silently — never reflect back what they said about the person
+          // The reason could be positive or negative — we hold it privately
+          // Just acknowledge the act of thinking of someone warmly
+          await delay(300);
+          await showAIMessage("Good. Lune will be ready for them.", 400);
+        });
+      });
+
+      refNo.addEventListener('click', async function() {
+        refWrap.remove();
+        addMessage('Not right now', 'user');
+        // Silent — no response needed. They said no. Honor it.
+      });
+
+      refWrap.appendChild(refYes);
+      refWrap.appendChild(refNo);
+      chat.appendChild(refWrap);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 800);
   });
 
   document.getElementById('profileModalSkip').addEventListener('click', function() {
@@ -737,7 +1355,7 @@ function showOptions(options, onSelect, singleSelect) {
           if (!confirmBtn) {
             confirmBtn = document.createElement('button');
             confirmBtn.className = 'multi-confirm';
-            confirmBtn.style.cssText = 'margin-top:8px;padding:11px 22px;background:var(--accent);border:none;border-radius:10px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;';
+            confirmBtn.style.cssText = 'margin-top:8px;padding:11px 22px;background:var(--accent);border:none;border-radius:10px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;';
             confirmBtn.textContent = 'Continue →';
             confirmBtn.addEventListener('click', function() {
               var val = selected.join(', ');
@@ -795,13 +1413,31 @@ function getConvoSoFar() {
   if (responses.why) parts.push('Why they came: ' + responses.why);
   if (responses.duration) parts.push('Follow-up: ' + responses.duration);
   if (responses.loves) parts.push('What they love: ' + responses.loves);
+  if (responses.loves_extra) parts.push('More on what they love: ' + responses.loves_extra);
   if (responses.bestDay) parts.push('Best work moment: ' + responses.bestDay);
+  if (responses.bestDay_extra) parts.push('More on that moment: ' + responses.bestDay_extra);
   if (responses.neverAgain1) parts.push('Never again: ' + responses.neverAgain1);
+  if (responses.neverAgain1_extra) parts.push('More on that: ' + responses.neverAgain1_extra);
   if (responses.neverAgain2) parts.push('Also never again: ' + responses.neverAgain2);
   if (responses.background) parts.push('Background: ' + responses.background);
+  if (responses.background_extra) parts.push('More on their background: ' + responses.background_extra);
   if (responses.identity) parts.push('How others describe them: ' + responses.identity);
   if (responses.environment) parts.push('Work environment: ' + responses.environment);
   if (responses.pace) parts.push('Pace preference: ' + responses.pace);
+  if (responses.referredBy) parts.push('Note: this person was referred by ' + responses.referredBy + ' — someone in their life thought they needed this conversation. Worth acknowledging warmly if relevant.');
+  // Add constraint context — filters matches through what's actually reachable
+  var constraintCtx = getConstraintContext();
+  if (constraintCtx) parts.push(constraintCtx);
+
+  if (responses.relocationType === 'active') {
+    parts.push('ACTIVELY RELOCATING: moving imminently from ' + (responses.currentLocation || responses.location) + ' to ' + responses.targetLocation + '. Orient ALL matches, salary ranges, and geographic context to ' + responses.targetLocation + '. Do not reference current city for job purposes.' + (responses.relocationNote ? ' Additional context about the move: ' + responses.relocationNote : ''));
+  } else if (responses.relocationType === 'urgent') {
+    parts.push('WANTS TO RELOCATE URGENTLY to ' + responses.targetLocation + ' (currently in ' + (responses.currentLocation || responses.location) + '). Mix local matches with remote-friendly or ' + responses.targetLocation + '-based roles. Acknowledge the goal in the summary.');
+  } else if (responses.relocationType === 'eventual') {
+    parts.push('Location: ' + (responses.currentLocation || responses.location) + '. NOTE: they mentioned eventually wanting to move to ' + responses.targetLocation + ' — focus matches on current city. Briefly and warmly acknowledge the future goal at the end of the summary without making it the focus.');
+  } else if (responses.location) {
+    parts.push('Location: ' + responses.location);
+  }
   return parts.join('\n');
 }
 
@@ -874,6 +1510,278 @@ async function getAcknowledgment(whatTheyShared) {
   }
 }
 
+// Micro follow-up — fires ONLY on free text answers when there's a hook worth pulling
+// Never fires on button selections. One follow-up maximum per step.
+// Returns a short question string if there's a hook, null if the answer is complete.
+async function getMicroFollowUp(whatTheyShared, context) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 120,
+      messages: [{ role: 'user', content:
+        TONE_SYSTEM + '\n\nSomeone just typed a free-text answer in a career conversation. Your job is to decide if there is ONE specific hook worth following up on — and if so, ask it in a warm, curious way.\n\nA hook is: a pronoun with no name attached ("she", "he", "they", "my boss"), an event referenced but not explained ("when it happened", "the announcement", "after that"), a job or place mentioned briefly ("the shop", "my manager"), something that would help understand their situation more fully.\n\nRULES:\n- If there is a clear hook: return ONE short warm question (under 10 words) that invites them to share more. Match their energy exactly. No em dashes. Never start with I.\n- CRITICAL TONE RULE: The question must feel genuinely curious and inviting — never skeptical, never challenging, never like you are questioning whether what they said is true. You believe them completely. You just want to know more. The question should make them feel good about sharing more, not defensive.\n- BAD example: "are those clients actually yours?" — sounds like you doubt them\n- GOOD example: "do they follow you specifically?" — sounds like you want to hear more\n- BAD example: "are you sure that was your work?" — challenging\n- GOOD example: "what did you change that made the difference?" — curious and affirming\n- If the answer is already complete and clear: return empty string — do NOT invent a follow-up\n- Never ask something they already answered\n- This is a conversation between friends, not an interrogation — if in doubt, return empty string\n\nContext of conversation so far: ' + context + '\n\nWhat they just shared: ' + whatTheyShared + '\n\nRespond with ONLY the follow-up question or an empty string. Nothing else.'
+      }]
+    });
+    var text = data.content && data.content[0] && data.content[0].text;
+    var q = (text && text.trim()) || '';
+    // Safety: if it returned something too long or generic, skip it
+    if (q.length > 80 || q.length < 3) return null;
+    return q;
+  } catch(e) {
+    return null;
+  }
+}
+
+// ── PASSIVE CONSTRAINTS DETECTOR ────────────────────────────────────────────
+// Runs silently on every free-text answer throughout the conversation
+// Listens for signals that reveal timeline urgency, income needs, location locks,
+// credential gaps, caregiving situations, or anything that makes a match unreachable
+// NEVER asks directly. Just notices and stores what people reveal naturally.
+// Accumulates across the whole conversation — each answer can add to the picture.
+
+var constraints = {
+  timeline: null,        // 'immediate' | 'soon' | 'runway' | 'longterm'
+  timelineRaw: null,     // the actual words they used
+  hardLimit: null,       // the most critical structural constraint
+  hardLimitType: null,   // 'location' | 'income' | 'credential' | 'caregiving' | 'health' | 'legal' | 'other'
+  hardLimitRaw: null,    // the actual words they used
+  softLimits: [],        // other constraints that matter but aren't walls
+  acknowledged: []       // which constraints have already been acknowledged to the user
+};
+
+async function detectConstraints(whatTheyShared, stepContext) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 200,
+      messages: [{ role: 'user', content:
+        'Read this message from someone in a career conversation and identify any constraints they revealed — things that would make certain job matches impossible or very difficult for them right now. Listen for what they actually said, not what they might mean.
+
+CONSTRAINT TYPES TO DETECT:
+- Timeline: signals about how urgently they need something. "I have 8 months" / "my savings are running out" / "I need something by March" / "I have runway" / "no rush" / "I need to move fast"
+- Income floor: mentions of needing a minimum salary, bills, family support, debt, mortgage, healthcare coverage
+- Location lock: can't relocate, needs to stay near family, caregiving responsibilities anchoring them to a place
+- Credential gap: no degree, missing certification or license that roles in their target field typically require
+- Caregiving: kids, elderly parent, partner situation that limits schedule, travel, or sudden job changes
+- Health/benefits: needs employer health coverage, disability, medical situation
+- Legal: non-compete, visa situation, background check concern
+
+RULES:
+- Only flag something if it was actually said or clearly implied — never invent constraints
+- If nothing was revealed, return empty
+- Capture their actual words in the raw fields — use quotes when possible
+- One constraint per call — flag the most important one if multiple exist
+- Keep acknowledgment note under 10 words, warm and validating, never alarming
+
+Step context (where in the conversation this came from): ' + stepContext + '
+What they shared: ' + whatTheyShared + '
+
+Respond ONLY with valid JSON or empty string if no constraint detected:
+{"type": "timeline|income|location|credential|caregiving|health|legal|other", "urgency": "immediate|soon|runway|longterm|null", "detail": "one sentence describing the constraint", "raw": "their actual words", "acknowledgment": "warm validating note under 10 words or empty string"}'
+      }]
+    });
+    var raw = data.content && data.content[0] && data.content[0].text;
+    if (!raw || raw.trim() === '' || raw.trim() === '{}') return null;
+    var clean = raw.replace(/```json|```/g, '').trim();
+    if (clean.length < 5) return null;
+    return JSON.parse(clean);
+  } catch(e) {
+    return null;
+  }
+}
+
+// Integrate a detected constraint into the constraints object
+// Quietly acknowledges it once if it's significant — never asks follow-up questions about constraints
+async function integrateConstraint(detected, val) {
+  if (!detected || !detected.type) return;
+
+  // Store timeline if not already set or if this one is more urgent
+  var urgencyRank = { immediate: 4, soon: 3, runway: 2, longterm: 1 };
+  if (detected.type === 'timeline' && detected.urgency) {
+    var currentRank = urgencyRank[constraints.timeline] || 0;
+    var newRank = urgencyRank[detected.urgency] || 0;
+    if (newRank > currentRank) {
+      constraints.timeline = detected.urgency;
+      constraints.timelineRaw = detected.raw;
+    }
+  }
+
+  // Store hard limit — only the first one, or upgrade if more severe
+  if (detected.type !== 'timeline' && !constraints.hardLimit) {
+    constraints.hardLimit = detected.detail;
+    constraints.hardLimitType = detected.type;
+    constraints.hardLimitRaw = detected.raw;
+  } else if (detected.type !== 'timeline' && !constraints.softLimits.includes(detected.detail)) {
+    constraints.softLimits.push(detected.detail);
+  }
+
+  // Acknowledge it once — warm, brief, never alarming
+  // Only acknowledge if it hasn't been acknowledged yet and it's significant
+  var alreadyAcknowledged = constraints.acknowledged.includes(detected.type);
+  var isSignificant = detected.type === 'timeline' && detected.urgency === 'immediate' ||
+                      detected.type === 'income' ||
+                      detected.type === 'caregiving' ||
+                      detected.type === 'health' ||
+                      detected.type === 'location' ||
+                      detected.type === 'credential';
+
+  if (!alreadyAcknowledged && isSignificant && detected.acknowledgment && detected.acknowledgment.length > 3) {
+    constraints.acknowledged.push(detected.type);
+    await delay(300);
+    await showAIMessage(detected.acknowledgment, 400);
+    await delay(500);
+  }
+}
+
+// Runs constraint detection alongside the normal flow on any free-text answer
+// Called inside acknowledgeAndMaybeFollowUp — silent, parallel, non-intrusive
+async function passiveConstraintCheck(val, stepContext) {
+  try {
+    var detected = await detectConstraints(val, stepContext);
+    if (detected) await integrateConstraint(detected, val);
+  } catch(e) {
+    // Silent fail — constraints are enhancement, never blocking
+  }
+}
+
+// Builds constraint context string for getConvoSoFar and match prompts
+function getConstraintContext() {
+  var parts = [];
+  if (constraints.timeline) {
+    var timelineLabels = {
+      immediate: 'URGENT — needs something within weeks. Only surface roles that hire quickly and are immediately available.',
+      soon: 'Timeline is soon — needs something within a few months. Avoid roles with very long hiring processes.',
+      runway: 'Has some runway — a few months to find the right thing. Can consider roles with normal hiring timelines.',
+      longterm: 'Playing a long game — building toward something over the next year or more.'
+    };
+    parts.push('Timeline: ' + (timelineLabels[constraints.timeline] || constraints.timeline) + (constraints.timelineRaw ? ' (they said: "' + constraints.timelineRaw + '")' : ''));
+  }
+  if (constraints.hardLimit) {
+    parts.push('HARD CONSTRAINT — this is a wall, not a preference: ' + constraints.hardLimit + (constraints.hardLimitRaw ? ' (they said: "' + constraints.hardLimitRaw + '")' : '') + '. Any match that violates this constraint is the wrong match, regardless of fit.');
+  }
+  if (constraints.softLimits.length > 0) {
+    parts.push('Other constraints worth knowing: ' + constraints.softLimits.join('; '));
+  }
+  return parts.length > 0 ? '
+
+CONSTRAINTS — filter matches through these:
+' + parts.join('
+') : '';
+}
+
+// Relocation detector — fires on location step
+// Differentiates between three relocation states:
+//   "active"    — moving imminently, show destination jobs
+//   "urgent"    — wants to move ASAP, mix current + destination remote roles
+//   "eventual"  — someday/eventually, stay focused on current city,
+//                 remember the goal for post-payment check-in
+async function detectRelocation(locationAnswer) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 200,
+      messages: [{ role: 'user', content:
+        'Someone just answered a location question in a career tool. Read carefully and determine their relocation intent.\n\nTHREE STATES TO DISTINGUISH:\n1. "active" — they are actively relocating or moving very soon. Signals: "moving next month", "just got an offer there", "relocating in spring", "already have a place", "moving in X weeks".\n2. "urgent" — they strongly want to move as soon as possible but haven't made concrete plans. Signals: "trying to move", "need to get out", "want to move as soon as I can", "hoping to relocate soon", "looking to move".\n3. "eventual" — they mention it as a future dream or vague intention but are clearly still rooted where they are. Signals: "eventually", "one day", "someday", "down the road", "at some point", "would love to", "in a few years".\n4. "none" — no relocation mentioned at all.\n\nRULES:\n- Read the TIME signals carefully. "Eventually I want to move" is NOT urgent — it is eventual.\n- Extract current and target locations when present.\n- Write a warm acknowledgment under 12 words. Never start with I. No em dashes. Match their energy.\n- For "eventual": the acknowledgment should softly validate the dream without overpromising. e.g. "Good to know — we'll keep that in mind."\n- For "urgent": acknowledge the goal directly. e.g. "California is the target — we'll keep that close."\n- For "active": be practical and affirming. e.g. "California move coming up — matching you there."\n- For "none": return empty acknowledgment.\n\nAnswer: ' + locationAnswer + '\n\nRespond ONLY with valid JSON, no markdown:\n{"relocationType": "active|urgent|eventual|none", "currentLocation": "city/state or null", "targetLocation": "city/state or null", "acknowledgment": "warm one-liner or empty string"}'
+      }]
+    });
+    var raw = data.content && data.content[0] && data.content[0].text;
+    if (!raw) return null;
+    var clean = raw.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    return null;
+  }
+}
+
+// Compassion check — fires on step 2 free-text when there's emotional weight
+// Never asks a follow-up. Never prolongs. Just one quiet human sentence before moving on.
+// Shorter and faster than the acknowledgment layer — proof the product heard the person, not the career.
+async function compassionCheck(whatTheyShared) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 60,
+      messages: [{ role: 'user', content:
+        TONE_SYSTEM + '\n\nSomeone just shared something personal and emotionally weighted in a career conversation — a loss, a hard situation, something that clearly matters beyond the career question. Before moving to the next question, say ONE short warm sentence that acknowledges the human thing, not the career thing. RULES:\n(1) Sound like a person, not a chatbot. Never say "I\'m sorry to hear that" or "That must be hard."\n(2) Under 12 words.\n(3) Name the specific human detail if there is one — a person, a situation, a feeling.\n(4) No advice. No questions. No em dashes. Never start with I.\n(5) If the answer has no emotional weight, return empty string — never manufacture warmth that wasn\'t called for.\n\nWhat they shared: ' + whatTheyShared
+      }]
+    });
+    var text = data.content && data.content[0] && data.content[0].text;
+    var response = (text && text.trim()) || '';
+    if (response.length < 4 || response.length > 100) return null;
+    return response;
+  } catch(e) {
+    return null;
+  }
+}
+
+// Runs compassion check (if needed) + acknowledgment + optional micro follow-up
+// Also passively checks for constraints in the background — silent, non-blocking
+async function acknowledgeAndMaybeFollowUp(val, contextKey) {
+  // Check if someone mentions being referred — store it warmly
+// "my friend told me about this" / "someone sent me this link" / "X told me I should try this"
+async function detectReferral(whatTheyShared) {
+  var referralSignals = /\b(told me|sent me|shared|referred|said I should|recommended|friend said|my (friend|coworker|sister|brother|partner|mom|dad|colleague))\b/i;
+  if (!referralSignals.test(whatTheyShared)) return null;
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 80,
+      messages: [{ role: 'user', content:
+        'Did this person mention being referred to this tool by someone they know? If yes, extract who referred them (name or relationship) and return JSON. If no clear referral signal, return empty string.\n\nWhat they said: ' + whatTheyShared + '\n\nRespond ONLY with JSON or empty string: {"referredBy": "name or relationship", "acknowledgment": "warm sentence under 10 words"}'
+      }]
+    });
+    var raw = data.content && data.content[0] && data.content[0].text;
+    if (!raw || raw.trim().length < 5) return null;
+    var clean = raw.replace(/```json|```/g, '').trim();
+    if (!clean.startsWith('{')) return null;
+    return JSON.parse(clean);
+  } catch(e) { return null; }
+}
+
+// Step 0: Run passive constraint check in background — never blocks, never changes rhythm
+  // Runs in parallel with everything else so there's zero added latency
+  passiveConstraintCheck(val, contextKey || 'conversation');
+
+  // Step 1: compassion check — if the answer carries grief, loss, or personal weight,
+  // acknowledge the human thing first before the career acknowledgment
+  var compassion = await compassionCheck(val);
+  var ack = await getAcknowledgment(val);
+
+  // If compassion fires and acknowledgment fires, show compassion first with a beat
+  // If only one fires, show that one. Never show both if they say the same thing.
+  if (compassion && compassion.trim().length > 4) {
+    await showAIMessage(compassion, 500);
+    // Breathing pause after compassion — let it land before anything else
+    await delay(700);
+    // Only show the acknowledgment if it adds something different
+    if (ack && ack.trim().length > 5 && ack.trim() !== compassion.trim()) {
+      await showAIMessage(ack, 600);
+      await delay(400);
+    }
+  } else if (ack && ack.trim().length > 5) {
+    await showAIMessage(ack, 600);
+    await delay(400);
+  }
+
+  // Step 2: check for a micro follow-up hook
+  var followUp = await getMicroFollowUp(val, getConvoSoFar());
+  if (!followUp) return val; // no hook, just return original
+
+  // Show the follow-up question and collect one more answer
+  await delay(400);
+  await showAIMessage(followUp, 500);
+
+  return new Promise(function(resolve) {
+    showTextInput('', function(extraVal) {
+      addMessage(extraVal, 'user');
+      // Append extra context to the original response
+      var combined = val + ' — ' + extraVal;
+      if (contextKey) responses[contextKey + '_extra'] = extraVal;
+      resolve(combined);
+    });
+  });
+}
+
 async function step1() {
   updateProgress(1);
   await showAIMessage("Hey. You're not here by accident.\n\nWhat's going on?", 600);
@@ -893,8 +1801,8 @@ async function step1() {
     }
     addMessage(val, 'user');
     if (responses.crisisFlag) {
-      // For urgent users: acknowledge the urgency immediately before proceeding
-      showAIMessage("Got it. Let's move quickly. I'll ask what I need to know and get you to matches as fast as possible.", 400).then(function() { step2(); });
+      // For urgent users: compassion first, then move quickly
+      showAIMessage("That's a hard place to be in. Let's move fast and get you somewhere better.", 400).then(function() { step2(); });
     } else {
       step2();
     }
@@ -957,7 +1865,45 @@ async function step2() {
 
   var result = await getAdaptiveStep(goal, seeds, fallbackQ, fallbackOpts);
   await showAIMessage(result.q);
-  showOptions(result.opts, function(val) { responses.duration = val; addMessage(val, 'user'); step3(); }, true);
+  showOptions(result.opts, async function(val) {
+    responses.duration = val;
+    addMessage(val, 'user');
+    var fullContext = (responses.why || '') + ' ' + val;
+
+    // Check if val contains free-text elaboration beyond a simple button selection
+    // If someone typed something personal (longer than ~40 chars or contains names/events),
+    // treat it like free text and run the full follow-up check
+    var isElaborated = val.length > 45 || /(my|I|he|she|they|we|it was|because|after|when|before)/.test(val);
+
+    if (isElaborated) {
+      // Full stack — compassion + micro follow-up for elaborated answers
+      // Also check for referral signal — someone might mention who sent them here
+      var referral = await detectReferral(val);
+      if (referral && referral.referredBy) {
+        responses.referredBy = referral.referredBy;
+        // Warm acknowledgment of the connection — makes the referrer feel real
+        if (referral.acknowledgment && referral.acknowledgment.length > 4) {
+          await delay(300);
+          await showAIMessage(referral.acknowledgment, 400);
+          await delay(500);
+        }
+      }
+      // passiveConstraintCheck runs inside acknowledgeAndMaybeFollowUp automatically
+      var enriched = await acknowledgeAndMaybeFollowUp(val, 'duration');
+      responses.duration = enriched;
+    } else {
+      // Simple button selection — compassion check only
+      // Still run passive constraint check silently on the combined context
+      passiveConstraintCheck(fullContext, 'step2');
+      var compassion = await compassionCheck(fullContext);
+      if (compassion && compassion.trim().length > 4) {
+        await delay(400);
+        await showAIMessage(compassion, 500);
+        await delay(700);
+      }
+    }
+    step3();
+  }, true);
 }
 
 async function step3() {
@@ -995,7 +1941,13 @@ async function step3b() {
     "It's kind of hard to explain but…"
   );
   await showAIMessage(q);
-  showTextInput("It's kind of hard to explain but…", function(val) { responses.loves = val; addMessage(val, 'user'); step4(); });
+  showTextInput("It's kind of hard to explain but…", async function(val) {
+    responses.loves = val;
+    addMessage(val, 'user');
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'loves');
+    responses.loves = enriched;
+    step4();
+  });
 }
 
 async function step4() {
@@ -1009,9 +1961,9 @@ async function step4() {
   showTextInput("It was when…", async function(val) {
     responses.bestDay = val;
     addMessage(val, 'user');
-    // Acknowledge what they shared before moving on
-    var ack = await getAcknowledgment(val);
-    if (ack && ack.trim().length > 5) await showAIMessage(ack, 600);
+    // Acknowledge + optional micro follow-up
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'bestDay');
+    responses.bestDay = enriched;
     step5();
   });
 }
@@ -1042,9 +1994,15 @@ async function step5() {
       ]
     );
     await showAIMessage(result.q);
-    showOptions(result.opts, function(val) {
+    showOptions(result.opts, async function(val) {
       if (val.toLowerCase().includes("something specific")) { step5b_happy(); }
-      else { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); }
+      else {
+        responses.neverAgain1 = val; addMessage(val, 'user');
+        passiveConstraintCheck(val, 'neverAgain1');
+        var c1h = await compassionCheck(val);
+        if (c1h && c1h.trim().length > 4) { await delay(300); await showAIMessage(c1h, 400); await delay(600); }
+        step6();
+      }
     });
   } else {
     var result = await getAdaptiveStep(
@@ -1068,9 +2026,15 @@ async function step5() {
       ]
     );
     await showAIMessage(result.q);
-    showOptions(result.opts, function(val) {
+    showOptions(result.opts, async function(val) {
       if (val.toLowerCase().includes("something specific") || val.toLowerCase().includes("let me describe")) { step5b(); }
-      else { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); }
+      else {
+        responses.neverAgain1 = val; addMessage(val, 'user');
+        passiveConstraintCheck(val, 'neverAgain1');
+        var c1s = await compassionCheck(val);
+        if (c1s && c1s.trim().length > 4) { await delay(300); await showAIMessage(c1s, 400); await delay(600); }
+        step6();
+      }
     });
   }
 }
@@ -1085,8 +2049,8 @@ async function step5b() {
   showTextInput("The thing I'm done with is…", async function(val) {
     responses.neverAgain1 = val;
     addMessage(val, 'user');
-    var ack = await getAcknowledgment(val);
-    if (ack && ack.trim().length > 5) await showAIMessage(ack, 600);
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'neverAgain1');
+    responses.neverAgain1 = enriched;
     step6();
   });
 }
@@ -1098,7 +2062,13 @@ async function step5b_happy() {
     "What makes it work is…"
   );
   await showAIMessage(q);
-  showTextInput("What makes it work is…", function(val) { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); });
+  showTextInput("What makes it work is…", async function(val) {
+    responses.neverAgain1 = val;
+    addMessage(val, 'user');
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'neverAgain1');
+    responses.neverAgain1 = enriched;
+    step6();
+  });
 }
 
 async function step6() {
@@ -1127,9 +2097,15 @@ async function step6() {
       ]
     );
     await showAIMessage(result.q);
-    showOptions(result.opts, function(val) {
+    showOptions(result.opts, async function(val) {
       if (val.toLowerCase().includes("something else")) { step6b_happy(); }
-      else { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); }
+      else {
+        responses.neverAgain2 = val; addMessage(val, 'user');
+        passiveConstraintCheck(val, 'neverAgain2');
+        var c2h = await compassionCheck(val);
+        if (c2h && c2h.trim().length > 4) { await delay(300); await showAIMessage(c2h, 400); await delay(600); }
+        step7();
+      }
     });
   } else {
     var result = await getAdaptiveStep(
@@ -1153,19 +2129,37 @@ async function step6() {
       ]
     );
     await showAIMessage(result.q);
-    showOptions(result.opts, function(val) {
+    showOptions(result.opts, async function(val) {
       if (val.toLowerCase().includes("something else") || val.toLowerCase().includes("want to add")) { step6b(); }
-      else { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); }
+      else {
+        responses.neverAgain2 = val; addMessage(val, 'user');
+        passiveConstraintCheck(val, 'neverAgain2');
+        var c2s = await compassionCheck(val);
+        if (c2s && c2s.trim().length > 4) { await delay(300); await showAIMessage(c2s, 400); await delay(600); }
+        step7();
+      }
     });
   }
 }
 
 async function step6b() {
-  showTextInput("One more thing I'd add…", function(val) { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); });
+  showTextInput("One more thing I'd add…", async function(val) {
+    responses.neverAgain2 = val;
+    addMessage(val, 'user');
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'neverAgain2');
+    responses.neverAgain2 = enriched;
+    step7();
+  });
 }
 
 async function step6b_happy() {
-  showTextInput("The thing that would break it is…", function(val) { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); });
+  showTextInput("The thing that would break it is…", async function(val) {
+    responses.neverAgain2 = val;
+    addMessage(val, 'user');
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'neverAgain2');
+    responses.neverAgain2 = enriched;
+    step7();
+  });
 }
 
 async function step7() {
@@ -1179,9 +2173,8 @@ async function step7() {
   showTextInput("Most of my day is actually…", async function(val) {
     responses.background = val;
     addMessage(val, 'user');
-    // Acknowledge what they shared before moving on
-    var ack = await getAcknowledgment(val);
-    if (ack && ack.trim().length > 5) await showAIMessage(ack, 600);
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'background');
+    responses.background = enriched;
     step8();
   }, 3);
 }
@@ -1209,14 +2202,26 @@ async function step8() {
     ]
   );
   await showAIMessage(result.q);
-  showOptions(result.opts, function(val) {
+  showOptions(result.opts, async function(val) {
     if (val.toLowerCase().includes("none of these") || val.toLowerCase().includes("let me describe") || val.toLowerCase().includes("let me say")) { step8b(); }
-    else { responses.identity = val; addMessage(val, 'user'); step9(); }
+    else {
+      responses.identity = val; addMessage(val, 'user');
+      passiveConstraintCheck(val, 'identity');
+      var c8 = await compassionCheck(val);
+      if (c8 && c8.trim().length > 4) { await delay(300); await showAIMessage(c8, 400); await delay(600); }
+      step9();
+    }
   });
 }
 
 async function step8b() {
-  showTextInput("People who really know me would say…", function(val) { responses.identity = val; addMessage(val, 'user'); step9(); });
+  showTextInput("People who really know me would say…", async function(val) {
+    responses.identity = val;
+    addMessage(val, 'user');
+    var enriched = await acknowledgeAndMaybeFollowUp(val, 'identity');
+    responses.identity = enriched;
+    step9();
+  });
 }
 
 async function step9() {
@@ -1269,7 +2274,99 @@ async function step9c() {
     "I'm in…"
   );
   await showAIMessage(q);
-  showTextInput("I'm in…", function(val) { responses.location = val; addMessage(val, 'user'); step10(); });
+  showTextInput("I'm in…", async function(val) {
+    responses.location = val;
+    addMessage(val, 'user');
+
+    // Run relocation detector and compassion check in parallel
+    var [relocation, compassion] = await Promise.all([
+      detectRelocation(val),
+      compassionCheck(val)
+    ]);
+
+    // Handle relocation signal — branch on urgency level
+    var rtype = relocation && relocation.relocationType;
+
+    if (rtype === 'active') {
+      // Moving imminently — orient everything to destination
+      responses.targetLocation = relocation.targetLocation;
+      responses.currentLocation = relocation.currentLocation || val;
+      responses.relocationType = 'active';
+      var msg = (relocation.acknowledgment && relocation.acknowledgment.length > 4)
+        ? relocation.acknowledgment + " Orienting your matches to " + relocation.targetLocation + "."
+        : "Got it — orienting everything to " + relocation.targetLocation + ".";
+      await delay(400);
+      await showAIMessage(msg, 500);
+      // Active move — offer a beat for elaboration before continuing
+      // Short open door, not a forced question. If they want to say more, they can.
+      await delay(700);
+      await showAIMessage("Anything about the move worth knowing before we get into the rest?", 400);
+      await new Promise(function(resolve) {
+        showOptions([
+          "Nope — let's keep going",
+          "Actually yes — let me say something"
+        ], async function(moveVal) {
+          addMessage(moveVal, 'user');
+          if (moveVal.toLowerCase().includes('yes') || moveVal.toLowerCase().includes('say something')) {
+            // Give them the floor for one more free text
+            await showAIMessage("Go ahead —", 300);
+            showTextInput("About the move…", async function(moveNote) {
+              addMessage(moveNote, 'user');
+              responses.relocationNote = moveNote;
+              // Light compassion on whatever they share
+              var mc = await compassionCheck(moveNote);
+              if (mc && mc.trim().length > 4) { await delay(300); await showAIMessage(mc, 400); }
+              resolve();
+            });
+          } else {
+            resolve();
+          }
+        }, true);
+      });
+
+    } else if (rtype === 'urgent') {
+      // Wants to move ASAP — mix current + remote-friendly destination roles
+      responses.targetLocation = relocation.targetLocation;
+      responses.currentLocation = relocation.currentLocation || val;
+      responses.relocationType = 'urgent';
+      var msg = (relocation.acknowledgment && relocation.acknowledgment.length > 4)
+        ? relocation.acknowledgment + " I'll fold in some " + relocation.targetLocation + "-friendly options alongside local ones."
+        : "Noted — mixing in some " + relocation.targetLocation + "-friendly options too.";
+      await delay(400);
+      await showAIMessage(msg, 500);
+      // Urgent — brief natural pause then continue. No forced elaboration.
+      // The urgency is noted. The career conversation is the next useful thing.
+      await delay(600);
+
+    } else if (rtype === 'eventual') {
+      // Someday/eventually — stay focused on current city, remember quietly
+      responses.targetLocation = relocation.targetLocation;
+      responses.currentLocation = relocation.currentLocation || val;
+      responses.relocationType = 'eventual';
+      responses.relocationMemory = relocation.targetLocation;
+      var msg = (relocation.acknowledgment && relocation.acknowledgment.length > 4)
+        ? relocation.acknowledgment
+        : "Good to know — we'll keep that in mind for down the road.";
+      await delay(400);
+      await showAIMessage(msg, 400);
+      // Eventual — gentle pause then move on. Don't make it the focus.
+      await delay(500);
+
+    } else {
+      // No relocation — run compassion if needed, then natural pause
+      responses.currentLocation = val;
+      // Also check for constraints in location answer
+      // e.g. "I'm in Detroit — can't leave, my mom needs me here"
+      passiveConstraintCheck(val, 'location');
+      if (compassion && compassion.trim().length > 4) {
+        await delay(300);
+        await showAIMessage(compassion, 400);
+        await delay(400);
+      }
+    }
+
+    step10();
+  });
 }
 
 async function step10() {
@@ -1294,8 +2391,8 @@ async function generateReveal() {
   var happyMode = isHappyUser();
 
   var prompt = happyMode
-    ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven't been able to say themselves — not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically — not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said — a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a warm invitation to save this profile — framed as capturing who they are now, while things are good, before anything changes\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified")
-    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- If their location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified");
+    ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven't been able to say themselves — not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically — not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said — a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a warm invitation to save this profile — framed as capturing who they are now, while things are good, before anything changes\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
+    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- RELOCATION: if relocationType is 'active', orient ALL geography to target location only. If 'urgent', mix current and target, acknowledge the goal. If 'eventual', focus on current city but end with one warm sentence about the future goal — something like 'and when California becomes more than eventually, what you're building now travels with you.' Never make the eventual goal the main point. If their relevant location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear AND tells you what to do first. PLAN FRAMING: If constraints show timeline=immediate or soon, or a hard limit exists, add one warm grounding sentence before the closing question that signals the matches include something to start this week and something to build toward.\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
 
   try {
     var data = await callAI({
@@ -1324,12 +2421,12 @@ async function generateReveal() {
     saveRow.style.cssText = 'display:flex;gap:10px;margin-top:10px;max-width:92%;flex-wrap:wrap;opacity:0;animation:fadeUp 0.4s ease 0.3s forwards;';
 
     var copyBtn = document.createElement('button');
-    copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
     copyBtn.textContent = 'Copy my summary';
     copyBtn.addEventListener('click', function() {
       navigator.clipboard.writeText(summaryText).then(function() {
         copyBtn.textContent = 'Copied ✓';
-        copyBtn.style.background = 'rgba(74,158,191,0.1)';
+        copyBtn.style.background = 'rgba(24,112,108,0.1)';
         setTimeout(function() { copyBtn.textContent = 'Copy my summary'; copyBtn.style.background = 'transparent'; }, 2000);
       }).catch(function() {
         var ta = document.createElement('textarea');
@@ -1346,16 +2443,16 @@ async function generateReveal() {
     });
 
     var emailSaveBtn = document.createElement('button');
-    emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
     emailSaveBtn.textContent = 'Email it to me';
     emailSaveBtn.addEventListener('click', function() {
       saveRow.style.display = 'none';
       var emailSaveCard = document.createElement('div');
-      emailSaveCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(74,158,191,0.2);border-radius:12px;padding:18px 20px;max-width:92%;margin-top:10px;';
+      emailSaveCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.2);border-radius:12px;padding:18px 20px;max-width:92%;margin-top:10px;';
       emailSaveCard.innerHTML =
         '<div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Where should we send this?</div>' +
         '<input id="saveEmailInput" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
-        '<button id="saveEmailSubmit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Send it →</button>';
+        '<button id="saveEmailSubmit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Send it →</button>';
       msg.appendChild(emailSaveCard);
       setTimeout(function() {
         var se = document.getElementById('saveEmailSubmit');
@@ -1403,7 +2500,7 @@ async function generateReveal() {
                     '<div style="font-size:13px;color:var(--muted);">— ' + (responses.neverAgain2 || '') + '</div>' +
                   '</div>' +
                   '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;">We\'re building the full match database right now. You\'ll be first to know when roles that match your profile open up.</div>' +
-                  '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#09090f;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
+                  '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#f7f6f3;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
                   '<div style="margin-top:20px;font-size:11px;color:var(--muted);">Lune · Your resume tells half the story<a href="#" style="color:var(--muted);">Unsubscribe</a></div>' +
                 '</div>' +
               '</div>';
@@ -1440,7 +2537,7 @@ async function generateReveal() {
     var errBubble = document.createElement('div');
     errBubble.className = 'bubble';
     errBubble.style.cssText = 'max-width:92%;';
-    errBubble.innerHTML = '<div style="margin-bottom:12px;color:var(--muted);font-size:14px;">Something went wrong generating your summary. Your answers are saved — just try again.</div><button id="retryBtn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Try again →</button>';
+    errBubble.innerHTML = '<div style="margin-bottom:12px;color:var(--muted);font-size:14px;">Something went wrong generating your summary. Your answers are saved — just try again.</div><button id="retryBtn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Try again →</button>';
     errMsg.appendChild(errBubble);
     chat.appendChild(errMsg);
     scrollToBottom();
@@ -1463,12 +2560,12 @@ async function showHappyEndActions(summaryText) {
   saveMsg.className = 'msg ai';
   saveMsg.style.animationDelay = '0s';
   var saveCard = document.createElement('div');
-  saveCard.style.cssText = 'background:linear-gradient(135deg,#131320,#0c0c18);border:1px solid rgba(74,158,191,0.3);border-radius:16px;padding:24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
+  saveCard.style.cssText = 'background:linear-gradient(135deg,#ffffff,#f5f3ef);border:1px solid rgba(24,112,108,0.3);border-radius:16px;padding:24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
   saveCard.innerHTML =
     '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
     '<div style="font-family:\'Instrument Serif\',serif;font-size:18px;color:var(--text);margin-bottom:8px;line-height:1.3;">Save this while it's accurate.</div>' +
     '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">Most people only do this when things fall apart. You get to do it from clarity — which means the profile is actually true.</div>' +
-    '<button id="happySaveBtn" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:10px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;">Save my profile →</button>' +
+    '<button id="happySaveBtn" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:10px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;">Save my profile →</button>' +
     '<div style="font-size:11px;color:var(--muted);font-style:italic;">Free. No resume required. Come back anytime things change.</div>';
   saveMsg.appendChild(saveCard);
   chat.appendChild(saveMsg);
@@ -1494,14 +2591,14 @@ async function showHappyEndActions(summaryText) {
   contribMsg.className = 'msg ai';
   contribMsg.style.animationDelay = '0s';
   var contribCard = document.createElement('div');
-  contribCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(74,158,191,0.15);border-radius:14px;padding:22px 24px;max-width:92%;';
+  contribCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.15);border-radius:14px;padding:22px 24px;max-width:92%;';
   contribCard.innerHTML =
     '<div style="font-size:14px;color:var(--text);margin-bottom:8px;line-height:1.5;">One optional thing, if you're open to it.</div>' +
     '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">We're building a database of what good work actually looks like from the inside — not from HR job descriptions, but from people who are genuinely thriving. If you'd share your job title and one thing you like about your work, you'd be helping us show other people what great looks like in your field.</div>' +
     '<input id="contribTitle" type="text" placeholder="Your job title" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
     '<textarea id="contribLikes" placeholder="What I actually like about it…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;resize:none;min-height:60px;margin-bottom:10px;"></textarea>' +
     '<div style="display:flex;gap:8px;">' +
-      '<button id="contribSubmit" style="flex:1;padding:10px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Share it →</button>' +
+      '<button id="contribSubmit" style="flex:1;padding:10px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Share it →</button>' +
       '<button id="contribSkip" style="padding:10px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;">Skip</button>' +
     '</div>';
   contribMsg.appendChild(contribCard);
@@ -1622,12 +2719,39 @@ async function showMatches() {
   var userLocation = responses.location || 'not specified';
   var isRemoteOk = (responses.environment || '').toLowerCase().includes('remote');
 
-  var matchPrompt = 'You are Lune\'s matching engine. Generate exactly 3 job matches for this person.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight toward companies with regional presence or remote-first roles') + '\n\nRULES FOR MATCHES 1 AND 2:\n- Must come from DIFFERENT conceptual categories. Force variety.\n- Real companies. Geographically accessible.\n- 2-sentence day-to-day description. Human, not HR-speak.\n- ONE reason sentence referencing a specific moment or detail they gave.\n' + (needsTranslation ? '- Include a bridge sentence: exactly how to describe their background in an interview for this role.\n' : '') + '\nRULE FOR MATCH 3 — THIS IS THE ONLY ONE THAT SHOWS FREE. EVERYTHING DEPENDS ON IT:\\nSTRICT REQUIREMENTS: (1) MUST cross an industry line completely — if healthcare background give no healthcare role; if restaurant background give no food/hospitality role; reframe skills into a different industry entirely. (2) The reason sentence MUST name a specific story, moment, or exact phrase from their answers — never a generic background summary. (3) A title upgrade from their current role is NOT surprising enough — find a different direction. (4) Must feel slightly uncomfortable — like someone saw something they had not named yet. This card shows free. The other two are locked. The surprise match is the only reason people pay.\n\nBackground weighting:\n- Healthcare/clinical: toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: toward advocacy, crisis work, program coordination\n- Restaurant/hospitality/ops: toward operations, startup ops, RevOps, program management\n- Creative: toward UX research, content design, community programs\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"operations","surprise":false},\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"people_ops","surprise":false},\n  {"title":"Unexpected Job Title","company":"Real Company","description":"Two sentences that explain what makes this surprising but right.","reason":"One sentence connecting their specific story to why this works.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"community","surprise":true}\n]';
+  var needsBridge = !isHappyUser() && (
+    constraints.timeline === 'immediate' ||
+    constraints.timeline === 'soon' ||
+    constraints.hardLimitType === 'credential' ||
+    constraints.hardLimitType === 'income'
+  );
+
+  var bridgeContext = needsBridge ? (
+  '\n\nBRIDGE MATCH REQUIRED (Match 0 — show first, before the others):\n' +
+  'This person has a constraint that means the aspirational matches need a stepping stone. ' +
+  (constraints.timeline === 'immediate' ? 'TIMELINE: they need something in the next few weeks. Only surface roles that post, interview, and hire within 2-4 weeks — nonprofits, startups, community orgs, coordinator roles, companies with rolling applications. ' : '') +
+  (constraints.timeline === 'soon' ? 'TIMELINE: they need something within 2-3 months. Avoid roles with 4+ month hiring processes. ' : '') +
+  (constraints.hardLimitType === 'credential' ? 'CREDENTIAL GAP: ' + constraints.hardLimit + '. The bridge role must not require this credential. ' : '') +
+  (constraints.hardLimitType === 'income' ? 'INCOME NEED: ' + constraints.hardLimit + '. The bridge role must clear this floor. ' : '') +
+  (constraints.hardLimitType === 'location' ? 'LOCATION LOCK: ' + constraints.hardLimit + '. Bridge must be local or remote — no relocation required. ' : '') +
+  'Generate one BRIDGE match that: ' +
+  '(1) They can realistically get RIGHT NOW — fast hiring, low barrier, no credential gap, accessible with their actual background. ' +
+  '(2) Is a genuine stepping stone toward the aspirational direction — it builds the exact thing missing (portfolio, network, proof of concept, income runway). ' +
+  '(3) Uses skills they already have directly, no translation needed. ' +
+  '(4) Pays enough to be real and sustainable. ' +
+  '(5) Has a specific bridge_note field (one sentence max) that explicitly names the sequence: what this role builds and what it leads to. Format: "This builds [specific thing]. [Aspirational role] is the next step." Make it feel like a plan, not a consolation. ' +
+  '(6) Has a reason sentence that names a specific detail from their conversation — not generic encouragement. ' +
+  'Label this match with "bridge": true in the JSON. Include a "bridge_note" field with the sequence sentence. It shows fully visible — not locked. ' +
+  'The other 3 matches (including the surprise) generate normally after the bridge.'
+) : '';
+
+var matchPrompt = 'You are Lune\'s matching engine. Generate ' + (needsBridge ? '4' : '3') + ' job matches for this person.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight toward companies with regional presence or remote-first roles') + '\n\nRULES FOR MATCHES 1 AND 2:\n- Must come from DIFFERENT conceptual categories. Force variety.\n- Real companies. Geographically accessible.\n- 2-sentence day-to-day description. Human, not HR-speak.\n- ONE reason sentence referencing a specific moment or detail they gave.\n' + (needsTranslation ? '- Include a bridge sentence: exactly how to describe their background in an interview for this role.\n' : '') + '\nRULE FOR MATCH 3 — THIS IS THE ONLY ONE THAT SHOWS FREE. EVERYTHING DEPENDS ON IT:\\nSTRICT REQUIREMENTS: (1) MUST cross an industry line completely — if healthcare background give no healthcare role; if restaurant background give no food/hospitality role; reframe skills into a different industry entirely. (2) The reason sentence MUST name a specific story, moment, or exact phrase from their answers — never a generic background summary. (3) A title upgrade from their current role is NOT surprising enough — find a different direction. (4) Must feel slightly uncomfortable — like someone saw something they had not named yet. This card shows free. The other two are locked. The CONSTRAINTS FILTER: Before generating any match, check the constraint context in the conversation. A match that violates a hard constraint (location lock, income floor, credential gap, caregiving situation) is wrong even if professionally perfect. If timeline is immediate, only surface roles with fast hiring cycles (2-4 weeks). Surface only what is actually reachable.\n\nThe surprise match is the only reason people pay.\n\n\n\' + bridgeContext + \'\nBackground weighting:\n- Healthcare/clinical: toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: toward advocacy, crisis work, program coordination\n- Restaurant/hospitality/ops: toward operations, startup ops, RevOps, program management\n- Creative: toward UX research, content design, community programs\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"operations","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"people_ops","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Unexpected Job Title","company":"Real Company","description":"Two sentences that explain what makes this surprising but right.","reason":"One sentence connecting their specific story to why this works.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"community","surprise":true,"bridge_match":false}\n]' +
+    (needsBridge ? ' + \',\\n  {"title":"Bridge Role — what they can get in 4-8 weeks","company":"Real Company","description":"Two sentences. Realistic, reachable, hires fast. Uses actual background directly. Pays enough to be real while building toward the aspirational direction.","reason":"One sentence: why this is the door they can open right now, and what it builds toward.","bridge_sentence":"One sentence — exactly how to describe their background to land this role. The words to use.","salary_category":"program_coord","surprise":false,"bridge_match":true}\\n]\'' : '') + bridgeContext;
 
   try {
     var data = await callAI({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1200,
+      max_tokens: 1800,
       messages: [{ role: 'user', content: matchPrompt }]
     });
     var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
@@ -1653,10 +2777,11 @@ async function showMatches() {
       return;
     }
 
-    // Separate surprise from regular matches
-    var surpriseJob = jobs.find(function(j) { return j.surprise; }) || jobs[2];
-    var lockedJobs = jobs.filter(function(j) { return !j.surprise; });
-    if (lockedJobs.length === 0) lockedJobs = [jobs[0], jobs[1]];
+    // Separate bridge, surprise, and locked matches
+    var bridgeJob = jobs.find(function(j) { return j.bridge; }) || null;
+    var surpriseJob = jobs.find(function(j) { return j.surprise; }) || jobs[jobs.length-1];
+    var lockedJobs = jobs.filter(function(j) { return !j.surprise && !j.bridge; });
+    if (lockedJobs.length === 0) lockedJobs = jobs.filter(function(j) { return !j.surprise; }).slice(0,2);
 
     // Intro
     // Check if location is likely a small market and warn appropriately
@@ -1666,6 +2791,42 @@ async function showMatches() {
     var isMajorCity = majorCities.some(function(c) { return loc.includes(c); });
     var hasLocation = responses.location && responses.location.trim().length > 2;
 
+    // ── BRIDGE CARD: shows before surprise when constraints warrant it ──────────
+    if (needsBridge && bridgeJob) {
+      var bridgeSalary = getSalaryType(bridgeJob.salary_category || 'default');
+      var bridgeTypeStr = bridgeSalary.remote + ' · ' + bridgeSalary.range;
+      // Build a warm intro that frames the bridge as part of a plan
+var bridgeIntroMsg = (constraints.timeline === 'immediate')
+  ? "Here's what I'd do first — something you can actually move on right now."
+  : (constraints.hardLimitType === 'credential')
+  ? "One thing to start with — builds toward where you're going without the gap."
+  : "Before the bigger picture — here's a place to start that's actually reachable.";
+await showAIMessage(bridgeIntroMsg, 400);
+      await delay(500);
+      var bridgeMsg = document.createElement('div');
+      bridgeMsg.className = 'msg ai';
+      bridgeMsg.style.animationDelay = '0s';
+      var bridgeCard = document.createElement('div');
+      bridgeCard.style.cssText = 'background:var(--surface);border:1px solid rgba(24,112,108,0.3);border-left:3px solid var(--accent);border-radius:14px;padding:24px 26px;max-width:92%;';
+      bridgeCard.innerHTML =
+        '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(24,112,108,0.1);color:var(--accent);padding:4px 12px;border-radius:100px;margin-bottom:14px;">' + (constraints.timeline === 'immediate' ? 'Move on this now' : constraints.hardLimitType === 'credential' ? 'Build toward it' : 'Start here') + '</div>' +
+        '<div style="font-family:'Instrument Serif',serif;font-size:18px;color:var(--text);margin-bottom:3px;line-height:1.2;">' + (bridgeJob.title || '') + '</div>' +
+        '<div style="font-size:12px;color:var(--accent);font-weight:500;margin-bottom:10px;">' + (bridgeJob.company || '') + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-bottom:14px;">' + bridgeTypeStr + '</div>' +
+        '<div style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:14px;">' + (bridgeJob.description || '') + '</div>' +
+        '<div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;padding-top:12px;border-top:1px solid var(--border);margin-bottom:' + (bridgeJob.bridge_note ? '8px' : '0') + ';">' + (bridgeJob.reason || '') + '</div>' +
+        (bridgeJob.bridge_note ? '<div style="font-size:13px;color:var(--accent);line-height:1.6;font-weight:500;">' + bridgeJob.bridge_note + '</div>' : '') +
+        (needsTranslation && bridgeJob.bridge ? '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">How to frame it: ' + bridgeJob.bridge + '</div>' : '') +
+        '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
+          '<a href="' + buildLinkedInURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;text-decoration:none;cursor:pointer;">Search LinkedIn →</a>' +
+          '<a href="' + buildIndeedURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:12px;text-decoration:none;cursor:pointer;">Search Indeed →</a>' +
+        '</div>';
+      bridgeMsg.appendChild(bridgeCard);
+      chat.appendChild(bridgeMsg);
+      scrollToBottom();
+      await delay(900);
+    }
+
     await showAIMessage("Found something. This one stood out — I want you to see it before anything else.");
     await delay(500);
 
@@ -1674,22 +2835,22 @@ async function showMatches() {
     cardMsg.className = 'msg ai';
     cardMsg.style.animationDelay = '0s';
     var card = document.createElement('div');
-    card.style.cssText = 'background:linear-gradient(135deg,#131320,#0c0c18);border:1px solid rgba(74,158,191,0.4);border-radius:16px;padding:22px 24px;max-width:92%;position:relative;overflow:hidden;';
+    card.style.cssText = 'background:linear-gradient(135deg,#ffffff,#f5f3ef);border:1px solid rgba(24,112,108,0.4);border-radius:16px;padding:22px 24px;max-width:92%;position:relative;overflow:hidden;';
     card.innerHTML =
       '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
       '<div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;">' + surpriseJob.title + '</div>' +
       '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">' + surpriseJob.company + ' · ' + surpriseJob.type + '</div>' +
       '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:14px;">' + surpriseJob.description + '</div>' +
-      (surpriseJob.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(74,158,191,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + surpriseJob.reason + '"</div>' : '') +
+      (surpriseJob.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(24,112,108,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + surpriseJob.reason + '"</div>' : '') +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
-      '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#09090f;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
-      '<a href="' + surpriseJob.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
+      '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#f7f6f3;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
+      '<a href="' + surpriseJob.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
       '</div>' +
-      '<div style="font-size:12px;color:var(--muted);background:rgba(74,158,191,0.04);border:1px solid rgba(74,158,191,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;">' +
+      '<div style="font-size:12px;color:var(--muted);background:rgba(24,112,108,0.04);border:1px solid rgba(24,112,108,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;">' +
         '<span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">🔒 How to say this in an interview</span>' +
         'Unlocked with your full matches — exactly how to describe your background for this role in language hiring managers search for.' +
       '</div>' +
-      '<button id="saveMatchBtn" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(74,158,191,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.5px;">Save this match →</button>';
+      '<button id="saveMatchBtn" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.5px;">Save this match →</button>';
     cardMsg.appendChild(card);
     chat.appendChild(cardMsg);
     scrollToBottom();
@@ -1700,7 +2861,7 @@ async function showMatches() {
       if (saveBtn) {
         saveBtn.addEventListener('click', function() {
           saveBtn.textContent = 'Saved ✓';
-          saveBtn.style.background = 'rgba(74,158,191,0.1)';
+          saveBtn.style.background = 'rgba(24,112,108,0.1)';
           saveBtn.style.pointerEvents = 'none';
           document.getElementById('profileModal').style.display = 'flex';
           setTimeout(function() {
@@ -1718,12 +2879,12 @@ async function showMatches() {
     emailCapMsg.className = 'msg ai';
     emailCapMsg.style.animationDelay = '0s';
     var emailCapCard = document.createElement('div');
-    emailCapCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(74,158,191,0.15);border-radius:12px;padding:18px 20px;max-width:92%;';
+    emailCapCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.15);border-radius:12px;padding:18px 20px;max-width:92%;';
     emailCapCard.innerHTML =
       '<div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.55;">Drop your email and we'll send your summary so you don't lose it. We'll also let you know when your full matches unlock.</div>' +
       '<div style="display:flex;gap:8px;">' +
         '<input id="earlyEmailInput" type="email" placeholder="your@email.com" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box;" />' +
-        '<button id="earlyEmailBtn" style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Save it →</button>' +
+        '<button id="earlyEmailBtn" style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Save it →</button>' +
         '<button id="earlyEmailSkip" style="padding:9px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;">Skip</button>' +
       '</div>';
     emailCapMsg.appendChild(emailCapCard);
@@ -1763,7 +2924,7 @@ async function showMatches() {
 
     lockedJobs.slice(0, 2).forEach(function(lj) {
       var lockedCard = document.createElement('div');
-      lockedCard.style.cssText = 'background:linear-gradient(135deg,#0f0f1c,#09090f);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px 22px;position:relative;overflow:hidden;';
+      lockedCard.style.cssText = 'background:linear-gradient(135deg,#0f0f1c,#f7f6f3);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px 22px;position:relative;overflow:hidden;';
       lockedCard.innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
           '<div>' +
@@ -1803,7 +2964,7 @@ async function showMatches() {
     paywallMsg.className = 'msg ai';
     paywallMsg.style.animationDelay = '0s';
     var paywallCard = document.createElement('div');
-    paywallCard.style.cssText = 'background:linear-gradient(135deg,#13132a,#0c0c1a);border:1px solid rgba(74,158,191,0.25);border-radius:16px;padding:28px 24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
+    paywallCard.style.cssText = 'background:linear-gradient(135deg,#f0eeea,#e8e5e0);border:1px solid rgba(24,112,108,0.25);border-radius:16px;padding:28px 24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
     paywallCard.innerHTML =
       '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
       '<div style="font-family:\'Instrument Serif\',serif;font-size:19px;color:var(--text);margin-bottom:8px;line-height:1.3;">Two more roles are waiting.</div>' +
@@ -1812,7 +2973,7 @@ async function showMatches() {
         '<span style="font-family:\'Instrument Serif\',serif;font-size:38px;color:var(--accent);line-height:1;">$12</span>' +
         '<span style="font-size:12px;color:var(--muted);text-align:left;line-height:1.5;">per month<br>cancel anytime</span>' +
       '</div>' +
-      '<a href="STRIPE_LINK" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#09090f;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">Unlock my matches →</a>' +
+      '<a href="STRIPE_LINK" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">Unlock my matches →</a>' +
       '<div style="font-size:11px;color:var(--muted);font-style:italic;">The conversation is always free. No resume required.</div>';
     paywallMsg.appendChild(paywallCard);
     chat.appendChild(paywallMsg);
@@ -1871,7 +3032,18 @@ function showEndActions() {
   wrap.appendChild(againBtn);
   wrap.appendChild(backBtn);
   chat.appendChild(wrap);
-  scrollToBottom();
+  // If bridge exists, close with a plan message — grounds scared users in sequence
+    if (needsBridge && bridgeJob) {
+      await delay(600);
+      var planMsg = (constraints.timeline === 'immediate')
+        ? "Two things: the first you can start this week. The second is where you're actually going. You don't have to choose — you do them in order."
+        : (constraints.hardLimitType === 'credential')
+        ? "The bridge role builds what the bigger roles need. Start there — it's not a detour, it's the route."
+        : "Start with what's reachable. Build toward what's right. Both are in there.";
+      await showAIMessage(planMsg, 500);
+      await delay(400);
+    }
+    scrollToBottom();
 }
 </script>
 </body>
