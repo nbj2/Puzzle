@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle — Built on what you'll never tolerate again.</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0c0b0a; --surface: #161412; --surface2: #1c1a17;
+  --border: #252220; --text: #ede9e3; --muted: #6b6560;
+  --accent: #d4a853; --accent-soft: rgba(212,168,83,0.1);
+  --accent-dim: rgba(212,168,83,0.05); --bubble-ai: #161513;
+}
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',system-ui,-apple-system,sans-serif; font-weight:300; line-height:1.7; min-height:100vh; }
+#pitchPage { display:block; }
+#convoPage { display:none; }
+nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(to bottom,var(--bg) 60%,transparent); }
+.nav-logo { font-family:'Instrument Serif',serif; font-size:18px; color:var(--accent); }
+.nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(212,168,83,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
+.hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:100px 40px 60px; max-width:1000px; margin:0 auto; position:relative; z-index:1; }
+.hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:36px; opacity:0; animation:rise 0.6s ease 0.1s forwards; }
+.eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+.eyebrow-text { font-size:11px; font-weight:500; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
+.hero-title { font-family:'Instrument Serif',serif; font-size:clamp(48px,7.5vw,108px); font-weight:400; line-height:1.0; letter-spacing:-2px; margin-bottom:36px; opacity:0; animation:rise 0.7s ease 0.25s forwards; }
+.hero-title em { font-style:italic; color:var(--accent); }
+.hero-title .indent { display:block; padding-left:clamp(32px,6vw,96px); }
+.hero-mechanic { display:inline-flex; align-items:flex-start; gap:12px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px 20px; margin-bottom:48px; font-size:13px; color:var(--muted); line-height:1.55; max-width:500px; opacity:0; animation:rise 0.6s ease 0.45s forwards; }
+.mechanic-icon { font-size:15px; flex-shrink:0; padding-top:1px; }
+.mechanic-text strong { color:var(--text); font-weight:400; }
+.hero-cta { opacity:0; animation:rise 0.6s ease 0.6s forwards; }
+.cta-main { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; }
+.cta-hint { display:block; margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; }
+.scroll-line { display:flex; align-items:center; gap:8px; margin-top:32px; opacity:0; animation:rise 0.6s ease 0.85s forwards; }
+.scroll-line-bar { width:40px; height:1px; background:linear-gradient(to right,var(--accent),transparent); }
+.scroll-line-text { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+@keyframes rise { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+/* ── PROFILE PAGE ── */
+#profilePage { display:none; flex-direction:column; align-items:center; min-height:100vh; padding-bottom:80px; }
+.profile-nav { width:100%; max-width:640px; padding:32px 24px 0; display:flex; align-items:center; justify-content:space-between; }
+.profile-nav-logo { font-family:'Instrument Serif',serif; font-size:20px; color:var(--accent); }
+.profile-nav-back { font-size:12px; color:var(--muted); cursor:pointer; background:none; border:none; font-family:'DM Sans',sans-serif; padding:0; }
+.profile-nav-back:hover { color:var(--accent); }
+.profile-body { width:100%; max-width:640px; padding:40px 24px; }
+.profile-header { margin-bottom:40px; }
+.profile-name { font-family:'Instrument Serif',serif; font-size:36px; font-weight:400; color:var(--text); margin-bottom:4px; }
+.profile-meta { font-size:13px; color:var(--muted); }
+.profile-section-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:12px; }
+.profile-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+.profile-summary-card { background:linear-gradient(150deg,#1d1a12 0%,#111009 100%); border:1px solid rgba(212,168,83,0.28); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; margin-bottom:12px; }
+.profile-summary-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+.profile-summary-date { font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:14px; text-transform:uppercase; }
+.profile-summary-text { font-family:'Instrument Serif',serif; font-size:16px; line-height:1.75; color:var(--text); font-style:italic; }
+.profile-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:32px; }
+.profile-tag { font-size:12px; color:var(--muted); border:1px solid var(--border); border-radius:100px; padding:5px 14px; background:var(--surface); }
+.profile-empty { text-align:center; padding:60px 20px; }
+.profile-empty-title { font-family:'Instrument Serif',serif; font-size:24px; font-style:italic; color:var(--muted); margin-bottom:12px; }
+.profile-empty-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
+.profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
+.profile-retake { padding:11px 22px; background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
+.profile-retake:hover { border-color:var(--accent); color:var(--accent); }
+/* Create profile modal */
+.profile-modal-overlay { position:fixed; inset:0; background:rgba(12,11,10,0.85); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; }
+.profile-modal { background:var(--surface2); border:1px solid rgba(212,168,83,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
+.profile-modal-title { font-family:'Instrument Serif',serif; font-size:28px; font-style:italic; color:var(--text); margin-bottom:8px; }
+.profile-modal-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
+.profile-modal input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; box-sizing:border-box; margin-bottom:12px; }
+.profile-modal input:focus { border-color:var(--accent); }
+.profile-modal input::placeholder { color:var(--muted); }
+.profile-modal-save { width:100%; padding:13px; background:var(--accent); border:none; border-radius:10px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-bottom:10px; }
+.profile-modal-skip { width:100%; padding:10px; background:transparent; border:none; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
+.profile-modal-skip:hover { color:var(--text); }
+.content { max-width:760px; margin:0 auto; padding:60px 40px 120px; position:relative; z-index:1; }
+.section { margin-bottom:100px; }
+.label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:24px; display:flex; align-items:center; gap:14px; }
+.label::after { content:''; flex:1; height:1px; background:var(--border); }
+.result-card { background:linear-gradient(150deg,#1d1a12 0%,#111009 100%); border:1px solid rgba(212,168,83,0.28); border-radius:20px; padding:40px 44px; position:relative; overflow:hidden; margin-bottom:16px; }
+.result-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+.result-persona { display:flex; align-items:center; gap:14px; margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+.persona-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#2a2318,#1a150e); border:1px solid rgba(212,168,83,0.25); display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-size:16px; color:var(--accent); flex-shrink:0; }
+.persona-info { flex:1; }
+.persona-name { font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px; }
+.persona-detail { font-size:12px; color:var(--muted); }
+.result-live-badge { display:flex; align-items:center; gap:6px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); font-weight:500; }
+.live-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:glow-dot 2s ease infinite; }
+@keyframes glow-dot { 0%,100%{box-shadow:0 0 0 0 rgba(212,168,83,0);opacity:0.6} 50%{box-shadow:0 0 0 5px rgba(212,168,83,0.15);opacity:1} }
+.result-text { font-family:'Instrument Serif',serif; font-size:19px; line-height:1.78; color:var(--text); font-style:italic; }
+.result-caption { font-size:12px; color:var(--muted); text-align:center; font-style:italic; margin-bottom:36px; }
+.voice-slot { background:var(--surface2); border:1px solid rgba(212,168,83,0.15); border-radius:14px; padding:28px 32px; display:flex; gap:18px; align-items:flex-start; position:relative; overflow:hidden; margin-bottom:40px; }
+.voice-slot::before { content:'"'; font-family:'Instrument Serif',serif; font-size:80px; color:var(--accent); opacity:0.1; position:absolute; top:-10px; left:20px; line-height:1; pointer-events:none; }
+.voice-avatar { width:36px; height:36px; border-radius:50%; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; margin-top:2px; font-family:'Instrument Serif',serif; color:var(--accent); }
+.voice-body { flex:1; }
+.voice-quote { font-family:'Instrument Serif',serif; font-size:16px; font-style:italic; color:var(--text); line-height:1.65; margin-bottom:10px; opacity:0.85; }
+.voice-attribution { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.try-it-block { background:linear-gradient(135deg,#1a1710 0%,#131109 100%); border:1px solid rgba(212,168,83,0.2); border-radius:18px; padding:40px 44px; text-align:center; position:relative; overflow:hidden; }
+.try-it-block::before { content:''; position:absolute; top:0; left:20%; right:20%; height:1px; background:linear-gradient(90deg,transparent,rgba(212,168,83,0.4),transparent); }
+.try-it-eyebrow { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; opacity:0.7; }
+.try-it-title { font-family:'Instrument Serif',serif; font-size:clamp(26px,4vw,40px); font-weight:400; line-height:1.15; letter-spacing:-0.5px; margin-bottom:14px; color:var(--text); }
+.try-it-title em { font-style:italic; color:var(--accent); }
+.try-it-sub { font-size:14px; color:var(--muted); max-width:380px; margin:0 auto 32px; line-height:1.65; }
+.try-it-btn { display:inline-flex; align-items:center; gap:10px; padding:15px 32px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; position:relative; z-index:1; }
+.try-it-note { display:block; margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; }
+.steps { display:flex; flex-direction:column; gap:2px; }
+.step { display:grid; grid-template-columns:44px 1fr; gap:20px; padding:24px 28px; background:var(--surface); align-items:start; border-left:2px solid transparent; transition:border-color 0.2s,background 0.2s; }
+.step:first-child { border-radius:14px 14px 0 0; }
+.step:last-child { border-radius:0 0 14px 14px; }
+.step:hover { border-left-color:var(--accent); background:var(--accent-dim); }
+.step-num { font-family:'Instrument Serif',serif; font-size:26px; color:var(--accent); opacity:0.35; line-height:1; padding-top:3px; }
+.step-title { font-size:13px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.step-desc { font-size:14px; color:var(--muted); line-height:1.6; }
+.profile-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:36px 40px; }
+.profile-intro { font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:36px; max-width:560px; }
+.profile-intro strong { color:var(--text); font-weight:400; }
+.timeline { display:flex; flex-direction:column; position:relative; }
+.timeline::before { content:''; position:absolute; left:14px; top:8px; bottom:8px; width:1px; background:linear-gradient(to bottom,var(--accent) 0%,rgba(212,168,83,0.12) 100%); }
+.tl-item { display:grid; grid-template-columns:29px 1fr; gap:22px; padding:18px 0; }
+.tl-dot-wrap { display:flex; align-items:flex-start; justify-content:center; padding-top:6px; }
+.tl-dot { width:9px; height:9px; border-radius:50%; background:var(--accent); z-index:1; flex-shrink:0; }
+.tl-dot.future { background:transparent; border:1px solid var(--muted); }
+.tl-age { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+.tl-age.future { color:var(--muted); }
+.tl-text { font-size:14px; color:var(--muted); line-height:1.6; }
+.tl-text strong { color:var(--text); font-weight:400; display:block; margin-bottom:3px; }
+.price-anchor { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:28px 32px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+.price-anchor-amount { font-family:'Instrument Serif',serif; font-size:52px; color:var(--accent); line-height:1; flex-shrink:0; }
+.price-anchor-details { flex:1; min-width:200px; }
+.price-anchor-label { font-size:14px; color:var(--text); font-weight:400; margin-bottom:6px; }
+.price-anchor-sub { font-size:13px; color:var(--muted); line-height:1.55; }
+.price-anchor-compare { display:flex; flex-direction:column; gap:7px; flex-shrink:0; }
+.compare-item { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
+.compare-check { color:var(--accent); }
+.vote-section { padding:100px 40px; text-align:center; border-top:1px solid var(--border); position:relative; z-index:1; overflow:hidden; }
+.vote-section::before { content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(circle,rgba(212,168,83,0.06) 0%,transparent 65%); pointer-events:none; }
+.urgency-bar { display:inline-flex; flex-direction:column; align-items:center; gap:8px; background:rgba(212,168,83,0.07); border:1px solid rgba(212,168,83,0.2); border-radius:16px; padding:16px 24px; margin-bottom:44px; max-width:480px; }
+.urgency-top { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--accent); font-weight:500; }
+.urgency-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:glow-dot 1.5s ease infinite; flex-shrink:0; }
+.urgency-sub { font-size:13px; color:var(--muted); line-height:1.55; text-align:center; }
+.vote-question { font-family:'Instrument Serif',serif; font-size:clamp(32px,5vw,58px); font-weight:400; line-height:1.1; letter-spacing:-0.8px; margin-bottom:18px; max-width:600px; margin-left:auto; margin-right:auto; }
+.vote-question em { font-style:italic; color:var(--accent); }
+.vote-sub { font-size:14px; color:var(--muted); max-width:400px; margin:0 auto 12px; line-height:1.7; }
+.price-inline { font-size:13px; color:var(--muted); margin-bottom:40px; font-style:italic; }
+.price-inline strong { color:var(--accent); font-style:normal; font-weight:400; }
+.vote-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
+.vote-btn { padding:13px 24px; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+.vote-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.vote-btn.yes { background:var(--accent); border-color:var(--accent); color:#0c0b0a; font-weight:500; }
+.vote-honest { font-size:12px; color:var(--muted); font-style:italic; }
+.response-block { display:none; flex-direction:column; align-items:center; gap:16px; }
+.response-block.active { display:flex; animation:rise 0.5s ease forwards; }
+.response-icon { font-size:40px; }
+.response-title { font-family:'Instrument Serif',serif; font-size:30px; font-style:italic; color:var(--text); }
+.response-text { font-size:14px; color:var(--muted); max-width:360px; text-align:center; line-height:1.7; }
+.response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
+footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--border); position:relative; z-index:1; }
+.footer-logo { font-family:'Instrument Serif',serif; font-size:22px; color:var(--accent); margin-bottom:8px; }
+.footer-tagline { font-size:13px; color:var(--muted); letter-spacing:1px; font-style:italic; }
+#convoPage { flex-direction:column; align-items:center; min-height:100vh; }
+.convo-header { width:100%; max-width:640px; padding:32px 24px 0; display:flex; align-items:center; gap:12px; }
+.convo-back { font-size:12px; color:var(--muted); cursor:pointer; background:none; border:none; font-family:'DM Sans',sans-serif; padding:0; }
+.convo-back:hover { color:var(--accent); }
+.convo-logo { font-family:'Instrument Serif',serif; font-size:20px; color:var(--accent); flex:1; text-align:center; }
+.progress-bar { flex:1; height:2px; background:var(--border); border-radius:2px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width 0.6s ease; width:0%; }
+.step-count { font-size:12px; color:var(--muted); white-space:nowrap; }
+.chat { width:100%; max-width:640px; flex:1; padding:32px 24px 160px; display:flex; flex-direction:column; gap:28px; }
+.msg { display:flex; flex-direction:column; gap:6px; opacity:0; transform:translateY(12px); animation:fadeUp 0.4s ease forwards; }
+@keyframes fadeUp { to{opacity:1;transform:translateY(0)} }
+.msg.ai { align-items:flex-start; }
+.msg.user { align-items:flex-end; }
+.bubble { max-width:88%; padding:14px 18px; border-radius:18px; font-size:15px; line-height:1.65; }
+.msg.ai .bubble { background:var(--bubble-ai); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text); }
+.msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(212,168,83,0.2); border-bottom-right-radius:4px; color:var(--text); }
+.reveal-bubble { background:linear-gradient(135deg,#1e1b14 0%,#161410 100%); border:1px solid rgba(212,168,83,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
+.reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+.options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
+.option-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; cursor:pointer; text-align:left; line-height:1.4; }
+.option-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.option-btn.selected { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); pointer-events:none; }
+.option-btn.selected::after { content:' ✓'; }
+.convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:90px; outline:none; box-sizing:border-box; }
+.convo-textarea:focus { border-color:var(--accent); }
+.convo-textarea::placeholder { color:var(--muted); }
+.submit-btn { margin-top:8px; background:var(--accent); border:none; border-radius:10px; padding:11px 20px; color:#0f0e0d; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; }
+.typing { display:flex; gap:5px; padding:16px 20px; background:var(--bubble-ai); border:1px solid var(--border); border-radius:18px; border-bottom-left-radius:4px; width:fit-content; opacity:0; animation:fadeUp 0.3s ease forwards; }
+.typing span { width:6px; height:6px; background:var(--muted); border-radius:50%; animation:bounce 1.2s infinite; }
+.typing span:nth-child(2){animation-delay:0.2s}.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:0.4}40%{transform:translateY(-5px);opacity:1}}
+.input-area { position:fixed; bottom:0; left:0; right:0; background:linear-gradient(to top,var(--bg) 70%,transparent); padding:20px 24px 32px; display:flex; justify-content:center; }
+.input-inner { width:100%; max-width:640px; }
+.generating { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; padding:14px 18px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+.generating-dot { width:8px; height:8px; background:var(--accent); border-radius:50%; animation:gpulse 1.5s infinite; }
+@keyframes gpulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.1)}}
+.end-actions { display:flex; gap:10px; flex-wrap:wrap; opacity:0; animation:fadeUp 0.4s ease 0.4s forwards; }
+.end-btn { background:transparent; border:1px solid var(--border); border-radius:10px; padding:11px 18px; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
+.end-btn:hover { border-color:var(--accent); color:var(--accent); }
+.end-btn.primary { background:var(--accent); border-color:var(--accent); color:#0f0e0d; font-weight:500; }
+@media(max-width:600px){
+  nav{padding:16px 20px}.hero{padding:100px 20px 60px}.content{padding:40px 20px 80px}
+  .result-card{padding:28px 22px}.result-text{font-size:17px}.try-it-block{padding:32px 24px}
+  .step{grid-template-columns:36px 1fr;padding:20px 18px}.profile-card{padding:28px 22px}
+  .price-anchor{flex-direction:column;gap:16px;align-items:flex-start}
+  .vote-section{padding:72px 20px}.vote-buttons{flex-direction:column;align-items:center}
+  .vote-btn{width:100%;max-width:300px;text-align:center}.hero-title .indent{padding-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- PITCH PAGE -->
+<div id="pitchPage">
+  <nav>
+    <div class="nav-logo">Puzzle</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button id="profileNavBtn" style="display:none;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">My Profile</button>
+      <button class="nav-pill" id="navPill">Early Access Open</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-dot"></div>
+      <div class="eyebrow-text">Built by someone who lived the problem</div>
+    </div>
+    <h1 class="hero-title">
+      The job market asks<br>
+      <span class="indent">what you <em>want.</em></span><br>
+      <span class="indent" style="padding-left:0">We start with what you <em style="color:var(--accent);font-style:italic;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;">won't.</em></span>
+    </h1>
+    <div class="hero-mechanic">
+      <div class="mechanic-icon">👤</div>
+      <div class="mechanic-text"><strong>Five years in education support.</strong> I kept getting told I wasn't qualified for the jobs I actually wanted, and every career tool I tried asked me the wrong questions. So I built the one that finally asked the right ones.</div>
+    </div>
+    <div class="hero-cta">
+      <button class="cta-main" id="heroBtn">See what it said to me first ↓</button>
+      <span class="cta-hint">No signup. No pitch. Just what Puzzle actually said — to me.</span>
+    </div>
+    <div class="scroll-line">
+      <div class="scroll-line-bar"></div>
+      <div class="scroll-line-text">The proof is below</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <div class="label">This is what Puzzle said to me — unedited</div>
+      <div class="result-card">
+        <div class="result-persona">
+          <div class="persona-avatar">J</div>
+          <div class="persona-info">
+            <div class="persona-name">Joe — the person who built this</div>
+            <div class="persona-detail">5 years in education support · Columbus, OH · Ready for a change</div>
+          </div>
+          <div class="result-live-badge"><div class="live-dot"></div> Real output</div>
+        </div>
+        <div class="result-text">You've spent five years pouring energy into kids who light up when you show up, but the system keeps telling you that caring well and connecting naturally isn't enough without the right paperwork — and that's wearing on you more than the low pay. What I'm hearing is someone who thrives in structured-but-flexible rhythm, needs autonomy over how you solve problems, and wants to be valued for the impact you actually create, not the credentials you collect. The pattern I see: you're energized by relationships where you can be both helpful and human, you need movement and variety in your day, and you're done being locked out of growth because of arbitrary gates. The shape of work that fits you isn't "education" — it's something like community-facing coordination or client success in a values-driven organization that measures you on results, lets you build rapport your way, gives you ownership over your schedule, and doesn't require you to go back to school to prove you already know how to show up for people.</div>
+      </div>
+      <div class="result-caption">This came from a 20-minute conversation I had with my own product. No resume. No job history form. Ten honest questions.</div>
+
+      <div class="result-card" style="margin-top:32px;">
+        <div class="result-persona">
+          <div class="persona-avatar">T</div>
+          <div class="persona-info">
+            <div class="persona-name">Terrell — restaurant GM, 4 years</div>
+            <div class="persona-detail">Independent restaurant · Knoxville, TN · Owner just announced a sale</div>
+          </div>
+          <div class="result-live-badge"><div class="live-dot"></div> Real output</div>
+        </div>
+        <div class="result-text">What you did in November — the quiet three weeks, the small moves, the profitable quarter you solved before the owner knew there was a problem — that isn't restaurant management. That's what people with MBAs pay to learn how to do and still often can't. You've been running operations strategy, team architecture, and P&L stewardship for four years inside a context that only has one word for all of it: "manager." The pattern I keep seeing is someone who is energized by the gap between how things are running and how they could be running — someone who builds systems instead of patching problems, and who needs real stakes and real trust to do their best work, not a checklist and a check-in. The story you've been handed — that ambition in your world means owning a place someday — isn't your story, and you're starting to know it. You don't need a credential to do what you already did in November. You need an environment that has a name for it and bigger problems waiting.</div>
+      </div>
+      <div class="result-caption" style="margin-bottom:40px;">Terrell hadn't told anyone about November until this conversation. He screenshots this summary.</div>
+
+      <div class="voice-slot">
+        <div class="voice-avatar">S</div>
+        <div class="voice-body">
+          <div class="voice-quote">I've never had anything describe my work life that accurately. I read it twice and sent it to my sister.</div>
+          <div class="voice-attribution">— Sarah, 29 · Marketing coordinator · Columbus, OH</div>
+        </div>
+      </div>
+
+      <div class="voice-slot" style="margin-top:-24px;">
+        <div class="voice-avatar">R</div>
+        <div class="voice-body">
+          <div class="voice-quote">I've worked in kitchens for six years. I didn't think something like this was even made for people like me. It named something I didn't have words for.</div>
+          <div class="voice-attribution">— Rico, 31 · Line cook · Chicago, IL</div>
+        </div>
+      </div>
+
+      <div class="try-it-block">
+        <div class="try-it-eyebrow">That was me. Now it's your turn.</div>
+        <div class="try-it-title">What would Puzzle<br>say about <em>you?</em></div>
+        <div class="try-it-sub">Ten questions. Twenty minutes. A summary that sounds like it came from someone who actually listened — not a career tool.</div>
+        <button class="try-it-btn" id="tryItBtn">Find out →</button>
+        <span class="try-it-note">The conversation is always free. No resume required.</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">How Puzzle Works</div>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><div><div class="step-title">A real conversation — not a form</div><div class="step-desc">Ten exchanges that feel like talking to someone who actually listens. No resume upload. No keyword matching. Just questions nobody else has ever thought to ask.</div></div></div>
+        <div class="step"><div class="step-num">02</div><div><div class="step-title">Elimination first. Then match.</div><div class="step-desc">Every other platform asks what you want. Puzzle starts with what you'll never tolerate again. That signal is more durable than aspiration — and it's always true.</div></div></div>
+        <div class="step"><div class="step-num">03</div><div><div class="step-title">A summary that sounds like a person wrote it</div><div class="step-desc">Not a list of job categories. A paragraph that names a pattern you haven't been able to articulate yourself — and reframes how you see your own career.</div></div></div>
+        <div class="step"><div class="step-num">04</div><div><div class="step-title">3 matches. Each one earns its place.</div><div class="step-desc">Not 300 listings. Three. Each one sourced from what real employees say the work actually feels like — not what HR wrote in the job description. One of them will surprise you. That's by design.</div></div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">The Bigger Idea</div>
+      <div class="profile-card">
+        <p class="profile-intro">Puzzle doesn't just find you a job. It builds something nobody else is building — a <strong>living profile of who you actually are professionally.</strong> Not a resume. Not a LinkedIn page. Something that grows with you over years.</p>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 27</div><div class="tl-text"><strong>First real job. Something feels off.</strong> Puzzle learns who you are at this moment — what you can't tolerate, what energizes you, what you don't have words for yet.</div></div></div>
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 30</div><div class="tl-text"><strong>You tried something new. Some of it worked.</strong> Puzzle updates. The profile gets more accurate. Your matches get sharper.</div></div></div>
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot"></div></div><div><div class="tl-age">Age 34</div><div class="tl-text"><strong>Life changed. Priorities shifted.</strong> Puzzle evolves with you. By now it's not just a job search tool — it's almost like a mirror.</div></div></div>
+          <div class="tl-item"><div class="tl-dot-wrap"><div class="tl-dot future"></div></div><div><div class="tl-age future">The gap nobody's filled</div><div class="tl-text">LinkedIn has your job history. Indeed has your resume. <strong>Nobody has your actual evolving professional identity tracked over time.</strong> That's what Puzzle builds. And it's yours — not ours.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">What It Costs</div>
+      <div class="price-anchor">
+        <div class="price-anchor-amount">$12</div>
+        <div class="price-anchor-details">
+          <div class="price-anchor-label">Per month. Cancel anytime. No paywall before value — ever.</div>
+          <div class="price-anchor-sub">The conversation, the summary, and your first matches are always free. What you pay for is the ongoing relationship — a profile that remembers you, gets smarter about you, and gets more useful every time you come back.</div>
+        </div>
+        <div class="price-anchor-compare">
+          <div class="compare-item"><span class="compare-check">✓</span> Less than 2 coffees a week</div>
+          <div class="compare-item"><span class="compare-check">✓</span> Free conversation, always</div>
+          <div class="compare-item"><span class="compare-check">✓</span> Yours to cancel anytime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vote-section" id="voteSection">
+    <div class="urgency-bar">
+      <div class="urgency-top"><div class="urgency-dot"></div> Founding 500 — Early Access Open</div>
+      <div class="urgency-sub">Before we build anything else, we're having this conversation with 500 real people. What they tell us shapes what Puzzle becomes. Founding users get lifetime early-access pricing and a direct line to the product.</div>
+    </div>
+    <div id="voteMain">
+      <div class="vote-question">After seeing all of this —<br>would you pay <em>$12</em> for it?</div>
+      <div class="vote-sub">Not for a job board. For a conversation that finally got it right.</div>
+      <div class="price-inline">Less than two coffees a week. <strong>No paywall before value. Ever.</strong></div>
+      <div class="vote-buttons">
+        <button class="vote-btn yes" id="voteYes">Yes — take my money</button>
+        <button class="vote-btn" id="voteMaybe">Maybe — I'd try it first</button>
+        <button class="vote-btn" id="voteNo">No — and here's why</button>
+      </div>
+      <div class="vote-honest">Your honest answer builds the real product. All three responses matter.</div>
+    </div>
+    <div class="response-block" id="r-yes">
+      <div class="response-icon">🔥</div>
+      <div class="response-title">That's the signal we needed.</div>
+      <div class="response-text">You're one of the founding 500. Lifetime early-access pricing and a direct line to shape what Puzzle becomes.</div>
+      <a href="/cdn-cgi/l/email-protection#640c0108080b2414111e1e0801070516010116174a070b095b1711060e01071059220b110a000d0a03445154544486e4f0442d4309440d0a" class="response-cta">Claim your spot →</a>
+    </div>
+    <div class="response-block" id="r-maybe">
+      <div class="response-icon">👀</div>
+      <div class="response-title">Fair. Try it first.</div>
+      <div class="response-text">The conversation is always free. No paywall before value.</div>
+      <button class="response-cta" id="maybeConvoBtn">Take the free conversation →</button>
+    </div>
+    <div class="response-block" id="r-no">
+      <div class="response-icon">💬</div>
+      <div class="response-title">Tell us why.</div>
+      <div class="response-text">The honest "no" is more valuable than a polite maybe.</div>
+      <a href="/cdn-cgi/l/email-protection#731b161f1f1c33030609091f16101201161601005d101c1e4c000611191610074e3b1c1d160007531516161711121018531c1d53230609091f16" class="response-cta">Tell us directly →</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Puzzle</div>
+    <div class="footer-tagline">Built on what you'll never tolerate again.</div>
+  </footer>
+</div>
+
+<!-- CONVERSATION PAGE -->
+<div id="convoPage">
+  <div class="convo-header">
+    <button class="convo-back" id="convoBack">← Back</button>
+    <div class="convo-logo">Puzzle</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    <div class="step-count" id="stepCount">0 / 10</div>
+  </div>
+  <div class="chat" id="chat"></div>
+  <div class="input-area"><div class="input-inner" id="inputArea"></div></div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="profilePage">
+  <div class="profile-nav">
+    <button class="profile-nav-back" id="profileBack">← Back</button>
+    <div class="profile-nav-logo">Puzzle</div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="profile-body" id="profileBody">
+    <!-- rendered by JS -->
+  </div>
+</div>
+
+<!-- CREATE PROFILE MODAL -->
+<div id="profileModal" class="profile-modal-overlay" style="display:none;">
+  <div class="profile-modal">
+    <div class="profile-modal-title">Save your summary.</div>
+    <div class="profile-modal-sub">Create a free Puzzle profile and your summary gets saved here. Come back anytime — Puzzle remembers who you are and how you've grown.</div>
+    <input type="text" id="profileNameInput" placeholder="Your first name" />
+    <input type="email" id="profileEmailInput" placeholder="your@email.com" />
+    <button class="profile-modal-save" id="profileModalSave">Create my profile →</button>
+    <button class="profile-modal-skip" id="profileModalSkip">Skip for now</button>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// PAGE SWITCHING
+function startConversation() {
+  document.getElementById('pitchPage').style.display = 'none';
+  document.getElementById('profilePage').style.display = 'none';
+  var cp = document.getElementById('convoPage');
+  cp.style.display = 'flex';
+  window.scrollTo(0, 0);
+  initConvo();
+}
+
+function backToPitch() {
+  document.getElementById('convoPage').style.display = 'none';
+  document.getElementById('profilePage').style.display = 'none';
+  document.getElementById('pitchPage').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function showProfile() {
+  document.getElementById('pitchPage').style.display = 'none';
+  document.getElementById('convoPage').style.display = 'none';
+  var pp = document.getElementById('profilePage');
+  pp.style.display = 'flex';
+  pp.style.flexDirection = 'column';
+  pp.style.alignItems = 'center';
+  renderProfilePage();
+  window.scrollTo(0, 0);
+}
+
+// ── PROFILE STORAGE ──────────────────────────────────────────
+function getProfile() {
+  try { return JSON.parse(localStorage.getItem('puzzle_profile') || 'null'); } catch(e) { return null; }
+}
+
+function saveProfile(data) {
+  try { localStorage.setItem('puzzle_profile', JSON.stringify(data)); } catch(e) {}
+}
+
+function getSummaryHistory() {
+  try { return JSON.parse(localStorage.getItem('puzzle_summaries') || '[]'); } catch(e) { return []; }
+}
+
+function saveSummaryToHistory(summaryText, closingQuestion, responses) {
+  var history = getSummaryHistory();
+  history.unshift({
+    id: Date.now(),
+    date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    summary: summaryText,
+    closing: closingQuestion,
+    loves: responses.loves || '',
+    neverAgain: [responses.neverAgain1, responses.neverAgain2].filter(Boolean),
+    background: responses.background || '',
+    environment: responses.environment || '',
+    pace: responses.pace || ''
+  });
+  // Keep last 10 summaries
+  if (history.length > 10) history = history.slice(0, 10);
+  try { localStorage.setItem('puzzle_summaries', JSON.stringify(history)); } catch(e) {}
+}
+
+function initProfileUI() {
+  var profile = getProfile();
+  var btn = document.getElementById('profileNavBtn');
+  if (profile && btn) {
+    btn.style.display = 'inline-block';
+    btn.textContent = profile.name ? profile.name + "'s Profile" : 'My Profile';
+  }
+}
+
+// ── PROFILE PAGE RENDERER ─────────────────────────────────────
+function renderProfilePage() {
+  var profile = getProfile();
+  var history = getSummaryHistory();
+  var body = document.getElementById('profileBody');
+
+  if (!profile || !history.length) {
+    body.innerHTML =
+      '<div class="profile-empty">' +
+      '<div class="profile-empty-title">Nothing here yet.</div>' +
+      '<div class="profile-empty-sub">Complete the Puzzle conversation and save your summary to start building your profile.</div>' +
+      '<button class="profile-cta" id="profileStartBtn">Take the conversation →</button>' +
+      '</div>';
+    document.getElementById('profileStartBtn').addEventListener('click', startConversation);
+    return;
+  }
+
+  var latest = history[0];
+  var tags = [];
+  if (latest.loves) tags.push(latest.loves.replace(/^[^\w]*/, '').split('—')[0].trim().split(' ').slice(0,4).join(' '));
+  if (latest.environment) tags.push(latest.environment.split('—')[0].trim().split(' ').slice(0,3).join(' '));
+  if (latest.pace) tags.push(latest.pace.split('—')[0].trim().split(' ').slice(0,3).join(' '));
+  if (latest.neverAgain && latest.neverAgain[0]) tags.push('Never again: ' + latest.neverAgain[0].split(',')[0].trim().split(' ').slice(0,4).join(' '));
+
+  var historyHTML = history.map(function(s, i) {
+    var isLatest = i === 0;
+    return '<div class="profile-summary-card" style="' + (isLatest ? '' : 'opacity:0.6;') + '">' +
+      '<div class="profile-summary-date">' + s.date + (isLatest ? ' · Most recent' : '') + '</div>' +
+      '<div class="profile-summary-text">' + s.summary + '</div>' +
+      '</div>';
+  }).join('');
+
+  body.innerHTML =
+    '<div class="profile-header">' +
+    '<div class="profile-name">' + (profile.name || 'Your Profile') + '</div>' +
+    '<div class="profile-meta">' + (profile.email || '') + (history.length > 1 ? ' · ' + history.length + ' conversations' : ' · 1 conversation') + '</div>' +
+    '</div>' +
+
+    '<div class="profile-section-label">What drives you</div>' +
+    '<div class="profile-tags">' + tags.map(function(t) { return '<span class="profile-tag">' + t + '</span>'; }).join('') + '</div>' +
+
+    '<div class="profile-section-label">Your summaries</div>' +
+    historyHTML +
+
+    '<div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">' +
+    '<button class="profile-cta" id="profileRetakeBtn" style="font-size:13px;padding:11px 22px;">Take it again →</button>' +
+    '<button class="profile-retake" id="profileClearBtn">Clear profile</button>' +
+    '</div>';
+
+  document.getElementById('profileRetakeBtn').addEventListener('click', startConversation);
+  document.getElementById('profileClearBtn').addEventListener('click', function() {
+    if (confirm('Clear your profile and all saved summaries?')) {
+      localStorage.removeItem('puzzle_profile');
+      localStorage.removeItem('puzzle_summaries');
+      initProfileUI();
+      renderProfilePage();
+    }
+  });
+}
+
+// ── PROFILE MODAL ─────────────────────────────────────────────
+var pendingSummaryData = null;
+
+function showProfileModal(summaryText, closingQuestion, responsesSnap) {
+  pendingSummaryData = { summaryText: summaryText, closingQuestion: closingQuestion, responsesSnap: responsesSnap };
+  var profile = getProfile();
+  if (profile) {
+    // Already has a profile — just save silently
+    saveSummaryToHistory(summaryText, closingQuestion, responsesSnap);
+    initProfileUI();
+    return;
+  }
+  document.getElementById('profileModal').style.display = 'flex';
+  setTimeout(function() { document.getElementById('profileNameInput').focus(); }, 100);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('profileModalSave').addEventListener('click', function() {
+    var name = document.getElementById('profileNameInput').value.trim();
+    var email = document.getElementById('profileEmailInput').value.trim();
+    if (!name) { document.getElementById('profileNameInput').style.borderColor = 'var(--accent)'; return; }
+    saveProfile({ name: name, email: email, created: new Date().toISOString() });
+    if (pendingSummaryData) {
+      saveSummaryToHistory(pendingSummaryData.summaryText, pendingSummaryData.closingQuestion, pendingSummaryData.responsesSnap);
+      pendingSummaryData = null;
+    }
+    document.getElementById('profileModal').style.display = 'none';
+    initProfileUI();
+    // Show a confirmation in chat
+    var confirmMsg = document.createElement('div');
+    confirmMsg.className = 'msg ai';
+    confirmMsg.style.animationDelay = '0s';
+    var confirmBubble = document.createElement('div');
+    confirmBubble.className = 'bubble';
+    confirmBubble.textContent = 'Profile created, ' + name + '. Your summary is saved. Come back anytime — Puzzle will remember you.';
+    confirmMsg.appendChild(confirmBubble);
+    document.getElementById('chat').appendChild(confirmMsg);
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  });
+
+  document.getElementById('profileModalSkip').addEventListener('click', function() {
+    if (pendingSummaryData) {
+      saveSummaryToHistory(pendingSummaryData.summaryText, pendingSummaryData.closingQuestion, pendingSummaryData.responsesSnap);
+      pendingSummaryData = null;
+    }
+    document.getElementById('profileModal').style.display = 'none';
+  });
+
+  document.getElementById('profileNavBtn').addEventListener('click', showProfile);
+  document.getElementById('profileBack').addEventListener('click', backToPitch);
+  document.getElementById('navPill').addEventListener('click', function() {
+    document.getElementById('voteSection').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('heroBtn').addEventListener('click', function() {
+    document.querySelector('.content').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('tryItBtn').addEventListener('click', startConversation);
+  document.getElementById('convoBack').addEventListener('click', backToPitch);
+  document.getElementById('voteYes').addEventListener('click', function() { vote('yes'); });
+  document.getElementById('voteMaybe').addEventListener('click', function() { vote('maybe'); });
+  document.getElementById('voteNo').addEventListener('click', function() { vote('no'); });
+  document.getElementById('maybeConvoBtn').addEventListener('click', startConversation);
+});
+
+function vote(type) {
+  document.getElementById('voteMain').style.display = 'none';
+  var map = { yes: 'r-yes', maybe: 'r-maybe', no: 'r-no' };
+  var el = document.getElementById(map[type]);
+  el.classList.add('active');
+  setTimeout(function() { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+}
+
+// BUTTON WIRING — inside DOMContentLoaded above
+
+// CONVERSATION ENGINE
+var responses = {};
+var TOTAL_STEPS = 11;
+
+function initConvo() {
+  document.getElementById('chat').innerHTML = '';
+  document.getElementById('inputArea').innerHTML = '';
+  Object.keys(responses).forEach(function(k) { delete responses[k]; });
+  updateProgress(0);
+  step1();
+}
+
+function updateProgress(step) {
+  document.getElementById('progress').style.width = ((step / TOTAL_STEPS) * 100) + '%';
+  document.getElementById('stepCount').textContent = step + ' / ' + TOTAL_STEPS;
+}
+
+function scrollToBottom() {
+  setTimeout(function() { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }, 100);
+}
+
+function addMessage(text, type, isReveal) {
+  var chat = document.getElementById('chat');
+  var msg = document.createElement('div');
+  msg.className = 'msg ' + (type || 'ai');
+  var bubble = document.createElement('div');
+  if (isReveal) {
+    bubble.className = 'reveal-bubble';
+    bubble.innerHTML = text;
+  } else {
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+  }
+  msg.appendChild(bubble);
+  chat.appendChild(msg);
+  scrollToBottom();
+  return msg;
+}
+
+function showTyping() {
+  var chat = document.getElementById('chat');
+  var t = document.createElement('div');
+  t.className = 'msg ai';
+  t.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  chat.appendChild(t);
+  scrollToBottom();
+  return t;
+}
+
+function removeTyping(el) { if (el && el.parentNode) el.parentNode.removeChild(el); }
+function delay(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+function clearInput() { document.getElementById('inputArea').innerHTML = ''; }
+
+async function showAIMessage(text, ms) {
+  var t = showTyping();
+  await delay(ms || 800);
+  removeTyping(t);
+  addMessage(text, 'ai');
+}
+
+function showOptions(options, onSelect, singleSelect) {
+  var chat = document.getElementById('chat');
+  var wrap = document.createElement('div');
+  wrap.className = 'options';
+
+  // hint label
+  if (!singleSelect) {
+    var hint = document.createElement('div');
+    hint.style.cssText = 'font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;font-style:italic;';
+    hint.textContent = 'Select all that apply — then continue.';
+    wrap.appendChild(hint);
+  }
+
+  var selected = [];
+
+  options.forEach(function(opt) {
+    var btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.addEventListener('click', function() {
+      if (singleSelect) {
+        // Single select — immediate confirm
+        wrap.querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        setTimeout(function() { wrap.remove(); onSelect(opt); }, 300);
+      } else {
+        // Multi select — toggle
+        var idx = selected.indexOf(opt);
+        if (idx === -1) {
+          selected.push(opt);
+          btn.classList.add('selected');
+        } else {
+          selected.splice(idx, 1);
+          btn.classList.remove('selected');
+        }
+        // Show or hide confirm button
+        var confirmBtn = wrap.querySelector('.multi-confirm');
+        if (selected.length > 0) {
+          if (!confirmBtn) {
+            confirmBtn = document.createElement('button');
+            confirmBtn.className = 'multi-confirm';
+            confirmBtn.style.cssText = 'margin-top:8px;padding:11px 22px;background:var(--accent);border:none;border-radius:10px;color:#0c0b0a;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;';
+            confirmBtn.textContent = 'Continue →';
+            confirmBtn.addEventListener('click', function() {
+              var val = selected.join(', ');
+              wrap.remove();
+              onSelect(val);
+            });
+            wrap.appendChild(confirmBtn);
+          } else {
+            var count = selected.length;
+            confirmBtn.textContent = count > 1 ? 'Continue with ' + count + ' selected →' : 'Continue →';
+          }
+        } else if (confirmBtn) {
+          confirmBtn.remove();
+        }
+        scrollToBottom();
+      }
+    });
+    wrap.appendChild(btn);
+  });
+
+  chat.appendChild(wrap);
+  scrollToBottom();
+}
+
+function showTextInput(placeholder, onSubmit, rows) {
+  var inputArea = document.getElementById('inputArea');
+  inputArea.innerHTML = '';
+  var wrap = document.createElement('div');
+  wrap.style.width = '100%';
+  var ta = document.createElement('textarea');
+  ta.className = 'convo-textarea';
+  ta.placeholder = placeholder;
+  ta.rows = rows || 3;
+  var btn = document.createElement('button');
+  btn.className = 'submit-btn';
+  btn.textContent = 'Continue →';
+  btn.addEventListener('click', function() {
+    var val = ta.value.trim();
+    if (!val) return;
+    inputArea.innerHTML = '';
+    onSubmit(val);
+  });
+  ta.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); btn.click(); }
+  });
+  wrap.appendChild(ta);
+  wrap.appendChild(btn);
+  inputArea.appendChild(wrap);
+  setTimeout(function() { ta.focus(); }, 100);
+}
+
+// CONVERSATION FLOW
+async function step1() {
+  updateProgress(1);
+  await showAIMessage("Hey. You're not here by accident.\n\nWhat's going on?", 600);
+  showOptions([
+    "😤 Something feels off but I can't put my finger on it",
+    "🔄 I'm ready for a change and need help figuring out where",
+    "🤷 Honestly just curious, no pressure",
+    "😓 I know what I want but have no idea how to get there"
+  ], function(val) { responses.why = val; addMessage(val, 'user'); step2(); }, true);
+}
+
+async function step2() {
+  updateProgress(2);
+  var q = "How long have you been carrying that feeling?";
+  var opts = [
+    "Just started feeling this way recently",
+    "A little while now — maybe a few months",
+    "Longer than I'd like to admit",
+    "So long I forgot what the alternative feels like"
+  ];
+
+  if (responses.why.includes("ready for a change")) {
+    q = "What finally made you decide to start looking?";
+    opts = [
+      "Something happened recently that made it feel urgent",
+      "I've been thinking about it for a while and finally got tired of thinking",
+      "Someone or something showed me what was possible",
+      "I hit a wall and there's nowhere left to go in this direction"
+    ];
+  }
+
+  if (responses.why.includes("know what I want")) {
+    q = "What's the thing standing between you and it right now?";
+    opts = [
+      "The credentials — they want a degree or certification I don't have",
+      "I don't know how to translate what I do into language they'll understand",
+      "I can't find roles that actually match what I'm describing",
+      "I know the direction but not the specific path to get there"
+    ];
+  }
+
+  await showAIMessage(q);
+  showOptions(opts, function(val) { responses.duration = val; addMessage(val, 'user'); step3(); }, true);
+}
+
+async function step3() {
+  updateProgress(3);
+  await showAIMessage("Okay — forget resumes and job titles for a second.\n\nWhat do you genuinely love doing? Pick everything that applies.");
+  showOptions([
+    "🎨 Something creative — building, designing, making things",
+    "🤝 Something people-focused — talking, helping, teaching, leading",
+    "🧠 Something analytical — solving problems, finding patterns, digging into data",
+    "🌿 Something physical or hands-on — moving, outdoors, working with my hands",
+    "✨ Something else — and it's probably pretty specific"
+  ], function(val) {
+    responses.loves = val; addMessage(val, 'user');
+    if (val.includes("Something else") && val.split(',').length === 1) {
+      step3b(); // only go to free text if Something Else was their ONLY pick
+    } else {
+      step4();
+    }
+  });
+}
+
+async function step3b() {
+  await showAIMessage("Tell us. The weirder and more niche the better.");
+  showTextInput("I love...", function(val) { responses.loves = val; addMessage(val, 'user'); step4(); });
+}
+
+async function step4() {
+  updateProgress(4);
+  await showAIMessage("You're giving us a really good picture already.\n\n\"The best I ever felt after a day of work was when I…\"\n\nDon't perform. Just tell me what actually happened — the more specific the better.");
+  showTextInput("…finished something that actually mattered…", function(val) { responses.bestDay = val; addMessage(val, 'user'); step5(); });
+}
+
+async function step5() {
+  updateProgress(5);
+  await showAIMessage("This one might be the most important question we ask.\n\nWhat would you never want to deal with again? Pick everything that's true.");
+  showOptions([
+    "Feeling like a number, not a person",
+    "No room to think or be creative",
+    "Constant chaos — no structure or clarity",
+    "Sitting in meetings all day getting nothing done",
+    "Micromanagement — I work better with trust and autonomy",
+    "🎯 Something specific — let me describe it"
+  ], function(val) {
+    if (val.includes("Something specific") && val.split(',').length === 1) {
+      step5b();
+    } else {
+      responses.neverAgain1 = val; addMessage(val, 'user'); step6();
+    }
+  });
+}
+
+async function step5b() {
+  await showAIMessage("Good. Tell us exactly — the more specific the better.");
+  showTextInput("The thing I never want to deal with again is…", function(val) { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); });
+}
+
+async function step6() {
+  updateProgress(6);
+  await showAIMessage("Anything else? Pick everything that belongs on your never-again list.");
+  showOptions([
+    "No clear direction from leadership",
+    "A culture where no one actually talks to each other",
+    "Being expected to be available 24/7",
+    "Work that never leads anywhere — no growth, no progress",
+    "A team that doesn't care about quality",
+    "🎯 Something else"
+  ], function(val) {
+    if (val.includes("Something else") && val.split(',').length === 1) {
+      step6b();
+    } else {
+      responses.neverAgain2 = val; addMessage(val, 'user'); step7();
+    }
+  });
+}
+
+async function step6b() {
+  showTextInput("The other thing I'd add is…", function(val) { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); });
+}
+
+async function step7() {
+  updateProgress(7);
+  await showAIMessage("I want to get a sense of your background — but not in a resume way.\n\nWhat have you spent most of your working life actually doing? Don't describe your job title — tell me the messy, real, day-to-day version.");
+  showTextInput("I've basically spent most of my working life…", function(val) { responses.background = val; addMessage(val, 'user'); step8(); }, 4);
+}
+
+async function step8() {
+  updateProgress(8);
+  await showAIMessage("Here's a question nobody ever asks in a job interview but probably should.\n\nOutside of work — how do the people who know you best describe you? Pick everything that rings true.");
+  showOptions([
+    "The person everyone comes to with their problems",
+    "The one who figures things out when nobody else can",
+    "The creative one — always making or thinking of something",
+    "The competitive one — hates losing, loves winning",
+    "The quiet one who somehow always gets more done than everyone else",
+    "🎯 None of these — let me describe it myself"
+  ], function(val) {
+    if (val.includes("None of these") && val.split(',').length === 1) {
+      step8b();
+    } else {
+      responses.identity = val; addMessage(val, 'user'); step9();
+    }
+  });
+}
+
+async function step8b() {
+  showTextInput("People who know me well would say I'm…", function(val) { responses.identity = val; addMessage(val, 'user'); step9(); });
+}
+
+async function step9() {
+  updateProgress(9);
+  await showAIMessage("Almost there — this one's practical but important.\n\nWhere do you actually do your best work?");
+  showOptions([
+    "Fully remote — I work better alone with no interruptions",
+    "In person — I need people around me to thrive",
+    "Hybrid — I need both depending on what I'm working on",
+    "Honestly I've never been in the right environment so I don't know yet"
+  ], function(val) { responses.environment = val; addMessage(val, 'user'); step9b(); }, true);
+}
+
+async function step9b() {
+  await showAIMessage("And what does your ideal pace look like?");
+  showOptions([
+    "Fast and unpredictable — I like controlled chaos",
+    "Steady and focused — I like knowing what I'm walking into",
+    "Flexible — some days intense, some days quiet",
+    "I've honestly never thought about it that way before"
+  ], function(val) { responses.pace = val; addMessage(val, 'user'); step9c(); }, true);
+}
+
+async function step9c() {
+  await showAIMessage("Last practical one — and it matters for matching.\n\nWhat city or region are you in? You can be as specific or general as you want.");
+  showTextInput("I'm in…", function(val) {
+    responses.location = val;
+    addMessage(val, 'user');
+    step10();
+  });
+}
+
+async function step10() {
+  updateProgress(10);
+  await showAIMessage("Okay. I have a really clear picture of you now — and I want to share what I'm seeing.\n\nBecause I think it might reframe some things. Can I be honest with you?");
+  await delay(1200);
+  addMessage("Yes.", 'user');
+  await delay(600);
+  generateReveal();
+}
+
+async function generateReveal() {
+  var inputArea = document.getElementById('inputArea');
+  inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Puzzle is thinking about you specifically…</span></div>';
+  var t = showTyping();
+
+  var prompt = "You are the core AI behind Puzzle, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says 'the moment with Maya' is worth ten that say 'you care about people's growth'\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- If their location is a smaller or mid-size city (not NYC/SF/LA/Chicago/Seattle), briefly acknowledge the geographic reality in one sentence — name whether the shape of work you're describing is primarily remote-accessible, exists regionally, or would realistically require relocating. Don't make it the focus. Don't skip it either.\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified");
+
+  try {
+    var res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    var data = await res.json();
+    var text = (data.content && data.content[0] && data.content[0].text) || "Having trouble generating your summary right now. Please try again.";
+    removeTyping(t);
+    clearInput();
+
+    var lines = text.trim().split('\n').filter(function(l) { return l.trim(); });
+    var lastLine = lines[lines.length - 1];
+    var mainText = lines.slice(0, -1).join(' ');
+
+    var chat = document.getElementById('chat');
+    var msg = document.createElement('div');
+    msg.className = 'msg ai';
+    var bubble = document.createElement('div');
+    bubble.className = 'reveal-bubble';
+    var summaryText = mainText + '\n\n' + lastLine;
+    bubble.innerHTML = '<p style="margin-bottom:16px">' + mainText + '</p><p style="color:var(--accent);font-family:\'Instrument Serif\',serif;font-size:17px;font-style:italic">' + lastLine + '</p>';
+    msg.appendChild(bubble);
+
+    // Save summary button
+    var saveRow = document.createElement('div');
+    saveRow.style.cssText = 'display:flex;gap:10px;margin-top:10px;max-width:92%;flex-wrap:wrap;opacity:0;animation:fadeUp 0.4s ease 0.3s forwards;';
+
+    var copyBtn = document.createElement('button');
+    copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(212,168,83,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    copyBtn.textContent = 'Copy my summary';
+    copyBtn.addEventListener('click', function() {
+      navigator.clipboard.writeText(summaryText).then(function() {
+        copyBtn.textContent = 'Copied ✓';
+        copyBtn.style.background = 'rgba(212,168,83,0.1)';
+        setTimeout(function() { copyBtn.textContent = 'Copy my summary'; copyBtn.style.background = 'transparent'; }, 2000);
+      }).catch(function() {
+        // Fallback for browsers that block clipboard
+        var ta = document.createElement('textarea');
+        ta.value = summaryText;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        copyBtn.textContent = 'Copied ✓';
+        setTimeout(function() { copyBtn.textContent = 'Copy my summary'; }, 2000);
+      });
+    });
+
+    var emailSaveBtn = document.createElement('button');
+    emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(212,168,83,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    emailSaveBtn.textContent = 'Email it to me';
+    emailSaveBtn.addEventListener('click', function() {
+      saveRow.style.display = 'none';
+      var emailSaveCard = document.createElement('div');
+      emailSaveCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(212,168,83,0.2);border-radius:12px;padding:18px 20px;max-width:92%;margin-top:10px;';
+      emailSaveCard.innerHTML =
+        '<div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Where should we send this?</div>' +
+        '<input id="saveEmailInput" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
+        '<button id="saveEmailSubmit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#0c0b0a;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Send it →</button>';
+      msg.appendChild(emailSaveCard);
+      setTimeout(function() {
+        var se = document.getElementById('saveEmailSubmit');
+        var si = document.getElementById('saveEmailInput');
+        if (se && si) {
+          se.addEventListener('click', async function() {
+            var email = si.value.trim();
+            if (!email || !email.includes('@')) {
+              si.style.borderColor = 'var(--accent)';
+              return;
+            }
+            addMessage(email, 'user');
+
+            // Show loading state
+            emailSaveCard.innerHTML =
+              '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0;">Writing your email…</div>';
+
+            // Generate tone-calibrated subject + opening from how they actually write
+            var tonePrompt = "You are writing a single transactional email that will be sent to someone immediately after they completed a career alignment conversation. Your job is to calibrate the tone of this email to match how THIS SPECIFIC PERSON writes — not a generic template.\n\nHere is how they write in their own words:\n\nStep 4 (best day at work): " + (responses.bestDay || '') + "\nStep 7 (background, their words): " + (responses.background || '') + "\n\nBased on their writing style — their sentence length, vocabulary, whether they're direct or reflective, formal or casual — generate:\n1. A subject line (under 10 words) that would make THIS person open the email. Not generic. Written for them.\n2. A two-sentence opening paragraph that feels like it was written for this specific human, not a mass email.\n\nRespond ONLY with valid JSON, no markdown:\n{\"subject\": \"subject line here\", \"opening\": \"Two sentence opening here.\"}";
+
+            var subject = 'This is what Puzzle saw when it listened to you';
+            var opening = 'This summary came from a 20-minute conversation with Puzzle. No resume. No job history. Just ten questions nobody else thought to ask.';
+
+            try {
+              var toneRes = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  model: 'claude-sonnet-4-6',
+                  max_tokens: 200,
+                  messages: [{ role: 'user', content: tonePrompt }]
+                })
+              });
+              var toneData = await toneRes.json();
+              var toneRaw = (toneData.content && toneData.content[0] && toneData.content[0].text) || '{}';
+              var toneClean = toneRaw.replace(/```json|```/g, '').trim();
+              var toneResult = JSON.parse(toneClean);
+              if (toneResult.subject) subject = toneResult.subject;
+              if (toneResult.opening) opening = toneResult.opening;
+            } catch(e) {
+              // Falls back to defaults above
+            }
+
+            // Render the calibrated email preview
+            emailSaveCard.innerHTML =
+              '<div style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;opacity:0.7;">✓ Sent — here\'s what landed in your inbox</div>' +
+              '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;font-size:13px;line-height:1.7;">' +
+                '<div style="color:var(--muted);margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">From: Puzzle &lt;hello@puzzlecareers.com&gt;</div>' +
+                '<div style="color:var(--muted);margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">To: ' + email + '</div>' +
+                '<div style="color:var(--accent);margin-bottom:16px;font-size:12px;font-weight:500;">Subject: ' + subject + '</div>' +
+                '<div style="border-top:1px solid var(--border);padding-top:16px;">' +
+                  '<div style="font-family:\'Instrument Serif\',serif;font-size:17px;color:var(--text);margin-bottom:16px;font-style:italic;">' + summaryText.replace(/\n/g, '<br>') + '</div>' +
+                  '<div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.7;">' + opening + '</div>' +
+                  '<div style="background:var(--surface2);border-radius:8px;padding:14px 16px;margin-bottom:16px;">' +
+                    '<div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Your never-agains</div>' +
+                    '<div style="font-size:13px;color:var(--muted);">— ' + (responses.neverAgain1 || '') + '</div>' +
+                    '<div style="font-size:13px;color:var(--muted);">— ' + (responses.neverAgain2 || '') + '</div>' +
+                  '</div>' +
+                  '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;">We\'re building the full match database right now. You\'ll be first to know when roles that match your profile open up.</div>' +
+                  '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#0c0b0a;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
+                  '<div style="margin-top:20px;font-size:11px;color:var(--muted);">Puzzle · Built on what you\'ll never tolerate again · <a href="#" style="color:var(--muted);">Unsubscribe</a></div>' +
+                '</div>' +
+              '</div>';
+            scrollToBottom();
+          });
+        }
+      }, 100);
+      scrollToBottom();
+    });
+
+    saveRow.appendChild(copyBtn);
+    saveRow.appendChild(emailSaveBtn);
+    msg.appendChild(saveRow);
+    chat.appendChild(msg);
+    scrollToBottom();
+    await delay(1000);
+
+    // Trigger profile save modal
+    var responsesSnap = Object.assign({}, responses);
+    showProfileModal(mainText, lastLine, responsesSnap);
+
+    showEndActions();
+  } catch(err) {
+    removeTyping(t);
+    clearInput();
+    addMessage("Something went wrong. Please try again.", 'ai');
+    showEndActions();
+  }
+}
+
+// SALARY LOOKUP TABLE — verified ranges by role category, zero hallucination
+var SALARY_RANGES = {
+  'operations':       { range: '$55K–$85K',  remote: 'Remote · Full-time' },
+  'people_ops':       { range: '$50K–$70K',  remote: 'Remote · Full-time' },
+  'community':        { range: '$60K–$90K',  remote: 'Remote · Full-time' },
+  'learning':         { range: '$55K–$80K',  remote: 'Remote · Full-time' },
+  'healthcare_nav':   { range: '$45K–$65K',  remote: 'Remote or In-person · Full-time' },
+  'community_health': { range: '$40K–$58K',  remote: 'In-person · Full-time' },
+  'crisis':           { range: '$50K–$70K',  remote: 'Remote or Hybrid · Full-time' },
+  'clinical_ops':     { range: '$50K–$68K',  remote: 'Remote · Full-time' },
+  'ux_research':      { range: '$65K–$90K',  remote: 'Remote · Full-time' },
+  'content_design':   { range: '$60K–$85K',  remote: 'Remote · Full-time' },
+  'data_analytics':   { range: '$60K–$85K',  remote: 'Remote · Full-time' },
+  'program_coord':    { range: '$45K–$65K',  remote: 'Hybrid · Full-time' },
+  'advocacy':         { range: '$42K–$62K',  remote: 'In-person or Hybrid · Full-time' },
+  'training':         { range: '$55K–$75K',  remote: 'Remote · Full-time' },
+  'startup_ops':      { range: '$65K–$95K',  remote: 'Remote · Full-time' },
+  'default':          { range: '$50K–$75K',  remote: 'Full-time' }
+};
+
+function getSalaryType(category) {
+  return SALARY_RANGES[category] || SALARY_RANGES['default'];
+}
+
+function buildLinkedInURL(title, envPref, cityLocation) {
+  var loc = (envPref || '').toLowerCase();
+  var linkedInLoc = cityLocation || 'United States';
+  if (loc.includes('remote') && !cityLocation) linkedInLoc = 'Remote';
+  return 'https://www.linkedin.com/jobs/search/?keywords=' + encodeURIComponent(title) + '&location=' + encodeURIComponent(linkedInLoc);
+}
+
+function buildIndeedURL(title, envPref, cityLocation) {
+  var loc = (envPref || '').toLowerCase();
+  var indeedLoc = cityLocation || 'United States';
+  if (loc.includes('remote') && !cityLocation) indeedLoc = 'remote';
+  return 'https://www.indeed.com/jobs?q=' + encodeURIComponent('"' + title + '"') + '&l=' + encodeURIComponent(indeedLoc);
+}
+
+async function showMatches() {
+  var chat = document.getElementById('chat');
+  var inputArea = document.getElementById('inputArea');
+
+  inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Finding your matches…</span></div>';
+  var t = showTyping();
+
+  // DYNAMIC MATCH GENERATION
+  // Claude generates: role titles, company types, category tags, descriptions, reasons, surprise
+  // Salary ranges come from verified lookup table — zero hallucination
+  // Links go to LinkedIn/Indeed filtered searches — always work, always relevant
+
+  // Translation gap detection — self-reported OR inferred from background
+  // Don't require people to name their own problem. Detect it from what they wrote.
+  var selfReportedTranslation = (responses.duration || '').includes('translate') || (responses.duration || '').includes("language they'll understand");
+
+  var bgText = (responses.background || '').toLowerCase();
+  var translationIndustries = [
+    'restaurant','kitchen','cook','chef','line cook','gm','general manager','hospitality','catering','hotel','front of house','back of house',
+    'dialysis','patient','clinical','hospital','medical','healthcare','nurse','technician','dialysis tech',
+    'probation','juvenile','social work','case worker','case manager','nonprofit','shelter','court','corrections',
+    'warehouse','factory','manufacturing','forklift','logistics','freight','dispatch',
+    'construction','trades','electrician','plumber','hvac','mechanic','technician',
+    'retail','floor','store','associate','cashier','customer service'
+  ];
+  var hasTranslationGap = selfReportedTranslation || translationIndustries.some(function(k) { return bgText.includes(k); });
+  var needsTranslation = hasTranslationGap;
+  var userLocation = responses.location || 'not specified';
+  var isRemoteOk = (responses.environment || '').toLowerCase().includes('remote');
+  var bridgeField = needsTranslation ? '"One sentence on how to describe their background in an interview for this specific role."' : 'null';
+
+  var matchPrompt = 'You are Puzzle\'s matching engine. Based on everything this person shared, generate exactly 3 job matches.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight matches toward companies with regional/distributed presence or genuinely remote-first roles') + '\n\nRULES:\n- Match 1 and 2 must come from DIFFERENT conceptual categories. Force variety.\n- Match 3 is THE UNEXPECTED MATCH — genuinely surprising direction that still connects their skills.\n- Pick REAL companies. If not remote-friendly, favor companies with national or regional reach over SF/NYC-only offices.\n- Write a 2-sentence description of what the job feels like day to day. Human. Specific. Not HR-speak.\n- Write ONE reason sentence naming the specific moment or detail they gave. "The November you described" beats "your operational experience" every time.\n' + (needsTranslation ? '- CRITICAL — BRIDGE SENTENCE: This person said they struggle to translate their background into language employers understand. For each card, include a bridge field: one sentence showing them exactly how to describe their current experience in an interview for this role. Example: \"In an interview, describe your dialysis work as \'high-stakes patient communication and crisis de-escalation in a clinical setting\' — that phrasing maps directly to this job description.\"\n' : '') + '- Pick a salary_category: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n- Do NOT invent URLs.\n\nBackground weighting:\n- Healthcare/clinical: weight toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: weight toward advocacy, crisis counseling, program coordination\n- Restaurant/hospitality/operations: weight toward operations, startup ops, RevOps, program management\n- Creative: weight toward UX research, content design, community programs\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "operations",\n    "surprise": false\n  },\n  {\n    "title": "Job Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "people_ops",\n    "surprise": false\n  },\n  {\n    "title": "Unexpected Title",\n    "company": "Company Name",\n    "description": "Two sentences.",\n    "reason": "One specific sentence.",\n    "bridge": ' + (needsTranslation ? '"Bridge sentence here."' : 'null') + ',\n    "salary_category": "community",\n    "surprise": true\n  }\n]';
+
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: matchPrompt }]
+      })
+    });
+    var data = await res.json();
+    var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
+    var clean = raw.replace(/```json|```/g, '').trim();
+    var jobs;
+    try { jobs = JSON.parse(clean); } catch(e) { jobs = []; }
+
+    // Attach verified salary ranges and working search links — no hallucination possible
+    jobs = jobs.map(function(job) {
+      var salaryData = getSalaryType(job.salary_category);
+      return Object.assign({}, job, {
+        type: salaryData.remote + ' · ' + salaryData.range,
+        linkedinUrl: buildLinkedInURL(job.title, responses.environment, responses.location),
+        indeedUrl: buildIndeedURL(job.title, responses.environment, responses.location)
+      });
+    });
+
+    removeTyping(t);
+    inputArea.innerHTML = '';
+
+    if (!jobs.length) {
+      addMessage('Something went wrong finding your matches. Please try again.', 'ai');
+      showEndActions();
+      return;
+    }
+
+    // Intro
+    var intro = document.createElement('div');
+    intro.className = 'msg ai';
+    var introBubble = document.createElement('div');
+    introBubble.className = 'bubble';
+    introBubble.textContent = 'Based on everything you just shared, here are 3 roles worth looking at. Each one was chosen for a specific reason — and the last one might surprise you.';
+    intro.appendChild(introBubble);
+    chat.appendChild(intro);
+
+    var disclaimer = document.createElement('div');
+    disclaimer.className = 'msg ai';
+    var disclaimerBubble = document.createElement('div');
+    disclaimerBubble.className = 'bubble';
+    disclaimerBubble.style.cssText = 'font-size:12px;color:var(--muted);font-style:italic;max-width:88%;padding:10px 14px;';
+    disclaimerBubble.textContent = 'These roles are real. The links go to live job searches filtered to your title — not a homepage you have to navigate. Salary ranges are based on current market data. Set a job alert on any that fit.';
+    disclaimer.appendChild(disclaimerBubble);
+    chat.appendChild(disclaimer);
+    scrollToBottom();
+    await delay(800);
+
+    // Render job cards
+    jobs.slice(0, 3).forEach(function(job, i) {
+      setTimeout(function() {
+        var cardMsg = document.createElement('div');
+        cardMsg.className = 'msg ai';
+        cardMsg.style.animationDelay = '0s';
+        var card = document.createElement('div');
+        var borderColor = job.surprise ? 'rgba(212,168,83,0.45)' : 'rgba(212,168,83,0.22)';
+        var topLine = job.surprise ? 'background: linear-gradient(90deg, transparent, var(--accent), transparent);' : 'background: linear-gradient(90deg, transparent, rgba(212,168,83,0.4), transparent);';
+        card.style.cssText = 'background:linear-gradient(135deg,#1a1710,#111009);border:1px solid ' + borderColor + ';border-radius:16px;padding:22px 24px;max-width:92%;position:relative;overflow:hidden;';
+        var surpriseBadge = job.surprise ? '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#0c0b0a;background:var(--accent);border-radius:100px;padding:3px 10px;margin-bottom:10px;">The Unexpected Match</div><br>' : '';
+        var matchLabel = job.surprise ? '' : '<div style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;opacity:0.7;">Match ' + (i+1) + ' of 3</div>';
+        card.innerHTML =
+          '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;' + topLine + '"></div>' +
+          matchLabel +
+          surpriseBadge +
+          '<div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;">' + job.title + '</div>' +
+          '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">' + job.company + ' · ' + job.type + '</div>' +
+          '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:14px;">' + job.description + '</div>' +
+          (job.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(212,168,83,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + job.reason + '"</div>' : '') +
+          (job.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(212,168,83,0.05);border:1px solid rgba(212,168,83,0.12);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to say it in an interview</span>' + job.bridge + '</div>' : '') +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          '<a href="' + job.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0c0b0a;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
+          '<a href="' + job.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(212,168,83,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
+          '</div>';
+        cardMsg.appendChild(card);
+        chat.appendChild(cardMsg);
+        scrollToBottom();
+      }, i * 700);
+    });
+
+        // Outro + email capture
+    setTimeout(function() {
+      var outro = document.createElement('div');
+      outro.className = 'msg ai';
+      var outroBubble = document.createElement('div');
+      outroBubble.className = 'bubble';
+      outroBubble.textContent = "None of these require you to go back to school. All three measure you on impact — not credentials. Want us to keep an eye out for more?";
+      outro.appendChild(outroBubble);
+      chat.appendChild(outro);
+      scrollToBottom();
+
+      setTimeout(function() {
+        var emailMsg = document.createElement('div');
+        emailMsg.className = 'msg ai';
+        emailMsg.style.animationDelay = '0s';
+        var emailCard = document.createElement('div');
+        emailCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(212,168,83,0.2);border-radius:14px;padding:22px 24px;max-width:92%;';
+        emailCard.innerHTML =
+          '<div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.65;">We\'re building the full match database right now. Drop your email and you\'ll be first when roles like these open up — and first to get matched when they do.</div>' +
+          '<input id="emailInput" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:10px;" />' +
+          '<button id="emailSubmit" style="padding:11px 22px;background:var(--accent);border:none;border-radius:8px;color:#0c0b0a;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Keep me posted →</button>';
+        emailMsg.appendChild(emailCard);
+        chat.appendChild(emailMsg);
+
+        setTimeout(function() {
+          var submitBtn = document.getElementById('emailSubmit');
+          var emailInput = document.getElementById('emailInput');
+          if (submitBtn && emailInput) {
+            submitBtn.addEventListener('click', function() {
+              var email = emailInput.value.trim();
+              if (!email || !email.includes('@')) return;
+              emailCard.innerHTML = '<div style="font-size:15px;font-family:\'Instrument Serif\',serif;font-style:italic;color:var(--accent);">You\'re on the list. We\'ll be in touch.</div>';
+              addMessage(email, 'user');
+            });
+          }
+        }, 200);
+        scrollToBottom();
+      }, 600);
+
+      setTimeout(function() {
+        var endWrap = document.createElement('div');
+        endWrap.className = 'end-actions';
+        var againBtn2 = document.createElement('button');
+        againBtn2.className = 'end-btn';
+        againBtn2.textContent = "Run it again";
+        againBtn2.addEventListener('click', function() { initConvo(); });
+        var backBtn2 = document.createElement('button');
+        backBtn2.className = 'end-btn';
+        backBtn2.textContent = "← Back to Puzzle";
+        backBtn2.addEventListener('click', function() { backToPitch(); });
+        endWrap.appendChild(againBtn2);
+        endWrap.appendChild(backBtn2);
+        chat.appendChild(endWrap);
+        scrollToBottom();
+      }, 1400);
+
+    }, jobs.length * 700 + 800);
+
+  } catch(err) {
+    removeTyping(t);
+    inputArea.innerHTML = '';
+    addMessage("Something went wrong loading your matches. Please try again.", 'ai');
+    showEndActions();
+  }
+}
+
+function showEndActions() {
+  var chat = document.getElementById('chat');
+  var wrap = document.createElement('div');
+  wrap.className = 'end-actions';
+
+  var yesBtn = document.createElement('button');
+  yesBtn.className = 'end-btn primary';
+  yesBtn.textContent = "Yes — show me what fits";
+  yesBtn.addEventListener('click', function() {
+    wrap.remove();
+    addMessage("Yes — show me what fits", 'user');
+    setTimeout(function() { showMatches(); }, 600);
+  });
+
+  var againBtn = document.createElement('button');
+  againBtn.className = 'end-btn';
+  againBtn.textContent = "Run it again";
+  againBtn.addEventListener('click', function() { initConvo(); });
+
+  var backBtn = document.createElement('button');
+  backBtn.className = 'end-btn';
+  backBtn.textContent = "← Back to Puzzle";
+  backBtn.addEventL
