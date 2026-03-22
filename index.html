@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1318,4 +1317,14 @@ function showEndActions() {
   var backBtn = document.createElement('button');
   backBtn.className = 'end-btn';
   backBtn.textContent = "← Back to Puzzle";
-  backBtn.addEventListener('cl
+  backBtn.addEventListener('click', function() { backToPitch(); });
+
+  wrap.appendChild(yesBtn);
+  wrap.appendChild(againBtn);
+  wrap.appendChild(backBtn);
+  chat.appendChild(wrap);
+  scrollToBottom();
+}
+</script>
+</body>
+</html>
