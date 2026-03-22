@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -83,13 +84,13 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .result-live-badge { display:flex; align-items:center; gap:6px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); font-weight:500; }
 .live-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:glow-dot 2s ease infinite; }
 @keyframes glow-dot { 0%,100%{box-shadow:0 0 0 0 rgba(212,168,83,0);opacity:0.6} 50%{box-shadow:0 0 0 5px rgba(212,168,83,0.15);opacity:1} }
-.result-text { font-family:'Instrument Serif',serif; font-size:19px; line-height:1.78; color:var(--text); font-style:italic; }
+.result-text { font-family:'DM Sans',sans-serif; font-size:16px; line-height:1.8; color:var(--text); font-style:normal; font-weight:300; }
 .result-caption { font-size:12px; color:var(--muted); text-align:center; font-style:italic; margin-bottom:36px; }
 .voice-slot { background:var(--surface2); border:1px solid rgba(212,168,83,0.15); border-radius:14px; padding:28px 32px; display:flex; gap:18px; align-items:flex-start; position:relative; overflow:hidden; margin-bottom:40px; }
 .voice-slot::before { content:'"'; font-family:'Instrument Serif',serif; font-size:80px; color:var(--accent); opacity:0.1; position:absolute; top:-10px; left:20px; line-height:1; pointer-events:none; }
 .voice-avatar { width:36px; height:36px; border-radius:50%; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; margin-top:2px; font-family:'Instrument Serif',serif; color:var(--accent); }
 .voice-body { flex:1; }
-.voice-quote { font-family:'Instrument Serif',serif; font-size:16px; font-style:italic; color:var(--text); line-height:1.65; margin-bottom:10px; opacity:0.85; }
+.voice-quote { font-family:'DM Sans',sans-serif; font-size:15px; font-style:normal; font-weight:300; color:var(--text); line-height:1.65; margin-bottom:10px; opacity:0.85; }
 .voice-attribution { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
 .try-it-block { background:linear-gradient(135deg,#1a1710 0%,#131109 100%); border:1px solid rgba(212,168,83,0.2); border-radius:18px; padding:40px 44px; text-align:center; position:relative; overflow:hidden; }
 .try-it-block::before { content:''; position:absolute; top:0; left:20%; right:20%; height:1px; background:linear-gradient(90deg,transparent,rgba(212,168,83,0.4),transparent); }
@@ -176,7 +177,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .option-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
 .option-btn.selected { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); pointer-events:none; }
 .option-btn.selected::after { content:' ✓'; }
-.convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:90px; outline:none; box-sizing:border-box; }
+.convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:60px; outline:none; box-sizing:border-box; }
 .convo-textarea:focus { border-color:var(--accent); }
 .convo-textarea::placeholder { color:var(--muted); }
 .submit-btn { margin-top:8px; background:var(--accent); border:none; border-radius:10px; padding:11px 20px; color:#0f0e0d; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; }
@@ -353,7 +354,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="response-icon">🔥</div>
       <div class="response-title">That's the signal we needed.</div>
       <div class="response-text">You're one of the founding 500. Lifetime early-access pricing and a direct line to shape what Puzzle becomes.</div>
-      <a href="mailto:hello@puzzlecareers.com" class="response-cta">Claim your spot →</a>
+      <a href="/cdn-cgi/l/email-protection#82eae7eeeeedc2f2f7f8f8eee7e1e3f0e7e7f0f1ace1edef" class="response-cta">Claim your spot →</a>
     </div>
     <div class="response-block" id="r-maybe">
       <div class="response-icon">👀</div>
@@ -365,7 +366,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="response-icon">💬</div>
       <div class="response-title">Tell us why.</div>
       <div class="response-text">The honest "no" is more valuable than a polite maybe.</div>
-      <a href="mailto:hello@puzzlecareers.com" class="response-cta">Tell us directly →</a>
+      <a href="/cdn-cgi/l/email-protection#335b565f5f5c73434649495f56505241565641401d505c5e" class="response-cta">Tell us directly →</a>
     </div>
   </div>
 
@@ -411,7 +412,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // PAGE SWITCHING
 function startConversation() {
   document.getElementById('pitchPage').style.display = 'none';
@@ -741,7 +742,7 @@ function showTextInput(placeholder, onSubmit, rows) {
   var ta = document.createElement('textarea');
   ta.className = 'convo-textarea';
   ta.placeholder = placeholder;
-  ta.rows = rows || 3;
+  ta.rows = rows || 2;
   var btn = document.createElement('button');
   btn.className = 'submit-btn';
   btn.textContent = 'Continue →';
@@ -816,7 +817,7 @@ async function step3() {
     "✨ Something else — and it's probably pretty specific"
   ], function(val) {
     responses.loves = val; addMessage(val, 'user');
-    if (val.includes("Something else") && val.split(',').length === 1) {
+    if (val.includes("Something else")) {
       step3b();
     } else {
       step4();
@@ -846,7 +847,7 @@ async function step5() {
     "Micromanagement — I work better with trust and autonomy",
     "🎯 Something specific — let me describe it"
   ], function(val) {
-    if (val.includes("Something specific") && val.split(',').length === 1) {
+    if (val.includes("Something specific")) {
       step5b();
     } else {
       responses.neverAgain1 = val; addMessage(val, 'user'); step6();
@@ -870,7 +871,7 @@ async function step6() {
     "A team that doesn't care about quality",
     "🎯 Something else"
   ], function(val) {
-    if (val.includes("Something else") && val.split(',').length === 1) {
+    if (val.includes("Something else")) {
       step6b();
     } else {
       responses.neverAgain2 = val; addMessage(val, 'user'); step7();
@@ -899,7 +900,7 @@ async function step8() {
     "The quiet one who somehow always gets more done than everyone else",
     "🎯 None of these — let me describe it myself"
   ], function(val) {
-    if (val.includes("None of these") && val.split(',').length === 1) {
+    if (val.includes("None of these")) {
       step8b();
     } else {
       responses.identity = val; addMessage(val, 'user'); step9();
@@ -1317,14 +1318,4 @@ function showEndActions() {
   var backBtn = document.createElement('button');
   backBtn.className = 'end-btn';
   backBtn.textContent = "← Back to Puzzle";
-  backBtn.addEventListener('click', function() { backToPitch(); });
-
-  wrap.appendChild(yesBtn);
-  wrap.appendChild(againBtn);
-  wrap.appendChild(backBtn);
-  chat.appendChild(wrap);
-  scrollToBottom();
-}
-</script>
-</body>
-</html>
+  backBtn.addEventListener('cl
