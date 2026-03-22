@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle — Investor Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0c0b0a; --surface: #161412; --surface2: #1c1a17;
+  --border: #252220; --text: #ede9e3; --muted: #6b6560;
+  --accent: #d4a853; --accent-soft: rgba(212,168,83,0.1);
+}
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',system-ui,sans-serif; font-weight:300; line-height:1.7; min-height:100vh; }
+.wrap { max-width:780px; margin:0 auto; padding:80px 40px 120px; }
+.eyebrow { font-size:11px; font-weight:500; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:24px; display:flex; align-items:center; gap:12px; }
+.eyebrow::after { content:''; flex:1; height:1px; background:var(--border); }
+h1 { font-family:'Instrument Serif',serif; font-size:clamp(36px,6vw,72px); font-weight:400; line-height:1.05; letter-spacing:-1.5px; margin-bottom:28px; }
+h1 em { font-style:italic; color:var(--accent); }
+.lede { font-size:18px; color:var(--muted); line-height:1.75; max-width:620px; margin-bottom:56px; }
+.lede strong { color:var(--text); font-weight:400; }
+.section { margin-bottom:80px; }
+.section-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:24px; display:flex; align-items:center; gap:14px; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+p { font-size:15px; color:var(--muted); line-height:1.8; margin-bottom:20px; }
+p strong { color:var(--text); font-weight:400; }
+.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px; }
+.stat { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; }
+.stat-num { font-family:'Instrument Serif',serif; font-size:42px; color:var(--accent); line-height:1; margin-bottom:6px; }
+.stat-label { font-size:12px; color:var(--muted); line-height:1.5; }
+.persona-grid { display:flex; flex-direction:column; gap:16px; }
+.persona-card { background:linear-gradient(150deg,#1d1a12 0%,#111009 100%); border:1px solid rgba(212,168,83,0.25); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; }
+.persona-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+.persona-meta { font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+.persona-name { font-size:16px; font-weight:500; color:var(--text); margin-bottom:4px; }
+.persona-detail { font-size:13px; color:var(--muted); margin-bottom:16px; }
+.persona-summary { font-size:14px; color:var(--text); line-height:1.75; margin-bottom:14px; font-style:italic; border-left:2px solid rgba(212,168,83,0.3); padding-left:16px; }
+.persona-insight { font-size:13px; color:var(--muted); line-height:1.6; }
+.persona-insight strong { color:var(--accent); font-weight:400; }
+.cta-block { background:linear-gradient(135deg,#1a1710 0%,#131109 100%); border:1px solid rgba(212,168,83,0.2); border-radius:18px; padding:44px; text-align:center; position:relative; overflow:hidden; margin-bottom:40px; }
+.cta-block::before { content:''; position:absolute; top:0; left:20%; right:20%; height:1px; background:linear-gradient(90deg,transparent,rgba(212,168,83,0.4),transparent); }
+.cta-title { font-family:'Instrument Serif',serif; font-size:clamp(24px,3.5vw,38px); font-weight:400; line-height:1.15; margin-bottom:14px; }
+.cta-title em { font-style:italic; color:var(--accent); }
+.cta-sub { font-size:14px; color:var(--muted); max-width:400px; margin:0 auto 28px; line-height:1.65; }
+.cta-btn { display:inline-flex; align-items:center; gap:10px; padding:15px 32px; background:var(--accent); border:none; border-radius:12px; color:#0c0b0a; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; }
+.honest-block { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:32px; margin-bottom:40px; }
+.honest-title { font-size:13px; font-weight:500; color:var(--text); margin-bottom:16px; }
+.honest-item { display:flex; gap:12px; margin-bottom:12px; font-size:14px; color:var(--muted); line-height:1.6; }
+.honest-icon { flex-shrink:0; margin-top:2px; }
+.divider { height:1px; background:var(--border); margin:60px 0; }
+.footer { text-align:center; padding-top:40px; }
+.footer-logo { font-family:'Instrument Serif',serif; font-size:22px; color:var(--accent); margin-bottom:8px; }
+.footer-sub { font-size:13px; color:var(--muted); }
+@media(max-width:600px) {
+  .wrap{padding:60px 20px 80px}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .persona-card{padding:22px 20px}
+  .cta-block{padding:32px 24px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Puzzle · Investor Overview · Early Stage</div>
+
+  <h1>Built for the 80% that every<br>career tool <em>ignores.</em></h1>
+
+  <p class="lede">LinkedIn was built for people who already know how to talk about themselves in job market language. <strong>That's maybe 20% of the workforce.</strong> The other 80% are skilled, experienced, and stuck — not because they lack ability, but because nobody has ever handed them the vocabulary to describe what they actually do. Puzzle fixes that.</p>
+
+  <div class="section">
+    <div class="section-label">What it cost to build this</div>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">$5</div>
+        <div class="stat-label">Total spent on API credits to build and test the product</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">12h</div>
+        <div class="stat-label">Hours to go from idea to fully working deployed product</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3¢</div>
+        <div class="stat-label">Cost per full conversation including summary and job matches</div>
+      </div>
+    </div>
+    <p>The entire product — adaptive AI conversation, personalized career summary, geographically-filtered job matches, interview coaching, and profile storage — runs on a single HTML file deployed to Vercel. <strong>The margin on a $12/month subscription is real from day one.</strong></p>
+  </div>
+
+  <div class="section">
+    <div class="section-label">The core insight</div>
+    <p>Every career tool starts with the same question: <em>what do you want?</em> Puzzle starts with what you'll never tolerate again. That signal is more durable than aspiration — and it's always true, even when someone doesn't know what they want next.</p>
+    <p>The second insight: <strong>the conversation adapts in real time.</strong> Every question is written by AI after reading everything the person has said so far. Someone who says "I'm just curious" gets a completely different conversation than someone who says "I know exactly what I want." Same data collected. Completely different experience. No other career tool does this.</p>
+    <p>The third insight: <strong>the vocabulary gap is the product.</strong> Most people can't describe their skills in language the job market understands. Puzzle closes that gap — not by teaching them, but by reflecting their own words back in a frame the outside world recognizes. The "How to say it in an interview" bridge sentence on every job card is the most valuable single feature in the product.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Four people the product was built for</div>
+    <p style="margin-bottom:28px;">These are simulated personas used to stress-test the product across different backgrounds, industries, and stuck-ness profiles. Each one represents a real demographic that existing tools systematically fail.</p>
+
+    <div class="persona-grid">
+
+      <div class="persona-card">
+        <div class="persona-meta">Persona 01 — Healthcare</div>
+        <div class="persona-name">Marcus, 38</div>
+        <div class="persona-detail">Dialysis technician · 9 years · Evansville, Indiana</div>
+        <div class="persona-summary">"You've been doing the 70% of the job nobody trains for and nobody measures — and there's a job title for that. You caught something no monitor did. That's not clinical skill. That's patient advocacy, and there are companies that built a business around hiring exactly that."</div>
+        <div class="persona-insight">
+          <strong>What previous tools gave him:</strong> REI, Patagonia, Airbnb.<br>
+          <strong>What Puzzle gave him:</strong> Healthcare navigator roles within 25 miles of his home, with bridge sentences translating "I hook patients up to dialysis machines" into language health system HR actually searches for.<br>
+          <strong>Why it matters:</strong> 18 million healthcare support workers in the US. Almost none of them have job market vocabulary for what they actually do.
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-meta">Persona 02 — Public Sector</div>
+        <div class="persona-name">Renata, 41</div>
+        <div class="persona-detail">Juvenile probation officer · 6 years · Pueblo, Colorado</div>
+        <div class="persona-summary">"The Devon memo is the whole story — you wrote something nobody asked for, in language the system understands, because you saw what the paperwork was missing. You've been told caring too much is a liability. Precisely calibrated is not the same thing as too emotional."</div>
+        <div class="persona-insight">
+          <strong>What she needed:</strong> Someone to name the translation gap. She knew what she valued and where she wanted to go — she just didn't have the language.<br>
+          <strong>What Puzzle gave her:</strong> Victim advocacy and program coordinator roles at organizations in Pueblo, plus interview language drawn directly from her own description of her work.<br>
+          <strong>Why it matters:</strong> 7 million public sector workers in the US are leaving their fields. Most don't know how to describe their skills outside of government job titles.
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-meta">Persona 03 — Hospitality / Operations</div>
+        <div class="persona-name">Terrell, 33</div>
+        <div class="persona-detail">Restaurant GM · 4 years · Knoxville, Tennessee</div>
+        <div class="persona-summary">"What you did in November — that isn't restaurant management. That's what people with MBAs pay to learn how to do and still often can't. You need an environment that has a name for it. Your background isn't something to translate. It's the credential."</div>
+        <div class="persona-insight">
+          <strong>The moment:</strong> Saved a profitable quarter nobody asked him to save. Owner said "good job" and moved on. Terrell spent weeks wondering what to call the skill.<br>
+          <strong>What Puzzle gave him:</strong> Toast — a company literally built for operators with his background — as his top match. First time his experience was the credential, not the obstacle.<br>
+          <strong>Why it matters:</strong> 15 million hospitality workers. The industry's only career narrative is "own a place someday." Puzzle is the first tool that offers a different story.
+        </div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-meta">Persona 04 — Service / Entry Level</div>
+        <div class="persona-name">Destiny, 29</div>
+        <div class="persona-detail">Dental receptionist · 3 years · Shreveport, Louisiana</div>
+        <div class="persona-summary">"The twenty minutes you spent with that patient in the waiting room — the ones your boss never knew about — that's not customer service. That's clinical de-escalation. The written warning is telling you something the job never would: this context doesn't have room for what you're actually good at. That's the context's problem, not yours."</div>
+        <div class="persona-insight">
+          <strong>What she arrived with:</strong> No vocabulary for her own skills whatsoever. Had been told her whole career she should "go into sales."<br>
+          <strong>What Puzzle gave her:</strong> Patient experience coordinator and crisis support roles, plus the first professional framing of a skill she'd been performing for three years without a name for it.<br>
+          <strong>Why it matters:</strong> Destiny is the median Puzzle user. Skilled, overlooked, inarticulate about her own value — not because she lacks it, but because nobody ever helped her find the words.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">The business</div>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">$12</div>
+        <div class="stat-label">Per month after the free conversation. Cancel anytime.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$11.32</div>
+        <div class="stat-label">What stays after Stripe's cut on every transaction</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">~97%</div>
+        <div class="stat-label">Gross margin once at scale. Infrastructure costs are near-zero.</div>
+      </div>
+    </div>
+    <p>The free conversation, summary, and first job matches are always free — no paywall before value, ever. What people pay for is the ongoing relationship: a profile that remembers them, gets smarter over time, and proactively surfaces new matches. <strong>The paid tier is memory and continuity, not access.</strong></p>
+  </div>
+
+  <div class="section">
+    <div class="section-label">What's honest — the gaps</div>
+    <div class="honest-block">
+      <div class="honest-title">What a good investor will ask, and the real answers:</div>
+      <div class="honest-item"><span class="honest-icon">⚠️</span><span><strong style="color:var(--text)">Real users:</strong> Currently zero paying users. The four personas above are simulated stress tests, not real testimonials. The product works — it needs real people to prove it converts.</span></div>
+      <div class="honest-item"><span class="honest-icon">⚠️</span><span><strong style="color:var(--text)">Paid tier:</strong> The $12/month infrastructure doesn't exist yet. Stripe, Supabase, and email delivery are the next build. The conversation and matches are fully working.</span></div>
+      <div class="honest-item"><span class="honest-icon">⚠️</span><span><strong style="color:var(--text)">Job data:</strong> Matches are AI-generated with LinkedIn/Indeed search links. No employer partnerships or proprietary job data yet. That's a real moat to build.</span></div>
+      <div class="honest-item"><span class="honest-icon">⚠️</span><span><strong style="color:var(--text)">Team:</strong> First-time founder, no technical co-founder. Built with AI assistance. That's the origin story — and it's also the risk.</span></div>
+      <div class="honest-item"><span class="honest-icon">✓</span><span><strong style="color:var(--text)">What is real:</strong> The core product works. The insight is differentiated. The build cost is extraordinary. The market is enormous. And the four personas above are real proof that the product does something no existing tool does.</span></div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <div class="cta-title">The best way to evaluate this<br>is to <em>try it yourself.</em></div>
+    <div class="cta-sub">The full product is live. No signup required. The conversation is free. See what it says about you — or just watch what it does.</div>
+    <a href="https://puzzle-pi-five.vercel.app" target="_blank" class="cta-btn">Open Puzzle →</a>
+  </div>
+
+  <div class="section">
+    <div class="section-label">What we're looking for</div>
+    <p>The right first investor for Puzzle isn't writing a $10M check. They're someone who has felt this problem — either as a person who was good at something a job description couldn't capture, or as someone who has tried to hire for that kind of person and failed.</p>
+    <p>The immediate need is <strong>$25K–$50K</strong> to cover API costs at scale, build the paid tier infrastructure, and get to 500 real users with measurable conversion data. That number buys six months and a real answer on whether people pay.</p>
+    <p>What we're not looking for: someone who wants to scale before the product is proven. The conversation is the product. It has to stay honest, specific, and human — or it becomes everything it was built against.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="footer">
+    <div class="footer-logo">Puzzle</div>
+    <div class="footer-sub">Built on what you'll never tolerate again.</div>
+  </div>
+
+</div>
+</body>
+</html>
