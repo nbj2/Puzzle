@@ -760,8 +760,7 @@ function showTextInput(placeholder, onSubmit, rows) {
   setTimeout(function() { ta.focus(); }, 100);
 }
 
-// ── ADAPTIVE QUESTION ENGINE ─────────────────────────────────
-// Builds a short conversation summary for Claude to read before writing each question
+// ── ADAPTIVE CONVERSATION ENGINE ─────────────────────────────
 function getConvoSoFar() {
   var parts = [];
   if (responses.why) parts.push('Why they came: ' + responses.why);
@@ -777,14 +776,43 @@ function getConvoSoFar() {
   return parts.join('\n');
 }
 
-// Ask Claude to write the next question in a human, adaptive tone
-async function getAdaptiveQuestion(goal, fallback) {
+var TONE_SYSTEM = 'You are the warm, human voice behind Puzzle — a career tool for people who feel stuck, overlooked, or unsure what comes next. Many of them are vulnerable. Some haven\'t told anyone they\'re thinking about leaving. Your job is to make them feel genuinely seen and safe — like texting a trusted friend who happens to know a lot about careers. Be warm, real, and encouraging. Never clinical. Never formal. No em dashes. No bullet points. Short sentences. Match their energy — if they\'re casual, be casual. If they\'re serious, be warm and direct. Always make them feel like their answer matters and that you\'re actually listening.';
+
+// Gets an adaptive question AND matching answer options in one AI call
+async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
+  try {
+    var optionContext = optionSeeds ? '\n\nThe answer options must cover these concepts (reword them to match the question\'s tone — same meaning, different energy):\n' + optionSeeds.join('\n') : '';
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 300,
+      messages: [{ role: 'user', content:
+        TONE_SYSTEM + '\n\nConversation so far:\n' + getConvoSoFar() +
+        '\n\nNext thing to find out: ' + goal +
+        optionContext +
+        '\n\nWrite a short, warm follow-up message (under 20 words) and ' + (optionSeeds ? optionSeeds.length : 0) + ' answer options that match its tone exactly.' +
+        '\n\nRules:\n- Question: casual, warm, human — never start with "I" or "So"\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
+      }]
+    });
+    var raw = data.content && data.content[0] && data.content[0].text;
+    if (!raw) throw new Error('no response');
+    var clean = raw.replace(/```json|```/g, '').trim();
+    var result = JSON.parse(clean);
+    return { q: result.q || fallbackQ, opts: result.opts || fallbackOpts };
+  } catch(e) {
+    return { q: fallbackQ, opts: fallbackOpts };
+  }
+}
+
+// Gets just a question (for free-text steps)
+async function getAdaptiveQuestion(goal, fallback, placeholder) {
   try {
     var data = await callAI({
       model: 'claude-sonnet-4-6',
       max_tokens: 100,
       messages: [{ role: 'user', content:
-        'You are having a real, casual conversation with someone about their career. Read what they\'ve said so far and write ONE short follow-up message that naturally leads to the next topic.\n\nWhat they\'ve said so far:\n' + getConvoSoFar() + '\n\nNext topic to get to (DO NOT mention this directly — just lead naturally toward it): ' + goal + '\n\nRules:\n- Sound like a real person texting, not a career counselor\n- Keep it under 15 words ideally\n- No em dashes, no bullet points, no "Based on what you said"\n- Match their energy — if they sound casual be casual, if they sound serious be warm but direct\n- Never start with "I" or "So"\n- Just the message, nothing else'
+        TONE_SYSTEM + '\n\nConversation so far:\n' + getConvoSoFar() +
+        '\n\nNext thing to find out: ' + goal +
+        '\n\nWrite ONE warm, short follow-up message (under 20 words). No em dashes. Never start with "I" or "So". Just the message, nothing else.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -798,88 +826,99 @@ async function step1() {
   updateProgress(1);
   await showAIMessage("Hey. You're not here by accident.\n\nWhat's going on?", 600);
   showOptions([
-    "😤 Something feels off but I can't put my finger on it",
-    "🔄 I'm ready for a change and need help figuring out where",
+    "😤 Something feels off but I can't name it",
+    "🔄 Ready for a change, just not sure where",
     "🤷 Honestly just curious, no pressure",
-    "😓 I know what I want but have no idea how to get there"
+    "😓 I know what I want, just not how to get there"
   ], function(val) { responses.why = val; addMessage(val, 'user'); step2(); }, true);
 }
 
 async function step2() {
   updateProgress(2);
 
-  // Fixed options that change based on step 1 — same as before
-  var opts;
-  if (responses.why.includes("ready for a change")) {
-    opts = [
-      "Something happened recently that made it feel urgent",
-      "Been thinking about it for a while, finally got tired of thinking",
-      "Someone or something showed me what was possible",
-      "Hit a wall — there's nowhere left to go in this direction"
+  var goal, seeds, fallbackQ, fallbackOpts;
+
+  if (responses.why.includes("Ready for a change") || responses.why.includes("ready for a change")) {
+    goal = "what triggered them to finally start looking — what happened recently or what wore them down";
+    seeds = [
+      "Something specific happened recently",
+      "Been building for a while, finally hit my limit",
+      "Someone showed me something that made me think",
+      "Hit a wall — nowhere left to go here"
     ];
-  } else if (responses.why.includes("know what I want")) {
-    opts = [
-      "The credentials — they want a degree I don't have",
-      "I don't know how to translate what I do into language they understand",
-      "Can't find roles that match what I'm describing",
-      "I know the direction but not the path"
+    fallbackQ = "What finally made you decide to start looking?";
+    fallbackOpts = seeds;
+  } else if (responses.why.includes("know what I want") || responses.why.includes("just not how")) {
+    goal = "what's actually standing between them and what they want";
+    seeds = [
+      "They want credentials I don't have",
+      "I can't translate my experience into their language",
+      "I can't find roles that match what I'm describing",
+      "I know the direction, just not the steps"
     ];
+    fallbackQ = "What's in the way right now?";
+    fallbackOpts = seeds;
   } else if (responses.why.includes("just curious")) {
-    opts = [
-      "Something's been nagging at me but I haven't acted on it",
-      "A friend sent this to me and I figured why not",
+    goal = "what nudged them to click today — keep it light, make them feel welcome";
+    seeds = [
+      "Something's been nagging at me lately",
+      "A friend sent it, figured I'd try",
       "Just exploring, nothing urgent",
-      "Honestly needed a push to even think about this stuff"
+      "Needed a push to even think about this"
     ];
+    fallbackQ = "What made you click though?";
+    fallbackOpts = seeds;
   } else {
-    opts = [
+    goal = "how long this feeling has been going on";
+    seeds = [
       "Just started feeling this way",
-      "Been a few months now",
+      "A few months now",
       "Longer than I'd like to admit",
       "So long I forgot what the alternative feels like"
     ];
+    fallbackQ = "How long has that been going on?";
+    fallbackOpts = seeds;
   }
 
-  // AI writes the question naturally based on their step 1 answer
-  var goal = responses.why.includes("ready for a change")
-    ? "what triggered them to start looking now"
-    : responses.why.includes("know what I want")
-    ? "what's actually blocking them from getting there"
-    : responses.why.includes("just curious")
-    ? "what made them click today — keep it light and encouraging"
-    : "how long this feeling has been going on";
-
-  var fallback = responses.why.includes("ready for a change") ? "What made now the time?"
-    : responses.why.includes("know what I want") ? "What's in the way?"
-    : responses.why.includes("just curious") ? "What made you click though?"
-    : "How long has that been going on?";
-
-  var q = await getAdaptiveQuestion(goal, fallback);
-  await showAIMessage(q);
-  showOptions(opts, function(val) { responses.duration = val; addMessage(val, 'user'); step3(); }, true);
+  var result = await getAdaptiveStep(goal, seeds, fallbackQ, fallbackOpts);
+  await showAIMessage(result.q);
+  showOptions(result.opts, function(val) { responses.duration = val; addMessage(val, 'user'); step3(); }, true);
 }
 
 async function step3() {
   updateProgress(3);
-  var q = await getAdaptiveQuestion(
-    "what kind of work they actually enjoy doing — creative, people-focused, analytical, physical, or something niche",
-    "What kind of work actually feels good to you?"
+  var result = await getAdaptiveStep(
+    "what kind of work genuinely energizes them — creative, people work, analytical, hands-on, or something niche",
+    [
+      "🎨 Something creative — making, designing, building",
+      "🤝 Something people-focused — helping, leading, connecting",
+      "🧠 Something analytical — solving, finding patterns, figuring things out",
+      "🌿 Something physical or hands-on",
+      "✨ Something else — it's hard to put in a box"
+    ],
+    "What kind of work actually lights you up?",
+    [
+      "🎨 Creative — making and designing things",
+      "🤝 People-focused — helping and connecting",
+      "🧠 Analytical — solving and figuring things out",
+      "🌿 Physical or hands-on",
+      "✨ Something else entirely"
+    ]
   );
-  await showAIMessage(q);
-  showOptions([
-    "🎨 Something creative — building, designing, making things",
-    "🤝 Something people-focused — talking, helping, teaching, leading",
-    "🧠 Something analytical — solving problems, finding patterns, digging into data",
-    "🌿 Something physical or hands-on — moving, outdoors, working with my hands",
-    "✨ Something else — probably pretty specific"
-  ], function(val) {
+  await showAIMessage(result.q);
+  showOptions(result.opts, function(val) {
     responses.loves = val; addMessage(val, 'user');
-    if (val.includes("Something else")) { step3b(); } else { step4(); }
+    if (val.toLowerCase().includes("something else") || val.toLowerCase().includes("hard to put")) { step3b(); }
+    else { step4(); }
   });
 }
 
 async function step3b() {
-  var q = await getAdaptiveQuestion("what their specific niche interest is — encourage them to be weird and specific", "Tell me more — what is it?");
+  var q = await getAdaptiveQuestion(
+    "what their specific interest is — encourage them, the weirder and more specific the better",
+    "Tell me more — the more specific the better.",
+    "It's kind of hard to explain but…"
+  );
   await showAIMessage(q);
   showTextInput("It's kind of hard to explain but…", function(val) { responses.loves = val; addMessage(val, 'user'); step4(); });
 }
@@ -887,8 +926,9 @@ async function step3b() {
 async function step4() {
   updateProgress(4);
   var q = await getAdaptiveQuestion(
-    "a specific moment at work that stuck with them — not their job description, a real memory",
-    "Tell me about a moment at work that actually stuck with you. Could be small."
+    "a specific real moment at work that stuck with them — not their job, an actual memory",
+    "Tell me about a moment at work that actually stuck with you.",
+    "It was when…"
   );
   await showAIMessage(q);
   showTextInput("It was when…", function(val) { responses.bestDay = val; addMessage(val, 'user'); step5(); });
@@ -896,110 +936,169 @@ async function step4() {
 
 async function step5() {
   updateProgress(5);
-  var q = await getAdaptiveQuestion(
-    "what work situations they never want to deal with again — be direct, this is important",
-    "What's the stuff you're totally done with?"
+  var result = await getAdaptiveStep(
+    "what work situations they are completely done with and never want to deal with again",
+    [
+      "Feeling like just a number",
+      "No space to think or be creative",
+      "Constant chaos, no structure",
+      "All meetings, nothing actually getting done",
+      "Micromanagement — I need to be trusted",
+      "🎯 Something specific I want to describe"
+    ],
+    "What are you totally done with?",
+    [
+      "Feeling like a number, not a person",
+      "No room to think or create",
+      "Constant chaos with no structure",
+      "Endless meetings, nothing gets done",
+      "Micromanagement — I need autonomy",
+      "🎯 Something specific — let me describe it"
+    ]
   );
-  await showAIMessage(q);
-  showOptions([
-    "Feeling like a number, not a person",
-    "No room to think or be creative",
-    "Constant chaos with no structure",
-    "Meetings all day, nothing getting done",
-    "Micromanagement — I work better with trust",
-    "🎯 Something specific — let me describe it"
-  ], function(val) {
-    if (val.includes("Something specific")) { step5b(); }
+  await showAIMessage(result.q);
+  showOptions(result.opts, function(val) {
+    if (val.toLowerCase().includes("something specific") || val.toLowerCase().includes("let me describe")) { step5b(); }
     else { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); }
   });
 }
 
 async function step5b() {
-  var q = await getAdaptiveQuestion("them to describe their specific never-again in their own words", "What is it?");
+  var q = await getAdaptiveQuestion(
+    "them to describe in their own words the specific thing they never want to deal with again",
+    "What is it? Say it however feels right.",
+    "The thing I'm done with is…"
+  );
   await showAIMessage(q);
-  showTextInput("The thing I never want to deal with again is…", function(val) { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); });
+  showTextInput("The thing I'm done with is…", function(val) { responses.neverAgain1 = val; addMessage(val, 'user'); step6(); });
 }
 
 async function step6() {
   updateProgress(6);
-  var q = await getAdaptiveQuestion("anything else on their never-again list — keep it short", "Anything else on that list?");
-  await showAIMessage(q);
-  showOptions([
-    "No direction from leadership",
-    "A team that doesn't talk to each other",
-    "Being expected to be on 24/7",
-    "Work that goes nowhere",
-    "A team that doesn't care about quality",
-    "🎯 Something else"
-  ], function(val) {
-    if (val.includes("Something else")) { step6b(); }
+  var result = await getAdaptiveStep(
+    "anything else they want to add to their never-again list",
+    [
+      "No direction from leadership",
+      "A team that never talks to each other",
+      "Being expected to be on 24/7",
+      "Work that leads nowhere",
+      "A team that doesn't care about quality",
+      "🎯 Something else I want to add"
+    ],
+    "Anything else on that list?",
+    [
+      "No real direction from leadership",
+      "A team that doesn't communicate",
+      "Always being expected to be available",
+      "Work that feels pointless",
+      "A team that doesn't care about doing it right",
+      "🎯 Something else"
+    ]
+  );
+  await showAIMessage(result.q);
+  showOptions(result.opts, function(val) {
+    if (val.toLowerCase().includes("something else") || val.toLowerCase().includes("want to add")) { step6b(); }
     else { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); }
   });
 }
 
 async function step6b() {
-  showTextInput("One more thing…", function(val) { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); });
+  showTextInput("One more thing I'd add…", function(val) { responses.neverAgain2 = val; addMessage(val, 'user'); step7(); });
 }
 
 async function step7() {
   updateProgress(7);
   var q = await getAdaptiveQuestion(
-    "what they actually do day to day at work — not their job title, the real version",
-    "Tell me what you actually do all day. Not the title — the real version."
+    "what they actually do day to day — the real version, not the job title",
+    "Walk me through what your days actually look like.",
+    "Most of my day is actually…"
   );
   await showAIMessage(q);
-  showTextInput("Honestly, most of my day is…", function(val) { responses.background = val; addMessage(val, 'user'); step8(); }, 3);
+  showTextInput("Most of my day is actually…", function(val) { responses.background = val; addMessage(val, 'user'); step8(); }, 3);
 }
 
 async function step8() {
   updateProgress(8);
-  var q = await getAdaptiveQuestion(
-    "how the people who know them best outside of work would describe them",
-    "Outside of work — how would people who know you describe you?"
+  var result = await getAdaptiveStep(
+    "how the people who know them best outside of work would describe them as a person",
+    [
+      "The person everyone comes to with their problems",
+      "The one who figures things out when nobody else can",
+      "The creative one — always making or thinking of something",
+      "The competitive one — hates losing, loves winning",
+      "The quiet one who somehow always gets more done",
+      "🎯 None of these feel right — let me say it"
+    ],
+    "How would people who really know you describe you?",
+    [
+      "The one people come to when they need help",
+      "The one who always figures it out",
+      "The creative one — always making something",
+      "The competitive one — I hate losing",
+      "The quiet one who somehow gets the most done",
+      "🎯 None of these — let me describe it"
+    ]
   );
-  await showAIMessage(q);
-  showOptions([
-    "The person everyone comes to with their problems",
-    "The one who figures things out when nobody else can",
-    "The creative one — always making or thinking of something",
-    "The competitive one — hates losing, loves winning",
-    "The quiet one who somehow always gets more done",
-    "🎯 None of these — let me say it myself"
-  ], function(val) {
-    if (val.includes("None of these")) { step8b(); }
+  await showAIMessage(result.q);
+  showOptions(result.opts, function(val) {
+    if (val.toLowerCase().includes("none of these") || val.toLowerCase().includes("let me describe") || val.toLowerCase().includes("let me say")) { step8b(); }
     else { responses.identity = val; addMessage(val, 'user'); step9(); }
   });
 }
 
 async function step8b() {
-  showTextInput("People who know me would say…", function(val) { responses.identity = val; addMessage(val, 'user'); step9(); });
+  showTextInput("People who really know me would say…", function(val) { responses.identity = val; addMessage(val, 'user'); step9(); });
 }
 
 async function step9() {
   updateProgress(9);
-  var q = await getAdaptiveQuestion("where they do their best work — remote, in person, or hybrid", "Where do you actually work best?");
-  await showAIMessage(q);
-  showOptions([
-    "Fully remote — I work better alone",
-    "In person — I need people around",
-    "Hybrid — depends on what I'm doing",
-    "Honestly haven't been in the right environment yet"
-  ], function(val) { responses.environment = val; addMessage(val, 'user'); step9b(); }, true);
+  var result = await getAdaptiveStep(
+    "where they do their best work — fully remote, in person, or hybrid",
+    [
+      "Fully remote — I work better alone",
+      "In person — I need people around me",
+      "Hybrid — depends on the day",
+      "Honestly not sure — never been in the right setup"
+    ],
+    "Where do you actually do your best work?",
+    [
+      "Fully remote — I thrive alone",
+      "In person — I need people around",
+      "Hybrid — some of both",
+      "Honestly haven't figured that out yet"
+    ]
+  );
+  await showAIMessage(result.q);
+  showOptions(result.opts, function(val) { responses.environment = val; addMessage(val, 'user'); step9b(); }, true);
 }
 
 async function step9b() {
-  var q = await getAdaptiveQuestion("what kind of pace they like — fast and chaotic vs steady vs flexible", "What kind of pace works for you?");
-  await showAIMessage(q);
-  showOptions([
-    "Fast and unpredictable — I like the chaos",
-    "Steady and focused — I like knowing what's coming",
-    "Flexible — some days intense, some quiet",
-    "Honestly never thought about it that way"
-  ], function(val) { responses.pace = val; addMessage(val, 'user'); step9c(); }, true);
+  var result = await getAdaptiveStep(
+    "what kind of work pace suits them — fast and unpredictable, steady, or flexible",
+    [
+      "Fast and unpredictable — I love the chaos",
+      "Steady and focused — I like knowing what's coming",
+      "Flexible — some intense days, some quiet ones",
+      "Honestly never thought about it this way"
+    ],
+    "What pace works best for you?",
+    [
+      "Fast and chaotic — I thrive in it",
+      "Steady — I like knowing what to expect",
+      "Flexible — a mix of both",
+      "Never really thought about it"
+    ]
+  );
+  await showAIMessage(result.q);
+  showOptions(result.opts, function(val) { responses.pace = val; addMessage(val, 'user'); step9c(); }, true);
 }
 
 async function step9c() {
-  var q = await getAdaptiveQuestion("what city or region they're in — this helps with job matching", "Last one — where are you based?");
+  var q = await getAdaptiveQuestion(
+    "what city or region they're in — this helps personalize the job matches, keep it light",
+    "Last one — where are you based?",
+    "I'm in…"
+  );
   await showAIMessage(q);
   showTextInput("I'm in…", function(val) { responses.location = val; addMessage(val, 'user'); step10(); });
 }
@@ -1007,8 +1106,9 @@ async function step9c() {
 async function step10() {
   updateProgress(10);
   var q = await getAdaptiveQuestion(
-    "that you have a really clear picture of them now and want to share what you're seeing — make it feel like a real moment",
-    "Okay. I think I've got a pretty clear picture. Can I tell you what I'm seeing?"
+    "that you've heard everything and want to share what you're seeing — make it feel like a real moment of connection, warm and genuine",
+    "Okay. I think I've got a real picture of you. Can I share what I'm seeing?",
+    ""
   );
   await showAIMessage(q);
   await delay(1200);
