@@ -672,6 +672,10 @@ function getProfile() {
   try { return JSON.parse(localStorage.getItem('lune_profile') || 'null'); } catch(e) { return null; }
 }
 
+function setProfile(data) {
+  try { localStorage.setItem('lune_profile', JSON.stringify(data)); } catch(e) {}
+}
+
 function saveProfile(data) {
   try { localStorage.setItem('lune_profile', JSON.stringify(data)); } catch(e) {}
 }
@@ -1843,11 +1847,7 @@ async function compassionCheck(whatTheyShared) {
   }
 }
 
-// Runs compassion check (if needed) + acknowledgment + optional micro follow-up
-// Also passively checks for constraints in the background — silent, non-blocking
-async function acknowledgeAndMaybeFollowUp(val, contextKey) {
-  // Check if someone mentions being referred — store it warmly
-// "my friend told me about this" / "someone sent me this link" / "X told me I should try this"
+// ── REFERRAL DETECTOR — lives outside acknowledgeAndMaybeFollowUp ────────────
 async function detectReferral(whatTheyShared) {
   var referralSignals = /\b(told me|sent me|shared|referred|said I should|recommended|friend said|my (friend|coworker|sister|brother|partner|mom|dad|colleague))\b/i;
   if (!referralSignals.test(whatTheyShared)) return null;
@@ -1867,7 +1867,10 @@ async function detectReferral(whatTheyShared) {
   } catch(e) { return null; }
 }
 
-// Step 0: Run passive constraint check in background — never blocks, never changes rhythm
+// Runs compassion check (if needed) + acknowledgment + optional micro follow-up
+// Also passively checks for constraints in the background — silent, non-blocking
+async function acknowledgeAndMaybeFollowUp(val, contextKey) {
+  // Step 0: Run passive constraint check in background — never blocks, never changes rhythm
   // Runs in parallel with everything else so there's zero added latency
   passiveConstraintCheck(val, contextKey || 'conversation');
 
@@ -2919,6 +2922,9 @@ var matchPrompt = 'You are Lune\'s matching engine. Generate ' + (needsBridge ? 
 
     // Separate bridge, surprise, and locked matches
     var bridgeJob = jobs.find(function(j) { return j.bridge; }) || null;
+    // Store bridge state globally so showEndActions can access it
+    lastBridgeState.needsBridge = needsBridge;
+    lastBridgeState.bridgeJob = bridgeJob;
     var surpriseJob = jobs.find(function(j) { return j.surprise; }) || jobs[jobs.length-1];
     var lockedJobs = jobs.filter(function(j) { return !j.surprise && !j.bridge; });
     if (lockedJobs.length === 0) lockedJobs = jobs.filter(function(j) { return !j.surprise; }).slice(0,2);
@@ -3145,6 +3151,9 @@ await showAIMessage(bridgeIntroMsg, 400);
   }
 }
 
+// Global bridge state — set by showMatches, read by showEndActions
+var lastBridgeState = { needsBridge: false, bridgeJob: null };
+
 function showEndActions() {
   var chat = document.getElementById('chat');
   var wrap = document.createElement('div');
@@ -3173,18 +3182,7 @@ function showEndActions() {
   wrap.appendChild(againBtn);
   wrap.appendChild(backBtn);
   chat.appendChild(wrap);
-  // If bridge exists, close with a plan message — grounds scared users in sequence
-    if (needsBridge && bridgeJob) {
-      await delay(600);
-      var planMsg = (constraints.timeline === 'immediate')
-        ? "Two things: the first you can start this week. The second is where you're actually going. You don't have to choose — you do them in order."
-        : (constraints.hardLimitType === 'credential')
-        ? "The bridge role builds what the bigger roles need. Start there — it's not a detour, it's the route."
-        : "Start with what's reachable. Build toward what's right. Both are in there.";
-      await showAIMessage(planMsg, 500);
-      await delay(400);
-    }
-    scrollToBottom();
+  scrollToBottom();
 }
 // ── FOUNDING MEMBER SYSTEM ────────────────────────────────────────────────────
 // Tracks founding member count in localStorage (real version needs Supabase)
