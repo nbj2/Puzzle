@@ -741,9 +741,9 @@ function renderProfilePage() {
 
   // ── Build tags from latest responses ──
   var tags = [];
-  if (latest.loves) tags.push(latest.loves.replace(/^[^\w]*/, '').split('—')[0].trim().split(' ').slice(0,4).join(' '));
-  if (latest.environment) tags.push(latest.environment.split('—')[0].trim().split(' ').slice(0,3).join(' '));
-  if (latest.pace) tags.push(latest.pace.split('—')[0].trim().split(' ').slice(0,3).join(' '));
+  if (latest.loves) tags.push(latest.loves.replace(/^[^\w]*/, '').split('--')[0].trim().split(' ').slice(0,4).join(' '));
+  if (latest.environment) tags.push(latest.environment.split('--')[0].trim().split(' ').slice(0,3).join(' '));
+  if (latest.pace) tags.push(latest.pace.split('--')[0].trim().split(' ').slice(0,3).join(' '));
   if (latest.neverAgain && latest.neverAgain[0]) tags.push('Never again: ' + latest.neverAgain[0].split(',')[0].trim().split(' ').slice(0,4).join(' '));
 
   // ── Build summaries history ──
@@ -796,10 +796,10 @@ function renderProfilePage() {
         '</div>'
       : '<div class="profile-resume-zone" id="resumeZone">' +
         '<div class="profile-resume-title">Add your resume</div>' +
-        '<div class="profile-resume-sub">Optional. Helps Lune see where your experience and your pattern overlap — and where they don't.</div>' +
+        '<div class="profile-resume-sub">Optional. Helps Lune see where your experience and your pattern overlap -- and where they don\'t.</div>' +
         '<input type="file" id="resumeUpload" accept=".pdf,.doc,.docx" style="display:none;">' +
         '<button class="profile-cta" id="resumeUploadBtn" style="margin-top:16px;font-size:13px;padding:10px 20px;">Add resume</button>' +
-        '<div style="margin-top:8px;font-size:11px;color:var(--muted);">Or <button id="resumeSkipBtn" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;">skip for now</button> — you can always add it later.</div>' +
+        '<div style="margin-top:8px;font-size:11px;color:var(--muted);">Or <button id="resumeSkipBtn" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;">skip for now</button> -- you can always add it later.</div>' +
         '</div>');
 
   // ── Assemble the full page ──
@@ -931,17 +931,17 @@ async function showPromotionFlow() {
   body.innerHTML =
     '<div style="max-width:520px;margin:0 auto;padding:20px 0;">' +
     '<div style="font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:8px;">Something changed.</div>' +
-    '<div style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6;">Tell me about it — a few questions and your profile will reflect where you are now.</div>' +
+    '<div style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6;">Tell me about it -- a few questions and your profile will reflect where you are now.</div>' +
     '<div id="promotionFlow"></div>' +
     '</div>';
 
   var flowEl = document.getElementById('promotionFlow');
   var promotionData = {};
 
-  // Q1: What changed — new title, promotion, new company, or role shift
+  // Q1: What changed -- new title, promotion, new company, or role shift
   await addFlowMessage(flowEl, "What happened?");
   var changeType = await askFlowOptions(flowEl, [
-    "Got promoted — same company",
+    "Got promoted -- same company",
     "Started somewhere new",
     "My role shifted without a title change",
     "Something else changed"
@@ -955,7 +955,7 @@ async function showPromotionFlow() {
   // Q3: Tailored feeler based on mood type and change type
   var q3;
   if (moodType === 'urgent') {
-    q3 = "Did this solve what was urgent — or is something still unresolved?";
+    q3 = "Did this solve what was urgent -- or is something still unresolved?";
   } else if (moodType === 'happy') {
     q3 = "What's still working the way you hoped?";
   } else if (changeType.includes("new company")) {
@@ -966,7 +966,7 @@ async function showPromotionFlow() {
   await addFlowMessage(flowEl, q3);
   promotionData.whatChanged = await askFlowText(flowEl, "What changed is…");
 
-  // Q4: One more — what would make you come back to Lune
+  // Q4: One more -- what would make you come back to Lune
   await addFlowMessage(flowEl, "What would have to happen for you to be back here looking again?");
   promotionData.whatNext = await askFlowText(flowEl, "I'd come back if…");
 
@@ -985,7 +985,7 @@ async function showPromotionFlow() {
   setProfile(p);
 
   // Warm close
-  await addFlowMessage(flowEl, "Got it. Your profile is updated — and Lune will remember this the next time something feels off.");
+  await addFlowMessage(flowEl, "Got it. Your profile is updated -- and Lune will remember this the next time something feels off.");
   await new Promise(function(r) { setTimeout(r, 800); });
 
   // Return to profile
@@ -1074,7 +1074,7 @@ function buildCheckInEmail(profile, conversationCount, daysSinceLast) {
   // Subject lines tailored to mood
   var subjects = {
     urgent:   'still urgent? let us know how we can help',
-    stuck:    'checking in — has anything shifted?',
+    stuck:    'checking in -- has anything shifted?',
     happy:    'still loving it? tell us what's been going right',
     directed: 'did you find the path? we'd love to know',
     open:     'a quick check-in from Lune'
@@ -1084,17 +1084,17 @@ function buildCheckInEmail(profile, conversationCount, daysSinceLast) {
   var openings = {
     urgent:   'Last time you came to Lune things felt urgent. That was ' + daysSinceLast + ' days ago.',
     stuck:    'It's been ' + daysSinceLast + ' days since your Lune conversation. You came in searching for something.',
-    happy:    'You came to Lune curious — not stuck, just wondering. It's been ' + daysSinceLast + ' days.',
+    happy:    'You came to Lune curious -- not stuck, just wondering. It's been ' + daysSinceLast + ' days.',
     directed: 'You came in knowing the direction, just not the steps. That was ' + daysSinceLast + ' days ago.',
     open:     'It's been ' + daysSinceLast + ' days since your Lune conversation.'
   };
 
   // Check-in questions tailored to mood
   var questions = {
-    urgent:   'Has the urgency resolved — or is something still pressing? One update helps Lune find better matches for where you actually are right now.',
-    stuck:    'Has anything shifted since then? Even small things — a conversation, a realization, something that changed how you see it.',
+    urgent:   'Has the urgency resolved -- or is something still pressing? One update helps Lune find better matches for where you actually are right now.',
+    stuck:    'Has anything shifted since then? Even small things -- a conversation, a realization, something that changed how you see it.',
     happy:    'Is it still working the way you hoped? What's been going right?',
-    directed: 'Did you find the steps — or did the direction itself change?',
+    directed: 'Did you find the steps -- or did the direction itself change?',
     open:     'Where are you now compared to where you were?'
   };
 
@@ -1109,22 +1109,12 @@ function buildCheckInEmail(profile, conversationCount, daysSinceLast) {
 
   return {
     subject: subject,
-    body: 'Hi ' + name + ',
-
-' + opening + '
-
-' + question + '
-
-' + closings + '
-
-Just reply to this email — or update your profile at trylune.app.
-
-Lune'
+    body: 'Hi ' + name + ',\n\n' + opening + '\n\n' + question + '\n\n' + closings + '\n\nJust reply to this email -- or update your profile at trylune.app.\n\nLune'
   };
 }
 
 // Store the user mood when they complete the conversation
-// so email engine knows who it's talking to
+// so email engine knows who it\'s talking to
 function storeConversationMood() {
   var p = getProfile();
   if (!p) return;
@@ -1172,44 +1162,19 @@ document.addEventListener('DOMContentLoaded', function() {
         var welcomeSubject = isFounder
           ? 'welcome to the founding 100'
           : welcomeMood.type === 'urgent'
-          ? "you came in urgent — here's what comes next"
+          ? "you came in urgent -- here\'s what comes next"
           : welcomeMood.type === 'happy'
-          ? "glad you're here — your profile is saved"
+          ? "glad you're here -- your profile is saved"
           : 'your lune profile is ready';
 
+        var luneSign = '\\n\\nLune';
         var welcomeBody = isFounder
-          ? 'Hi ' + name + ',
-
-You're one of the founding 100. Your price is locked at $7/month for life — that never changes.
-
-Your profile is saved at trylune.app. The conversation is the beginning. Come back anytime something shifts.
-
-And if you ever want to tell us something that would make the product better — just reply to this email. It goes to a real person.
-
-Lune'
+          ? 'Hi ' + name + ',\\n\\nYou\'re one of the founding 100. Your price is locked at $7/month for life -- that never changes.\\n\\nYour profile is saved at trylune.app. The conversation is the beginning. Come back anytime something shifts.\\n\\nReply to this email anytime. It goes to a real person.' + luneSign
           : welcomeMood.type === 'urgent'
-          ? 'Hi ' + name + ',
-
-You came in with something urgent. Your profile is saved — the matches and your summary are waiting at trylune.app.
-
-We'll check in soon. If anything changes before then, just come back.
-
-Lune'
+          ? 'Hi ' + name + ',\\n\\nYou came in with something urgent. Your profile is saved -- the matches and your summary are waiting at trylune.app.\\n\\nWe\'ll check in soon. If anything changes before then, just come back.' + luneSign
           : welcomeMood.type === 'happy'
-          ? 'Hi ' + name + ',
-
-You came in curious, not stuck — which is actually the best time to do this. Your profile is saved at trylune.app.
-
-Come back whenever something shifts. Lune works best when it has a before and after to compare.
-
-Lune'
-          : 'Hi ' + name + ',
-
-Your Lune profile is saved. The summary and your matches are at trylune.app.
-
-If anything shifts — a new role, a change in what you want, something that makes you think — come back. The profile gets sharper every time.
-
-Lune';
+          ? 'Hi ' + name + ',\\n\\nYou came in curious, not stuck -- which is actually the best time to do this. Your profile is saved at trylune.app.\\n\\nCome back whenever something shifts. Lune works best when it has a before and after to compare.' + luneSign
+          : 'Hi ' + name + ',\\n\\nYour Lune profile is saved. The summary and your matches are at trylune.app.\\n\\nIf anything shifts -- a new role, a change in what you want, something that makes you think -- come back. The profile gets sharper every time.' + luneSign;
 
         fetch('/api/send-email', {
           method: 'POST',
@@ -1222,7 +1187,7 @@ Lune';
             emailType: 'welcome'
           })
         }).catch(function(e) {
-          // Silent fail — email is enhancement, never blocking
+          // Silent fail -- email is enhancement, never blocking
           console.log('Welcome email failed silently:', e);
         });
       } catch(emailErr) {
@@ -1251,21 +1216,21 @@ Lune';
     var confirmBubble = document.createElement('div');
     confirmBubble.className = 'bubble';
     var relocationNote = (responses.relocationType === 'eventual' && responses.targetLocation)
-      ? " And when " + responses.targetLocation + " stops being eventually, come back — we'll have matches waiting."
+      ? " And when " + responses.targetLocation + " stops being eventually, come back -- we'll have matches waiting."
       : "";
-    confirmBubble.textContent = 'Profile created, ' + name + '. Your summary is saved. Come back anytime — Lune will remember you.' + relocationNote;
+    confirmBubble.textContent = 'Profile created, ' + name + '. Your summary is saved. Come back anytime -- Lune will remember you.' + relocationNote;
     confirmMsg.appendChild(confirmBubble);
     document.getElementById('chat').appendChild(confirmMsg);
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-    // ── REFERRAL QUESTION — fires after profile save ──────────────────────────
+    // ── REFERRAL QUESTION -- fires after profile save ──────────────────────────
     // Warmest moment in the product. They just committed. Ask naturally.
     setTimeout(async function() {
       await delay(1200);
-      await showAIMessage("One last thing — is there someone in your life who needs this conversation?", 500);
+      await showAIMessage("One last thing -- is there someone in your life who needs this conversation?", 500);
       await delay(600);
 
-      // Two-option response — keeps it light, no pressure
+      // Two-option response -- keeps it light, no pressure
       var chat = document.getElementById('chat');
       var refWrap = document.createElement('div');
       refWrap.className = 'options';
@@ -1273,7 +1238,7 @@ Lune';
 
       var refYes = document.createElement('button');
       refYes.className = 'option-btn';
-      refYes.textContent = 'Actually yes — I know someone';
+      refYes.textContent = 'Actually yes -- I know someone';
 
       var refNo = document.createElement('button');
       refNo.className = 'option-btn';
@@ -1281,9 +1246,9 @@ Lune';
 
       refYes.addEventListener('click', async function() {
         refWrap.remove();
-        addMessage('Actually yes — I know someone', 'user');
+        addMessage('Actually yes -- I know someone', 'user');
         await delay(400);
-        await showAIMessage("Tell me about them — just enough so I know who to look out for.", 400);
+        await showAIMessage("Tell me about them -- just enough so I know who to look out for.", 400);
         await delay(300);
 
         showTextInput("Someone I know who needs this…", async function(refVal) {
@@ -1308,8 +1273,8 @@ Lune';
             localStorage.setItem('lune_referrals', JSON.stringify(referrals));
           } catch(e) {}
 
-          // Store silently — never reflect back what they said about the person
-          // The reason could be positive or negative — we hold it privately
+          // Store silently -- never reflect back what they said about the person
+          // The reason could be positive or negative -- we hold it privately
           // Just acknowledge the act of thinking of someone warmly
           await delay(300);
           await showAIMessage("Good. Lune will be ready for them.", 400);
@@ -1319,7 +1284,7 @@ Lune';
       refNo.addEventListener('click', async function() {
         refWrap.remove();
         addMessage('Not right now', 'user');
-        // Silent — no response needed. They said no. Honor it.
+        // Silent -- no response needed. They said no. Honor it.
       });
 
       refWrap.appendChild(refYes);
@@ -1425,7 +1390,7 @@ function clearInput() { document.getElementById('inputArea').innerHTML = ''; }
 
 async function showAIMessage(text, ms) {
   var t = showTyping();
-  // Crisis users get faster pacing — reduce wait time significantly
+  // Crisis users get faster pacing -- reduce wait time significantly
   var baseMs = responses.crisisFlag ? Math.min((ms || 800) * 0.4, 500) : (ms || 800);
   await delay(baseMs);
   removeTyping(t);
@@ -1449,7 +1414,7 @@ function showOptions(options, onSelect, singleSelect) {
   if (!singleSelect) {
     var hint = document.createElement('div');
     hint.style.cssText = 'font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;font-style:italic;';
-    hint.textContent = 'Select all that apply — then continue.';
+    hint.textContent = 'Select all that apply -- then continue.';
     wrap.appendChild(hint);
   }
 
@@ -1538,9 +1503,9 @@ function getConvoSoFar() {
     var durVal = responses.duration || '';
     // Flag the conditions-vs-work signal so summary and matches use it correctly
     if (durVal.toLowerCase().includes('love the work') || durVal.toLowerCase().includes('hate the environment')) {
-      parts.push('IMPORTANT — CONDITIONS NOT WORK: They love the actual craft but hate the environment. Do NOT suggest they leave the field. Suggest better conditions within the field or adjacent roles.');
+      parts.push('IMPORTANT -- CONDITIONS NOT WORK: They love the actual craft but hate the environment. Do NOT suggest they leave the field. Suggest better conditions within the field or adjacent roles.');
     } else if (durVal.toLowerCase().includes('don\'t want to do this') || durVal.toLowerCase().includes('completely different')) {
-      parts.push('IMPORTANT — GENUINE PIVOT: They want to leave the type of work entirely, not just find better conditions. Suggest roles in a different direction.');
+      parts.push('IMPORTANT -- GENUINE PIVOT: They want to leave the type of work entirely, not just find better conditions. Suggest roles in a different direction.');
     } else {
       parts.push('Follow-up: ' + durVal);
     }
@@ -1557,8 +1522,8 @@ function getConvoSoFar() {
   if (responses.identity) parts.push('How others describe them: ' + responses.identity);
   if (responses.environment) parts.push('Work environment: ' + responses.environment);
   if (responses.pace) parts.push('Pace preference: ' + responses.pace);
-  if (responses.referredBy) parts.push('Note: this person was referred by ' + responses.referredBy + ' — someone in their life thought they needed this conversation. Worth acknowledging warmly if relevant.');
-  // Add constraint context — filters matches through what's actually reachable
+  if (responses.referredBy) parts.push('Note: this person was referred by ' + responses.referredBy + ' -- someone in their life thought they needed this conversation. Worth acknowledging warmly if relevant.');
+  // Add constraint context -- filters matches through what's actually reachable
   var constraintCtx = getConstraintContext();
   if (constraintCtx) parts.push(constraintCtx);
 
@@ -1567,19 +1532,19 @@ function getConvoSoFar() {
   } else if (responses.relocationType === 'urgent') {
     parts.push('WANTS TO RELOCATE URGENTLY to ' + responses.targetLocation + ' (currently in ' + (responses.currentLocation || responses.location) + '). Mix local matches with remote-friendly or ' + responses.targetLocation + '-based roles. Acknowledge the goal in the summary.');
   } else if (responses.relocationType === 'eventual') {
-    parts.push('Location: ' + (responses.currentLocation || responses.location) + '. NOTE: they mentioned eventually wanting to move to ' + responses.targetLocation + ' — focus matches on current city. Briefly and warmly acknowledge the future goal at the end of the summary without making it the focus.');
+    parts.push('Location: ' + (responses.currentLocation || responses.location) + '. NOTE: they mentioned eventually wanting to move to ' + responses.targetLocation + ' -- focus matches on current city. Briefly and warmly acknowledge the future goal at the end of the summary without making it the focus.');
   } else if (responses.location) {
     parts.push('Location: ' + responses.location);
   }
   return parts.join('\n');
 }
 
-var TONE_SYSTEM = 'You are the warm, human voice behind Lune — a career tool for people who feel stuck, overlooked, or unsure what comes next. Many of them are vulnerable. Some haven\'t told anyone they\'re thinking about leaving. Your job is to make them feel genuinely seen and safe — like texting a trusted friend who happens to know a lot about careers. Be warm, real, and encouraging. Never clinical. Never formal. No em dashes. No bullet points. Short sentences. Match their energy — if they\'re casual, be casual. If they\'re serious, be warm and direct. Always make them feel like their answer matters and that you\'re actually listening.';
+var TONE_SYSTEM = 'You are the warm, human voice behind Lune -- a career tool for people who feel stuck, overlooked, or unsure what comes next. Many of them are vulnerable. Some haven\'t told anyone they\'re thinking about leaving. Your job is to make them feel genuinely seen and safe -- like texting a trusted friend who happens to know a lot about careers. Be warm, real, and encouraging. Never clinical. Never formal. No em dashes. No bullet points. Short sentences. Match their energy -- if they\'re casual, be casual. If they\'re serious, be warm and direct. Always make them feel like their answer matters and that you\'re actually listening.';
 
 // Gets an adaptive question AND matching answer options in one AI call
 async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
   try {
-    var optionContext = optionSeeds ? '\n\nThe answer options must cover these concepts (reword them to match the question\'s tone — same meaning, different energy):\n' + optionSeeds.join('\n') : '';
+    var optionContext = optionSeeds ? '\n\nThe answer options must cover these concepts (reword them to match the question\'s tone -- same meaning, different energy):\n' + optionSeeds.join('\n') : '';
     var data = await callAI({
       model: 'claude-sonnet-4-6',
       max_tokens: 300,
@@ -1588,7 +1553,7 @@ async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
         '\n\nNext thing to find out: ' + goal +
         optionContext +
         '\n\nWrite a short, warm follow-up message (under 20 words) and ' + (optionSeeds ? optionSeeds.length : 0) + ' answer options that match its tone exactly.' +
-        '\n\nRules:\n- Question: casual, warm, human — never start with "I" or "So"\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
+        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
       }]
     });
     var raw = data.content && data.content[0] && data.content[0].text;
@@ -1633,7 +1598,7 @@ async function getAcknowledgment(whatTheyShared) {
       model: 'claude-sonnet-4-6',
       max_tokens: 80,
       messages: [{ role: 'user', content:
-        TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail — a person, moment, or phrase they used. NEVER write anything generic like that sounds tough. (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) If no specific detail exists return empty string — silence beats generic.\n\nWhat they shared: ' + whatTheyShared
+        TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail -- a person, moment, or phrase they used. NEVER write anything generic like that sounds tough. (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) If no specific detail exists return empty string -- silence beats generic.\n\nWhat they shared: ' + whatTheyShared
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -1643,16 +1608,16 @@ async function getAcknowledgment(whatTheyShared) {
   }
 }
 
-// Micro follow-up — fires ONLY on free text answers when there's a hook worth pulling
+// Micro follow-up -- fires ONLY on free text answers when there\'s a hook worth pulling
 // Never fires on button selections. One follow-up maximum per step.
-// Returns a short question string if there's a hook, null if the answer is complete.
+// Returns a short question string if there\'s a hook, null if the answer is complete.
 async function getMicroFollowUp(whatTheyShared, context) {
   try {
     var data = await callAI({
       model: 'claude-sonnet-4-6',
       max_tokens: 120,
       messages: [{ role: 'user', content:
-        TONE_SYSTEM + '\n\nSomeone just typed a free-text answer in a career conversation. Your job is to decide if there is ONE specific hook worth following up on — and if so, ask it in a warm, curious way.\n\nA hook is: a pronoun with no name attached ("she", "he", "they", "my boss"), an event referenced but not explained ("when it happened", "the announcement", "after that"), a job or place mentioned briefly ("the shop", "my manager"), something that would help understand their situation more fully.\n\nRULES:\n- If there is a clear hook: return ONE short warm question (under 10 words) that invites them to share more. Match their energy exactly. No em dashes. Never start with I.\n- CRITICAL TONE RULE: The question must feel genuinely curious and inviting — never skeptical, never challenging, never like you are questioning whether what they said is true. You believe them completely. You just want to know more. The question should make them feel good about sharing more, not defensive.\n- BAD example: "are those clients actually yours?" — sounds like you doubt them\n- GOOD example: "do they follow you specifically?" — sounds like you want to hear more\n- BAD example: "are you sure that was your work?" — challenging\n- GOOD example: "what did you change that made the difference?" — curious and affirming\n- If the answer is already complete and clear: return empty string — do NOT invent a follow-up\n- Never ask something they already answered\n- This is a conversation between friends, not an interrogation — if in doubt, return empty string\n\nContext of conversation so far: ' + context + '\n\nWhat they just shared: ' + whatTheyShared + '\n\nRespond with ONLY the follow-up question or an empty string. Nothing else.'
+        TONE_SYSTEM + '\n\nSomeone just typed a free-text answer in a career conversation. Your job is to decide if there is ONE specific hook worth following up on -- and if so, ask it in a warm, curious way.\n\nA hook is: a pronoun with no name attached ("she", "he", "they", "my boss"), an event referenced but not explained ("when it happened", "the announcement", "after that"), a job or place mentioned briefly ("the shop", "my manager"), something that would help understand their situation more fully.\n\nRULES:\n- If there is a clear hook: return ONE short warm question (under 10 words) that invites them to share more. Match their energy exactly. No em dashes. Never start with I.\n- CRITICAL TONE RULE: The question must feel genuinely curious and inviting -- never skeptical, never challenging, never like you are questioning whether what they said is true. You believe them completely. You just want to know more. The question should make them feel good about sharing more, not defensive.\n- BAD example: "are those clients actually yours?" -- sounds like you doubt them\n- GOOD example: "do they follow you specifically?" -- sounds like you want to hear more\n- BAD example: "are you sure that was your work?" -- challenging\n- GOOD example: "what did you change that made the difference?" -- curious and affirming\n- If the answer is already complete and clear: return empty string -- do NOT invent a follow-up\n- Never ask something they already answered\n- This is a conversation between friends, not an interrogation -- if in doubt, return empty string\n\nContext of conversation so far: ' + context + '\n\nWhat they just shared: ' + whatTheyShared + '\n\nRespond with ONLY the follow-up question or an empty string. Nothing else.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -1670,7 +1635,7 @@ async function getMicroFollowUp(whatTheyShared, context) {
 // Listens for signals that reveal timeline urgency, income needs, location locks,
 // credential gaps, caregiving situations, or anything that makes a match unreachable
 // NEVER asks directly. Just notices and stores what people reveal naturally.
-// Accumulates across the whole conversation — each answer can add to the picture.
+// Accumulates across the whole conversation -- each answer can add to the picture.
 
 var constraints = {
   timeline: null,        // 'immediate' | 'soon' | 'runway' | 'longterm'
@@ -1688,22 +1653,22 @@ async function detectConstraints(whatTheyShared, stepContext) {
       model: 'claude-sonnet-4-6',
       max_tokens: 200,
       messages: [{ role: 'user', content:
-        'Read this message from someone in a career conversation and identify any constraints they revealed — things that would make certain job matches impossible or very difficult for them right now. Listen for what they actually said, not what they might mean.
+        'Read this message from someone in a career conversation and identify any constraints they revealed -- things that would make certain job matches impossible or very difficult for them right now. Listen for what they actually said, not what they might mean.
 
 CONSTRAINT TYPES TO DETECT:
 - Timeline: signals about how urgently they need something. "I have 8 months" / "my savings are running out" / "I need something by March" / "I have runway" / "no rush" / "I need to move fast"
 - Income floor: mentions of needing a minimum salary, bills, family support, debt, mortgage, healthcare coverage
-- Location lock: can't relocate, needs to stay near family, caregiving responsibilities anchoring them to a place
+- Location lock: can\'t relocate, needs to stay near family, caregiving responsibilities anchoring them to a place
 - Credential gap: no degree, missing certification or license that roles in their target field typically require
 - Caregiving: kids, elderly parent, partner situation that limits schedule, travel, or sudden job changes
 - Health/benefits: needs employer health coverage, disability, medical situation
 - Legal: non-compete, visa situation, background check concern
 
 RULES:
-- Only flag something if it was actually said or clearly implied — never invent constraints
+- Only flag something if it was actually said or clearly implied -- never invent constraints
 - If nothing was revealed, return empty
-- Capture their actual words in the raw fields — use quotes when possible
-- One constraint per call — flag the most important one if multiple exist
+- Capture their actual words in the raw fields -- use quotes when possible
+- One constraint per call -- flag the most important one if multiple exist
 - Keep acknowledgment note under 10 words, warm and validating, never alarming
 
 Step context (where in the conversation this came from): ' + stepContext + '
@@ -1724,7 +1689,7 @@ Respond ONLY with valid JSON or empty string if no constraint detected:
 }
 
 // Integrate a detected constraint into the constraints object
-// Quietly acknowledges it once if it's significant — never asks follow-up questions about constraints
+// Quietly acknowledges it once if it\'s significant -- never asks follow-up questions about constraints
 async function integrateConstraint(detected, val) {
   if (!detected || !detected.type) return;
 
@@ -1739,7 +1704,7 @@ async function integrateConstraint(detected, val) {
     }
   }
 
-  // Store hard limit — only the first one, or upgrade if more severe
+  // Store hard limit -- only the first one, or upgrade if more severe
   if (detected.type !== 'timeline' && !constraints.hardLimit) {
     constraints.hardLimit = detected.detail;
     constraints.hardLimitType = detected.type;
@@ -1748,8 +1713,8 @@ async function integrateConstraint(detected, val) {
     constraints.softLimits.push(detected.detail);
   }
 
-  // Acknowledge it once — warm, brief, never alarming
-  // Only acknowledge if it hasn't been acknowledged yet and it's significant
+  // Acknowledge it once -- warm, brief, never alarming
+  // Only acknowledge if it hasn't been acknowledged yet and it\'s significant
   var alreadyAcknowledged = constraints.acknowledged.includes(detected.type);
   var isSignificant = detected.type === 'timeline' && detected.urgency === 'immediate' ||
                       detected.type === 'income' ||
@@ -1767,13 +1732,13 @@ async function integrateConstraint(detected, val) {
 }
 
 // Runs constraint detection alongside the normal flow on any free-text answer
-// Called inside acknowledgeAndMaybeFollowUp — silent, parallel, non-intrusive
+// Called inside acknowledgeAndMaybeFollowUp -- silent, parallel, non-intrusive
 async function passiveConstraintCheck(val, stepContext) {
   try {
     var detected = await detectConstraints(val, stepContext);
     if (detected) await integrateConstraint(detected, val);
   } catch(e) {
-    // Silent fail — constraints are enhancement, never blocking
+    // Silent fail -- constraints are enhancement, never blocking
   }
 }
 
@@ -1782,31 +1747,31 @@ function getConstraintContext() {
   var parts = [];
   if (constraints.timeline) {
     var timelineLabels = {
-      immediate: 'URGENT — needs something within weeks. Only surface roles that hire quickly and are immediately available.',
-      soon: 'Timeline is soon — needs something within a few months. Avoid roles with very long hiring processes.',
-      runway: 'Has some runway — a few months to find the right thing. Can consider roles with normal hiring timelines.',
-      longterm: 'Playing a long game — building toward something over the next year or more.'
+      immediate: 'URGENT -- needs something within weeks. Only surface roles that hire quickly and are immediately available.',
+      soon: 'Timeline is soon -- needs something within a few months. Avoid roles with very long hiring processes.',
+      runway: 'Has some runway -- a few months to find the right thing. Can consider roles with normal hiring timelines.',
+      longterm: 'Playing a long game -- building toward something over the next year or more.'
     };
     parts.push('Timeline: ' + (timelineLabels[constraints.timeline] || constraints.timeline) + (constraints.timelineRaw ? ' (they said: "' + constraints.timelineRaw + '")' : ''));
   }
   if (constraints.hardLimit) {
-    parts.push('HARD CONSTRAINT — this is a wall, not a preference: ' + constraints.hardLimit + (constraints.hardLimitRaw ? ' (they said: "' + constraints.hardLimitRaw + '")' : '') + '. Any match that violates this constraint is the wrong match, regardless of fit.');
+    parts.push('HARD CONSTRAINT -- this is a wall, not a preference: ' + constraints.hardLimit + (constraints.hardLimitRaw ? ' (they said: "' + constraints.hardLimitRaw + '")' : '') + '. Any match that violates this constraint is the wrong match, regardless of fit.');
   }
   if (constraints.softLimits.length > 0) {
     parts.push('Other constraints worth knowing: ' + constraints.softLimits.join('; '));
   }
   return parts.length > 0 ? '
 
-CONSTRAINTS — filter matches through these:
+CONSTRAINTS -- filter matches through these:
 ' + parts.join('
 ') : '';
 }
 
-// Relocation detector — fires on location step
+// Relocation detector -- fires on location step
 // Differentiates between three relocation states:
-//   "active"    — moving imminently, show destination jobs
-//   "urgent"    — wants to move ASAP, mix current + destination remote roles
-//   "eventual"  — someday/eventually, stay focused on current city,
+//   "active"    -- moving imminently, show destination jobs
+//   "urgent"    -- wants to move ASAP, mix current + destination remote roles
+//   "eventual"  -- someday/eventually, stay focused on current city,
 //                 remember the goal for post-payment check-in
 async function detectRelocation(locationAnswer) {
   try {
@@ -1814,7 +1779,7 @@ async function detectRelocation(locationAnswer) {
       model: 'claude-sonnet-4-6',
       max_tokens: 200,
       messages: [{ role: 'user', content:
-        'Someone just answered a location question in a career tool. Read carefully and determine their relocation intent.\n\nTHREE STATES TO DISTINGUISH:\n1. "active" — they are actively relocating or moving very soon. Signals: "moving next month", "just got an offer there", "relocating in spring", "already have a place", "moving in X weeks".\n2. "urgent" — they strongly want to move as soon as possible but haven't made concrete plans. Signals: "trying to move", "need to get out", "want to move as soon as I can", "hoping to relocate soon", "looking to move".\n3. "eventual" — they mention it as a future dream or vague intention but are clearly still rooted where they are. Signals: "eventually", "one day", "someday", "down the road", "at some point", "would love to", "in a few years".\n4. "none" — no relocation mentioned at all.\n\nRULES:\n- Read the TIME signals carefully. "Eventually I want to move" is NOT urgent — it is eventual.\n- Extract current and target locations when present.\n- Write a warm acknowledgment under 12 words. Never start with I. No em dashes. Match their energy.\n- For "eventual": the acknowledgment should softly validate the dream without overpromising. e.g. "Good to know — we'll keep that in mind."\n- For "urgent": acknowledge the goal directly. e.g. "California is the target — we'll keep that close."\n- For "active": be practical and affirming. e.g. "California move coming up — matching you there."\n- For "none": return empty acknowledgment.\n\nAnswer: ' + locationAnswer + '\n\nRespond ONLY with valid JSON, no markdown:\n{"relocationType": "active|urgent|eventual|none", "currentLocation": "city/state or null", "targetLocation": "city/state or null", "acknowledgment": "warm one-liner or empty string"}'
+        'Someone just answered a location question in a career tool. Read carefully and determine their relocation intent.\n\nTHREE STATES TO DISTINGUISH:\n1. "active" -- they are actively relocating or moving very soon. Signals: "moving next month", "just got an offer there", "relocating in spring", "already have a place", "moving in X weeks".\n2. "urgent" -- they strongly want to move as soon as possible but haven't made concrete plans. Signals: "trying to move", "need to get out", "want to move as soon as I can", "hoping to relocate soon", "looking to move".\n3. "eventual" -- they mention it as a future dream or vague intention but are clearly still rooted where they are. Signals: "eventually", "one day", "someday", "down the road", "at some point", "would love to", "in a few years".\n4. "none" -- no relocation mentioned at all.\n\nRULES:\n- Read the TIME signals carefully. "Eventually I want to move" is NOT urgent -- it is eventual.\n- Extract current and target locations when present.\n- Write a warm acknowledgment under 12 words. Never start with I. No em dashes. Match their energy.\n- For "eventual": the acknowledgment should softly validate the dream without overpromising. e.g. "Good to know -- we'll keep that in mind."\n- For "urgent": acknowledge the goal directly. e.g. "California is the target -- we'll keep that close."\n- For "active": be practical and affirming. e.g. "California move coming up -- matching you there."\n- For "none": return empty acknowledgment.\n\nAnswer: ' + locationAnswer + '\n\nRespond ONLY with valid JSON, no markdown:\n{"relocationType": "active|urgent|eventual|none", "currentLocation": "city/state or null", "targetLocation": "city/state or null", "acknowledgment": "warm one-liner or empty string"}'
       }]
     });
     var raw = data.content && data.content[0] && data.content[0].text;
@@ -1826,16 +1791,16 @@ async function detectRelocation(locationAnswer) {
   }
 }
 
-// Compassion check — fires on step 2 free-text when there's emotional weight
+// Compassion check -- fires on step 2 free-text when there\'s emotional weight
 // Never asks a follow-up. Never prolongs. Just one quiet human sentence before moving on.
-// Shorter and faster than the acknowledgment layer — proof the product heard the person, not the career.
+// Shorter and faster than the acknowledgment layer -- proof the product heard the person, not the career.
 async function compassionCheck(whatTheyShared) {
   try {
     var data = await callAI({
       model: 'claude-sonnet-4-6',
       max_tokens: 60,
       messages: [{ role: 'user', content:
-        TONE_SYSTEM + '\n\nSomeone just shared something personal and emotionally weighted in a career conversation — a loss, a hard situation, something that clearly matters beyond the career question. Before moving to the next question, say ONE short warm sentence that acknowledges the human thing, not the career thing. RULES:\n(1) Sound like a person, not a chatbot. Never say "I\'m sorry to hear that" or "That must be hard."\n(2) Under 12 words.\n(3) Name the specific human detail if there is one — a person, a situation, a feeling.\n(4) No advice. No questions. No em dashes. Never start with I.\n(5) If the answer has no emotional weight, return empty string — never manufacture warmth that wasn\'t called for.\n\nWhat they shared: ' + whatTheyShared
+        TONE_SYSTEM + '\n\nSomeone just shared something personal and emotionally weighted in a career conversation -- a loss, a hard situation, something that clearly matters beyond the career question. Before moving to the next question, say ONE short warm sentence that acknowledges the human thing, not the career thing. RULES:\n(1) Sound like a person, not a chatbot. Never say "I\'m sorry to hear that" or "That must be hard."\n(2) Under 12 words.\n(3) Name the specific human detail if there is one -- a person, a situation, a feeling.\n(4) No advice. No questions. No em dashes. Never start with I.\n(5) If the answer has no emotional weight, return empty string -- never manufacture warmth that wasn\'t called for.\n\nWhat they shared: ' + whatTheyShared
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -1847,7 +1812,7 @@ async function compassionCheck(whatTheyShared) {
   }
 }
 
-// ── REFERRAL DETECTOR — lives outside acknowledgeAndMaybeFollowUp ────────────
+// ── REFERRAL DETECTOR -- lives outside acknowledgeAndMaybeFollowUp ────────────
 async function detectReferral(whatTheyShared) {
   var referralSignals = /\b(told me|sent me|shared|referred|said I should|recommended|friend said|my (friend|coworker|sister|brother|partner|mom|dad|colleague))\b/i;
   if (!referralSignals.test(whatTheyShared)) return null;
@@ -1868,13 +1833,13 @@ async function detectReferral(whatTheyShared) {
 }
 
 // Runs compassion check (if needed) + acknowledgment + optional micro follow-up
-// Also passively checks for constraints in the background — silent, non-blocking
+// Also passively checks for constraints in the background -- silent, non-blocking
 async function acknowledgeAndMaybeFollowUp(val, contextKey) {
-  // Step 0: Run passive constraint check in background — never blocks, never changes rhythm
-  // Runs in parallel with everything else so there's zero added latency
+  // Step 0: Run passive constraint check in background -- never blocks, never changes rhythm
+  // Runs in parallel with everything else so there\'s zero added latency
   passiveConstraintCheck(val, contextKey || 'conversation');
 
-  // Step 1: compassion check — if the answer carries grief, loss, or personal weight,
+  // Step 1: compassion check -- if the answer carries grief, loss, or personal weight,
   // acknowledge the human thing first before the career acknowledgment
   var compassion = await compassionCheck(val);
   var ack = await getAcknowledgment(val);
@@ -1883,7 +1848,7 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
   // If only one fires, show that one. Never show both if they say the same thing.
   if (compassion && compassion.trim().length > 4) {
     await showAIMessage(compassion, 500);
-    // Breathing pause after compassion — let it land before anything else
+    // Breathing pause after compassion -- let it land before anything else
     await delay(700);
     // Only show the acknowledgment if it adds something different
     if (ack && ack.trim().length > 5 && ack.trim() !== compassion.trim()) {
@@ -1907,7 +1872,7 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
     showTextInput('', function(extraVal) {
       addMessage(extraVal, 'user');
       // Append extra context to the original response
-      var combined = val + ' — ' + extraVal;
+      var combined = val + ' -- ' + extraVal;
       if (contextKey) responses[contextKey + '_extra'] = extraVal;
       resolve(combined);
     });
@@ -1916,13 +1881,13 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
 
 async function step1() {
   updateProgress(1);
-  await showAIMessage("Hey. You're not here by accident.\n\nWhat's going on?", 600);
+  await showAIMessage("Hey. You\'re not here by accident.\n\nWhat's going on?", 600);
   showOptions([
-    "😤 Something feels off but I can't name it",
+    "😤 Something feels off but I can\'t name it",
     "🔄 Ready for a change, just not sure where",
-    "😊 Honestly things are good — just exploring",
+    "😊 Honestly things are good -- just exploring",
     "😓 I know what I want, just not how to get there",
-    "🚨 Things are urgent — I need to move fast"
+    "🚨 Things are urgent -- I need to move fast"
   ], function(val) {
     responses.why = val;
     if (val.toLowerCase().includes('good') || val.toLowerCase().includes('exploring')) {
@@ -1934,7 +1899,7 @@ async function step1() {
     addMessage(val, 'user');
     if (responses.crisisFlag) {
       // For urgent users: compassion first, then move quickly
-      showAIMessage("That's a hard place to be in. Let's move fast and get you somewhere better.", 400).then(function() { step2(); });
+      showAIMessage("That's a hard place to be in. Let\'s move fast and get you somewhere better.", 400).then(function() { step2(); });
     } else {
       step2();
     }
@@ -1954,10 +1919,10 @@ async function step2() {
   var goal, seeds, fallbackQ, fallbackOpts;
 
   if (responses.why.includes("Ready for a change") || responses.why.includes("ready for a change")) {
-    goal = "what finally pushed them toward change — and whether it's the work itself or the situation around it";
+    goal = "what finally pushed them toward change -- and whether it\'s the work itself or the situation around it";
     seeds = [
       "Something specific happened and it made it urgent",
-      "It's been building for a while — I finally hit my limit",
+      "It's been building for a while -- I finally hit my limit",
       "I love what I do but not where I'm doing it",
       "I want to do something completely different"
     ];
@@ -1966,15 +1931,15 @@ async function step2() {
   } else if (responses.why.includes("know what I want") || responses.why.includes("just not how")) {
     goal = "what's actually standing between them and what they want";
     seeds = [
-      "They want credentials I don't have",
-      "I can't translate my experience into their language",
-      "I can't find roles that match what I'm describing",
+      "They want credentials I don\'t have",
+      "I can\'t translate my experience into their language",
+      "I can\'t find roles that match what I'm describing",
       "I know the direction, just not the steps"
     ];
     fallbackQ = "What's in the way right now?";
     fallbackOpts = seeds;
   } else if (responses.why.includes("just curious")) {
-    goal = "what nudged them to click today — keep it light, make them feel welcome";
+    goal = "what nudged them to click today -- keep it light, make them feel welcome";
     seeds = [
       "Something's been nagging at me lately",
       "A friend sent it, figured I'd try",
@@ -1983,16 +1948,16 @@ async function step2() {
     ];
     fallbackQ = "What made you click though?";
     fallbackOpts = seeds;
-  } else if (responses.why.toLowerCase().includes("feels off") || responses.why.toLowerCase().includes("can't name it")) {
-    // Brendan's fix: ask conditions vs work FIRST — this changes everything downstream
-    goal = "whether the feeling is about the work itself or the conditions and environment around the work — critical distinction";
+  } else if (responses.why.toLowerCase().includes("feels off") || responses.why.toLowerCase().includes("can\'t name it")) {
+    // Brendan's fix: ask conditions vs work FIRST -- this changes everything downstream
+    goal = "whether the feeling is about the work itself or the conditions and environment around the work -- critical distinction";
     seeds = [
-      "It's the work itself — I don't want to do this anymore",
+      "It's the work itself -- I don\'t want to do this anymore",
       "I love what I do but not where or how I'm doing it",
       "Honestly I'm not sure which one",
-      "A bit of both — the work and the situation"
+      "A bit of both -- the work and the situation"
     ];
-    fallbackQ = "Is it the work itself — or what surrounds it?";
+    fallbackQ = "Is it the work itself -- or what surrounds it?";
     fallbackOpts = seeds;
   } else {
     goal = "how long this feeling has been going on";
@@ -2019,12 +1984,12 @@ async function step2() {
     var isElaborated = val.length > 45 || /(my|I|he|she|they|we|it was|because|after|when|before)/.test(val);
 
     if (isElaborated) {
-      // Full stack — compassion + micro follow-up for elaborated answers
-      // Also check for referral signal — someone might mention who sent them here
+      // Full stack -- compassion + micro follow-up for elaborated answers
+      // Also check for referral signal -- someone might mention who sent them here
       var referral = await detectReferral(val);
       if (referral && referral.referredBy) {
         responses.referredBy = referral.referredBy;
-        // Warm acknowledgment of the connection — makes the referrer feel real
+        // Warm acknowledgment of the connection -- makes the referrer feel real
         if (referral.acknowledgment && referral.acknowledgment.length > 4) {
           await delay(300);
           await showAIMessage(referral.acknowledgment, 400);
@@ -2035,7 +2000,7 @@ async function step2() {
       var enriched = await acknowledgeAndMaybeFollowUp(val, 'duration');
       responses.duration = enriched;
     } else {
-      // Simple button selection — compassion check only
+      // Simple button selection -- compassion check only
       // Still run passive constraint check silently on the combined context
       passiveConstraintCheck(fullContext, 'step2');
       var compassion = await compassionCheck(fullContext);
@@ -2052,19 +2017,19 @@ async function step2() {
 async function step3() {
   updateProgress(3);
   var result = await getAdaptiveStep(
-    "what kind of work genuinely energizes them — creative, people work, analytical, hands-on, or something niche",
+    "what kind of work genuinely energizes them -- creative, people work, analytical, hands-on, or something niche",
     [
-      "🎨 Something creative — making, designing, building",
-      "🤝 Something people-focused — helping, leading, connecting",
-      "🧠 Something analytical — solving, finding patterns, figuring things out",
+      "🎨 Something creative -- making, designing, building",
+      "🤝 Something people-focused -- helping, leading, connecting",
+      "🧠 Something analytical -- solving, finding patterns, figuring things out",
       "🌿 Something physical or hands-on",
-      "✨ Something else — it's hard to put in a box"
+      "✨ Something else -- it\'s hard to put in a box"
     ],
     "What kind of work actually lights you up?",
     [
-      "🎨 Creative — making and designing things",
-      "🤝 People-focused — helping and connecting",
-      "🧠 Analytical — solving and figuring things out",
+      "🎨 Creative -- making and designing things",
+      "🤝 People-focused -- helping and connecting",
+      "🧠 Analytical -- solving and figuring things out",
       "🌿 Physical or hands-on",
       "✨ Something else entirely"
     ]
@@ -2079,8 +2044,8 @@ async function step3() {
 
 async function step3b() {
   var q = await getAdaptiveQuestion(
-    "what their specific interest is — encourage them, the weirder and more specific the better",
-    "Tell me more — the more specific the better.",
+    "what their specific interest is -- encourage them, the weirder and more specific the better",
+    "Tell me more -- the more specific the better.",
     "It's kind of hard to explain but…"
   );
   await showAIMessage(q);
@@ -2096,7 +2061,7 @@ async function step3b() {
 async function step4() {
   updateProgress(4);
   var q = await getAdaptiveQuestion(
-    "a specific real moment at work that stuck with them — not their job, an actual memory",
+    "a specific real moment at work that stuck with them -- not their job, an actual memory",
     "Tell me about a moment at work that actually stuck with you.",
     "It was when…"
   );
@@ -2115,9 +2080,9 @@ async function step5() {
   updateProgress(5);
 
   if (isHappyUser()) {
-    // Happy path — flip the frame: what MAKES it work, not what's broken
+    // Happy path -- flip the frame: what MAKES it work, not what's broken
     var result = await getAdaptiveStep(
-      "what makes their current work situation actually work for them — what conditions, environment, or type of work fits them well right now",
+      "what makes their current work situation actually work for them -- what conditions, environment, or type of work fits them well right now",
       [
         "I have real autonomy over how I work",
         "The people I work with actually care",
@@ -2155,7 +2120,7 @@ async function step5() {
         "No space to think or be creative",
         "Constant chaos, no structure",
         "All meetings, nothing actually getting done",
-        "Micromanagement — I need to be trusted",
+        "Micromanagement -- I need to be trusted",
         "🎯 Something specific I want to describe"
       ],
       "What are you totally done with?",
@@ -2164,8 +2129,8 @@ async function step5() {
         "No room to think or create",
         "Constant chaos with no structure",
         "Endless meetings, nothing gets done",
-        "Micromanagement — I need autonomy",
-        "🎯 Something specific — let me describe it"
+        "Micromanagement -- I need autonomy",
+        "🎯 Something specific -- let me describe it"
       ]
     );
     await showAIMessage(result.q);
@@ -2218,9 +2183,9 @@ async function step6() {
   updateProgress(6);
 
   if (isHappyUser()) {
-    // Happy path — what would have to change for this to stop working
+    // Happy path -- what would have to change for this to stop working
     var result = await getAdaptiveStep(
-      "what would have to change for their current situation to stop working — what conditions would break the spell",
+      "what would have to change for their current situation to stop working -- what conditions would break the spell",
       [
         "If I lost the autonomy I have now",
         "If the team or culture shifted",
@@ -2308,7 +2273,7 @@ async function step6b_happy() {
 async function step7() {
   updateProgress(7);
   var q = await getAdaptiveQuestion(
-    "what they actually do day to day — the real version, not the job title",
+    "what they actually do day to day -- the real version, not the job title",
     "Walk me through what your days actually look like.",
     "Most of my day is actually…"
   );
@@ -2329,19 +2294,19 @@ async function step8() {
     [
       "The person everyone comes to with their problems",
       "The one who figures things out when nobody else can",
-      "The creative one — always making or thinking of something",
-      "The competitive one — hates losing, loves winning",
+      "The creative one -- always making or thinking of something",
+      "The competitive one -- hates losing, loves winning",
       "The quiet one who somehow always gets more done",
-      "🎯 None of these feel right — let me say it"
+      "🎯 None of these feel right -- let me say it"
     ],
     "How would people who really know you describe you?",
     [
       "The one people come to when they need help",
       "The one who always figures it out",
-      "The creative one — always making something",
-      "The competitive one — I hate losing",
+      "The creative one -- always making something",
+      "The competitive one -- I hate losing",
       "The quiet one who somehow gets the most done",
-      "🎯 None of these — let me describe it"
+      "🎯 None of these -- let me describe it"
     ]
   );
   await showAIMessage(result.q);
@@ -2370,18 +2335,18 @@ async function step8b() {
 async function step9() {
   updateProgress(9);
   var result = await getAdaptiveStep(
-    "where they do their best work — fully remote, in person, or hybrid",
+    "where they do their best work -- fully remote, in person, or hybrid",
     [
-      "Fully remote — I work better alone",
-      "In person — I need people around me",
-      "Hybrid — depends on the day",
-      "Honestly not sure — never been in the right setup"
+      "Fully remote -- I work better alone",
+      "In person -- I need people around me",
+      "Hybrid -- depends on the day",
+      "Honestly not sure -- never been in the right setup"
     ],
     "Where do you actually do your best work?",
     [
-      "Fully remote — I thrive alone",
-      "In person — I need people around",
-      "Hybrid — some of both",
+      "Fully remote -- I thrive alone",
+      "In person -- I need people around",
+      "Hybrid -- some of both",
       "Honestly haven't figured that out yet"
     ]
   );
@@ -2391,18 +2356,18 @@ async function step9() {
 
 async function step9b() {
   var result = await getAdaptiveStep(
-    "what kind of work pace suits them — fast and unpredictable, steady, or flexible",
+    "what kind of work pace suits them -- fast and unpredictable, steady, or flexible",
     [
-      "Fast and unpredictable — I love the chaos",
-      "Steady and focused — I like knowing what's coming",
-      "Flexible — some intense days, some quiet ones",
+      "Fast and unpredictable -- I love the chaos",
+      "Steady and focused -- I like knowing what's coming",
+      "Flexible -- some intense days, some quiet ones",
       "Honestly never thought about it this way"
     ],
     "What pace works best for you?",
     [
-      "Fast and chaotic — I thrive in it",
-      "Steady — I like knowing what to expect",
-      "Flexible — a mix of both",
+      "Fast and chaotic -- I thrive in it",
+      "Steady -- I like knowing what to expect",
+      "Flexible -- a mix of both",
       "Never really thought about it"
     ]
   );
@@ -2412,8 +2377,8 @@ async function step9b() {
 
 async function step9c() {
   var q = await getAdaptiveQuestion(
-    "what city or region they're in — this helps personalize the job matches, keep it light",
-    "Last one — where are you based?",
+    "what city or region they're in -- this helps personalize the job matches, keep it light",
+    "Last one -- where are you based?",
     "I'm in…"
   );
   await showAIMessage(q);
@@ -2427,32 +2392,32 @@ async function step9c() {
       compassionCheck(val)
     ]);
 
-    // Handle relocation signal — branch on urgency level
+    // Handle relocation signal -- branch on urgency level
     var rtype = relocation && relocation.relocationType;
 
     if (rtype === 'active') {
-      // Moving imminently — orient everything to destination
+      // Moving imminently -- orient everything to destination
       responses.targetLocation = relocation.targetLocation;
       responses.currentLocation = relocation.currentLocation || val;
       responses.relocationType = 'active';
       var msg = (relocation.acknowledgment && relocation.acknowledgment.length > 4)
         ? relocation.acknowledgment + " Orienting your matches to " + relocation.targetLocation + "."
-        : "Got it — orienting everything to " + relocation.targetLocation + ".";
+        : "Got it -- orienting everything to " + relocation.targetLocation + ".";
       await delay(400);
       await showAIMessage(msg, 500);
-      // Active move — offer a beat for elaboration before continuing
+      // Active move -- offer a beat for elaboration before continuing
       // Short open door, not a forced question. If they want to say more, they can.
       await delay(700);
       await showAIMessage("Anything about the move worth knowing before we get into the rest?", 400);
       await new Promise(function(resolve) {
         showOptions([
-          "Nope — let's keep going",
-          "Actually yes — let me say something"
+          "Nope -- let\'s keep going",
+          "Actually yes -- let me say something"
         ], async function(moveVal) {
           addMessage(moveVal, 'user');
           if (moveVal.toLowerCase().includes('yes') || moveVal.toLowerCase().includes('say something')) {
             // Give them the floor for one more free text
-            await showAIMessage("Go ahead —", 300);
+            await showAIMessage("Go ahead --", 300);
             showTextInput("About the move…", async function(moveNote) {
               addMessage(moveNote, 'user');
               responses.relocationNote = moveNote;
@@ -2468,38 +2433,38 @@ async function step9c() {
       });
 
     } else if (rtype === 'urgent') {
-      // Wants to move ASAP — mix current + remote-friendly destination roles
+      // Wants to move ASAP -- mix current + remote-friendly destination roles
       responses.targetLocation = relocation.targetLocation;
       responses.currentLocation = relocation.currentLocation || val;
       responses.relocationType = 'urgent';
       var msg = (relocation.acknowledgment && relocation.acknowledgment.length > 4)
         ? relocation.acknowledgment + " I'll fold in some " + relocation.targetLocation + "-friendly options alongside local ones."
-        : "Noted — mixing in some " + relocation.targetLocation + "-friendly options too.";
+        : "Noted -- mixing in some " + relocation.targetLocation + "-friendly options too.";
       await delay(400);
       await showAIMessage(msg, 500);
-      // Urgent — brief natural pause then continue. No forced elaboration.
+      // Urgent -- brief natural pause then continue. No forced elaboration.
       // The urgency is noted. The career conversation is the next useful thing.
       await delay(600);
 
     } else if (rtype === 'eventual') {
-      // Someday/eventually — stay focused on current city, remember quietly
+      // Someday/eventually -- stay focused on current city, remember quietly
       responses.targetLocation = relocation.targetLocation;
       responses.currentLocation = relocation.currentLocation || val;
       responses.relocationType = 'eventual';
       responses.relocationMemory = relocation.targetLocation;
       var msg = (relocation.acknowledgment && relocation.acknowledgment.length > 4)
         ? relocation.acknowledgment
-        : "Good to know — we'll keep that in mind for down the road.";
+        : "Good to know -- we'll keep that in mind for down the road.";
       await delay(400);
       await showAIMessage(msg, 400);
-      // Eventual — gentle pause then move on. Don't make it the focus.
+      // Eventual -- gentle pause then move on. Don't make it the focus.
       await delay(500);
 
     } else {
-      // No relocation — run compassion if needed, then natural pause
+      // No relocation -- run compassion if needed, then natural pause
       responses.currentLocation = val;
       // Also check for constraints in location answer
-      // e.g. "I'm in Detroit — can't leave, my mom needs me here"
+      // e.g. "I'm in Detroit -- can\'t leave, my mom needs me here"
       passiveConstraintCheck(val, 'location');
       if (compassion && compassion.trim().length > 4) {
         await delay(300);
@@ -2515,8 +2480,8 @@ async function step9c() {
 async function step10() {
   updateProgress(10);
   var q = await getAdaptiveQuestion(
-    "that you've heard everything and want to share what you're seeing — make it feel like a real moment of connection, warm and genuine",
-    "Okay. I think I've got a real picture of you. Can I share what I'm seeing?",
+    "that you\'ve heard everything and want to share what you're seeing -- make it feel like a real moment of connection, warm and genuine",
+    "Okay. I think I\'ve got a real picture of you. Can I share what I'm seeing?",
     ""
   );
   await showAIMessage(q);
@@ -2534,8 +2499,8 @@ async function generateReveal() {
   var happyMode = isHappyUser();
 
   var prompt = happyMode
-    ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven't been able to say themselves — not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically — not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said — a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a warm invitation to save this profile — framed as capturing who they are now, while things are good, before anything changes\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
-    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- RELOCATION: if relocationType is 'active', orient ALL geography to target location only. If 'urgent', mix current and target, acknowledge the goal. If 'eventual', focus on current city but end with one warm sentence about the future goal — something like 'and when California becomes more than eventually, what you're building now travels with you.' Never make the eventual goal the main point. If their relevant location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear AND tells you what to do first.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, or a hard limit exists, add one warm grounding sentence before the closing question that signals the matches include something to start this week and something to build toward.\n- LATE-CAREER COURAGE: If the person appears to be over 40 and making a significant career pivot into a different field, add one sentence that acknowledges the courage of what they're doing — not the logic, the courage. Something like 'What you're describing takes something most people talk themselves out of.' The real barrier for late-career pivoters is self-belief not information. Name it.\n- CONDITIONS VS WORK: If they expressed frustration with their job, distinguish clearly between hating the work itself versus hating the conditions around the work. These need completely different matches. If they love the craft but hate the environment — name that explicitly. It changes everything about what comes next.\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
+    ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven't been able to say themselves -- not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically -- not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said -- a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a warm invitation to save this profile -- framed as capturing who they are now, while things are good, before anything changes\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
+    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened -- not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person -- reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- RELOCATION: if relocationType is 'active', orient ALL geography to target location only. If 'urgent', mix current and target, acknowledge the goal. If 'eventual', focus on current city but end with one warm sentence about the future goal -- something like 'and when California becomes more than eventually, what you're building now travels with you.' Never make the eventual goal the main point. If their relevant location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear AND tells you what to do first.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, or a hard limit exists, add one warm grounding sentence before the closing question that signals the matches include something to start this week and something to build toward.\n- LATE-CAREER COURAGE: If the person appears to be over 40 and making a significant career pivot into a different field, add one sentence that acknowledges the courage of what they're doing -- not the logic, the courage. Something like 'What you're describing takes something most people talk themselves out of.' The real barrier for late-career pivoters is self-belief not information. Name it.\n- CONDITIONS VS WORK: If they expressed frustration with their job, distinguish clearly between hating the work itself versus hating the conditions around the work. These need completely different matches. If they love the craft but hate the environment -- name that explicitly. It changes everything about what comes next.\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
 
   try {
     var data = await callAI({
@@ -2610,7 +2575,7 @@ async function generateReveal() {
             addMessage(email, 'user');
             emailSaveCard.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0;">Writing your email…</div>';
 
-            var tonePrompt = "You are writing a single transactional email that will be sent to someone immediately after they completed a career alignment conversation. Your job is to calibrate the tone of this email to match how THIS SPECIFIC PERSON writes — not a generic template.\n\nHere is how they write in their own words:\n\nStep 4 (best day at work): " + (responses.bestDay || '') + "\nStep 7 (background, their words): " + (responses.background || '') + "\n\nBased on their writing style — their sentence length, vocabulary, whether they're direct or reflective, formal or casual — generate:\n1. A subject line (under 10 words) that would make THIS person open the email. Not generic. Written for them.\n2. A two-sentence opening paragraph that feels like it was written for this specific human, not a mass email.\n\nRespond ONLY with valid JSON, no markdown:\n{\"subject\": \"subject line here\", \"opening\": \"Two sentence opening here.\"}";
+            var tonePrompt = "You are writing a single transactional email that will be sent to someone immediately after they completed a career alignment conversation. Your job is to calibrate the tone of this email to match how THIS SPECIFIC PERSON writes -- not a generic template.\n\nHere is how they write in their own words:\n\nStep 4 (best day at work): " + (responses.bestDay || '') + "\nStep 7 (background, their words): " + (responses.background || '') + "\n\nBased on their writing style -- their sentence length, vocabulary, whether they're direct or reflective, formal or casual -- generate:\n1. A subject line (under 10 words) that would make THIS person open the email. Not generic. Written for them.\n2. A two-sentence opening paragraph that feels like it was written for this specific human, not a mass email.\n\nRespond ONLY with valid JSON, no markdown:\n{\"subject\": \"subject line here\", \"opening\": \"Two sentence opening here.\"}";
 
             var subject = 'This is what Lune saw when it listened to you';
             var opening = 'This summary came from a 20-minute conversation with Lune. No resume. No job history. Just ten questions nobody else thought to ask.';
@@ -2629,7 +2594,7 @@ async function generateReveal() {
             } catch(e) {}
 
             emailSaveCard.innerHTML =
-              '<div style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;opacity:0.7;">✓ Sent — here\'s what landed in your inbox</div>' +
+              '<div style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;opacity:0.7;">✓ Sent -- here\'s what landed in your inbox</div>' +
               '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;font-size:13px;line-height:1.7;">' +
                 '<div style="color:var(--muted);margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">From: Lune &lt;hello@trylune.app&gt;</div>' +
                 '<div style="color:var(--muted);margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;">To: ' + email + '</div>' +
@@ -2639,8 +2604,8 @@ async function generateReveal() {
                   '<div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.7;">' + opening + '</div>' +
                   '<div style="background:var(--surface2);border-radius:8px;padding:14px 16px;margin-bottom:16px;">' +
                     '<div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Your never-agains</div>' +
-                    '<div style="font-size:13px;color:var(--muted);">— ' + (responses.neverAgain1 || '') + '</div>' +
-                    '<div style="font-size:13px;color:var(--muted);">— ' + (responses.neverAgain2 || '') + '</div>' +
+                    '<div style="font-size:13px;color:var(--muted);">-- ' + (responses.neverAgain1 || '') + '</div>' +
+                    '<div style="font-size:13px;color:var(--muted);">-- ' + (responses.neverAgain2 || '') + '</div>' +
                   '</div>' +
                   '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;">We\'re building the full match database right now. You\'ll be first to know when roles that match your profile open up.</div>' +
                   '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#f7f6f3;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
@@ -2665,7 +2630,7 @@ async function generateReveal() {
     showProfileModal(mainText, lastLine, responsesSnap);
 
     if (isHappyUser()) {
-      // Happy path — don't show job matches, show data contribution + profile save
+      // Happy path -- don\'t show job matches, show data contribution + profile save
       await delay(1200);
       showHappyEndActions(summaryText);
     } else {
@@ -2680,7 +2645,7 @@ async function generateReveal() {
     var errBubble = document.createElement('div');
     errBubble.className = 'bubble';
     errBubble.style.cssText = 'max-width:92%;';
-    errBubble.innerHTML = '<div style="margin-bottom:12px;color:var(--muted);font-size:14px;">Something went wrong generating your summary. Your answers are saved — just try again.</div><button id="retryBtn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Try again →</button>';
+    errBubble.innerHTML = '<div style="margin-bottom:12px;color:var(--muted);font-size:14px;">Something went wrong generating your summary. Your answers are saved -- just try again.</div><button id="retryBtn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Try again →</button>';
     errMsg.appendChild(errBubble);
     chat.appendChild(errMsg);
     scrollToBottom();
@@ -2706,8 +2671,8 @@ async function showHappyEndActions(summaryText) {
   saveCard.style.cssText = 'background:linear-gradient(135deg,#ffffff,#f5f3ef);border:1px solid rgba(24,112,108,0.3);border-radius:16px;padding:24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
   saveCard.innerHTML =
     '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
-    '<div style="font-family:\'Instrument Serif\',serif;font-size:18px;color:var(--text);margin-bottom:8px;line-height:1.3;">Save this while it's accurate.</div>' +
-    '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">Most people only do this when things fall apart. You get to do it from clarity — which means the profile is actually true.</div>' +
+    '<div style="font-family:\'Instrument Serif\',serif;font-size:18px;color:var(--text);margin-bottom:8px;line-height:1.3;">Save this while it\'s accurate.</div>' +
+    '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">Most people only do this when things fall apart. You get to do it from clarity -- which means the profile is actually true.</div>' +
     '<button id="happySaveBtn" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:10px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;">Save my profile →</button>' +
     '<div style="font-size:11px;color:var(--muted);font-style:italic;">Free. No resume required. Come back anytime things change.</div>';
   saveMsg.appendChild(saveCard);
@@ -2729,7 +2694,7 @@ async function showHappyEndActions(summaryText) {
 
   await delay(1000);
 
-  // Data contribution ask — voluntary, framed as helping others
+  // Data contribution ask -- voluntary, framed as helping others
   var contribMsg = document.createElement('div');
   contribMsg.className = 'msg ai';
   contribMsg.style.animationDelay = '0s';
@@ -2737,7 +2702,7 @@ async function showHappyEndActions(summaryText) {
   contribCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.15);border-radius:14px;padding:22px 24px;max-width:92%;';
   contribCard.innerHTML =
     '<div style="font-size:14px;color:var(--text);margin-bottom:8px;line-height:1.5;">One optional thing, if you're open to it.</div>' +
-    '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">We're building a database of what good work actually looks like from the inside — not from HR job descriptions, but from people who are genuinely thriving. If you'd share your job title and one thing you like about your work, you'd be helping us show other people what great looks like in your field.</div>' +
+    '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">We're building a database of what good work actually looks like from the inside -- not from HR job descriptions, but from people who are genuinely thriving. If you'd share your job title and one thing you like about your work, you'd be helping us show other people what great looks like in your field.</div>' +
     '<input id="contribTitle" type="text" placeholder="Your job title" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
     '<textarea id="contribLikes" placeholder="What I actually like about it…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;outline:none;box-sizing:border-box;resize:none;min-height:60px;margin-bottom:10px;"></textarea>' +
     '<div style="display:flex;gap:8px;">' +
@@ -2805,22 +2770,22 @@ async function showHappyEndActions(summaryText) {
 }
 
 var SALARY_RANGES = {
-  'operations':       { range: '$55K–$85K',  remote: 'Remote · Full-time' },
-  'people_ops':       { range: '$50K–$70K',  remote: 'Remote · Full-time' },
-  'community':        { range: '$60K–$90K',  remote: 'Remote · Full-time' },
-  'learning':         { range: '$55K–$80K',  remote: 'Remote · Full-time' },
-  'healthcare_nav':   { range: '$45K–$65K',  remote: 'Remote or In-person · Full-time' },
-  'community_health': { range: '$40K–$58K',  remote: 'In-person · Full-time' },
-  'crisis':           { range: '$50K–$70K',  remote: 'Remote or Hybrid · Full-time' },
-  'clinical_ops':     { range: '$50K–$68K',  remote: 'Remote · Full-time' },
-  'ux_research':      { range: '$65K–$90K',  remote: 'Remote · Full-time' },
-  'content_design':   { range: '$60K–$85K',  remote: 'Remote · Full-time' },
-  'data_analytics':   { range: '$60K–$85K',  remote: 'Remote · Full-time' },
-  'program_coord':    { range: '$45K–$65K',  remote: 'Hybrid · Full-time' },
-  'advocacy':         { range: '$42K–$62K',  remote: 'In-person or Hybrid · Full-time' },
-  'training':         { range: '$55K–$75K',  remote: 'Remote · Full-time' },
-  'startup_ops':      { range: '$65K–$95K',  remote: 'Remote · Full-time' },
-  'default':          { range: '$50K–$75K',  remote: 'Full-time' }
+  'operations':       { range: '$55K-$85K',  remote: 'Remote · Full-time' },
+  'people_ops':       { range: '$50K-$70K',  remote: 'Remote · Full-time' },
+  'community':        { range: '$60K-$90K',  remote: 'Remote · Full-time' },
+  'learning':         { range: '$55K-$80K',  remote: 'Remote · Full-time' },
+  'healthcare_nav':   { range: '$45K-$65K',  remote: 'Remote or In-person · Full-time' },
+  'community_health': { range: '$40K-$58K',  remote: 'In-person · Full-time' },
+  'crisis':           { range: '$50K-$70K',  remote: 'Remote or Hybrid · Full-time' },
+  'clinical_ops':     { range: '$50K-$68K',  remote: 'Remote · Full-time' },
+  'ux_research':      { range: '$65K-$90K',  remote: 'Remote · Full-time' },
+  'content_design':   { range: '$60K-$85K',  remote: 'Remote · Full-time' },
+  'data_analytics':   { range: '$60K-$85K',  remote: 'Remote · Full-time' },
+  'program_coord':    { range: '$45K-$65K',  remote: 'Hybrid · Full-time' },
+  'advocacy':         { range: '$42K-$62K',  remote: 'In-person or Hybrid · Full-time' },
+  'training':         { range: '$55K-$75K',  remote: 'Remote · Full-time' },
+  'startup_ops':      { range: '$65K-$95K',  remote: 'Remote · Full-time' },
+  'default':          { range: '$50K-$75K',  remote: 'Full-time' }
 };
 
 function getSalaryType(category) {
@@ -2870,26 +2835,26 @@ async function showMatches() {
   );
 
   var bridgeContext = needsBridge ? (
-  '\n\nBRIDGE MATCH REQUIRED (Match 0 — show first, before the others):\n' +
+  '\n\nBRIDGE MATCH REQUIRED (Match 0 -- show first, before the others):\n' +
   'This person has a constraint that means the aspirational matches need a stepping stone. ' +
-  (constraints.timeline === 'immediate' ? 'TIMELINE: they need something in the next few weeks. Only surface roles that post, interview, and hire within 2-4 weeks — nonprofits, startups, community orgs, coordinator roles, companies with rolling applications. ' : '') +
+  (constraints.timeline === 'immediate' ? 'TIMELINE: they need something in the next few weeks. Only surface roles that post, interview, and hire within 2-4 weeks -- nonprofits, startups, community orgs, coordinator roles, companies with rolling applications. ' : '') +
   (constraints.timeline === 'soon' ? 'TIMELINE: they need something within 2-3 months. Avoid roles with 4+ month hiring processes. ' : '') +
   (constraints.hardLimitType === 'credential' ? 'CREDENTIAL GAP: ' + constraints.hardLimit + '. The bridge role must not require this credential. ' : '') +
   (constraints.hardLimitType === 'income' ? 'INCOME NEED: ' + constraints.hardLimit + '. The bridge role must clear this floor. ' : '') +
-  (constraints.hardLimitType === 'location' ? 'LOCATION LOCK: ' + constraints.hardLimit + '. Bridge must be local or remote — no relocation required. ' : '') +
+  (constraints.hardLimitType === 'location' ? 'LOCATION LOCK: ' + constraints.hardLimit + '. Bridge must be local or remote -- no relocation required. ' : '') +
   'Generate one BRIDGE match that: ' +
-  '(1) They can realistically get RIGHT NOW — fast hiring, low barrier, no credential gap, accessible with their actual background. ' +
-  '(2) Is a genuine stepping stone toward the aspirational direction — it builds the exact thing missing (portfolio, network, proof of concept, income runway). ' +
+  '(1) They can realistically get RIGHT NOW -- fast hiring, low barrier, no credential gap, accessible with their actual background. ' +
+  '(2) Is a genuine stepping stone toward the aspirational direction -- it builds the exact thing missing (portfolio, network, proof of concept, income runway). ' +
   '(3) Uses skills they already have directly, no translation needed. ' +
   '(4) Pays enough to be real and sustainable. ' +
   '(5) Has a specific bridge_note field (one sentence max) that explicitly names the sequence: what this role builds and what it leads to. Format: "This builds [specific thing]. [Aspirational role] is the next step." Make it feel like a plan, not a consolation. ' +
-  '(6) Has a reason sentence that names a specific detail from their conversation — not generic encouragement. ' +
-  'Label this match with "bridge": true in the JSON. Include a "bridge_note" field with the sequence sentence. It shows fully visible — not locked. ' +
+  '(6) Has a reason sentence that names a specific detail from their conversation -- not generic encouragement. ' +
+  'Label this match with "bridge": true in the JSON. Include a "bridge_note" field with the sequence sentence. It shows fully visible -- not locked. ' +
   'The other 3 matches (including the surprise) generate normally after the bridge.'
 ) : '';
 
-var matchPrompt = 'You are Lune\'s matching engine. Generate ' + (needsBridge ? '4' : '3') + ' job matches for this person.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid — weight toward companies with regional presence or remote-first roles') + '\n\nRULES FOR MATCHES 1 AND 2:\n- Must come from DIFFERENT conceptual categories. Force variety.\n- Real companies. Geographically accessible.\n- 2-sentence day-to-day description. Human, not HR-speak.\n- ONE reason sentence referencing a specific moment or detail they gave.\n' + (needsTranslation ? '- Include a bridge sentence: exactly how to describe their background in an interview for this role.\n' : '') + '\nRULE FOR MATCH 3 — THIS IS THE ONLY ONE THAT SHOWS FREE. EVERYTHING DEPENDS ON IT:\\nSTRICT REQUIREMENTS: (1) MUST cross an industry line completely — if healthcare background give no healthcare role; if restaurant background give no food/hospitality role; reframe skills into a different industry entirely. (2) The reason sentence MUST name a specific story, moment, or exact phrase from their answers — never a generic background summary. (3) A title upgrade from their current role is NOT surprising enough — find a different direction. (4) Must feel slightly uncomfortable — like someone saw something they had not named yet. This card shows free. The other two are locked. The CONSTRAINTS FILTER: Before generating any match, check the constraint context in the conversation. A match that violates a hard constraint (location lock, income floor, credential gap, caregiving situation) is wrong even if professionally perfect. If timeline is immediate, only surface roles with fast hiring cycles (2-4 weeks). Surface only what is actually reachable.\n\nThe surprise match is the only reason people pay.\n\n\n\' + bridgeContext + \'\nBackground weighting:\n- Healthcare/clinical: toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: toward advocacy, crisis work, program coordination\n- Restaurant/hospitality/ops: toward operations, startup ops, RevOps, program management\n- Creative: toward UX research, content design, community programs\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"operations","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"people_ops","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Unexpected Job Title","company":"Real Company","description":"Two sentences that explain what makes this surprising but right.","reason":"One sentence connecting their specific story to why this works.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"community","surprise":true,"bridge_match":false}\n]' +
-    (needsBridge ? ' + \',\\n  {"title":"Bridge Role — what they can get in 4-8 weeks","company":"Real Company","description":"Two sentences. Realistic, reachable, hires fast. Uses actual background directly. Pays enough to be real while building toward the aspirational direction.","reason":"One sentence: why this is the door they can open right now, and what it builds toward.","bridge_sentence":"One sentence — exactly how to describe their background to land this role. The words to use.","salary_category":"program_coord","surprise":false,"bridge_match":true}\\n]\'' : '') + bridgeContext;
+var matchPrompt = 'You are Lune\'s matching engine. Generate ' + (needsBridge ? '4' : '3') + ' job matches for this person.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid -- weight toward companies with regional presence or remote-first roles') + '\n\nRULES FOR MATCHES 1 AND 2:\n- Must come from DIFFERENT conceptual categories. Force variety.\n- Real companies. Geographically accessible.\n- 2-sentence day-to-day description. Human, not HR-speak.\n- ONE reason sentence referencing a specific moment or detail they gave.\n' + (needsTranslation ? '- Include a bridge sentence: exactly how to describe their background in an interview for this role.\n' : '') + '\nRULE FOR MATCH 3 -- THIS IS THE ONLY ONE THAT SHOWS FREE. EVERYTHING DEPENDS ON IT:\\nSTRICT REQUIREMENTS: (1) MUST cross an industry line completely -- if healthcare background give no healthcare role; if restaurant background give no food/hospitality role; reframe skills into a different industry entirely. (2) The reason sentence MUST name a specific story, moment, or exact phrase from their answers -- never a generic background summary. (3) A title upgrade from their current role is NOT surprising enough -- find a different direction. (4) Must feel slightly uncomfortable -- like someone saw something they had not named yet. This card shows free. The other two are locked. The CONSTRAINTS FILTER: Before generating any match, check the constraint context in the conversation. A match that violates a hard constraint (location lock, income floor, credential gap, caregiving situation) is wrong even if professionally perfect. If timeline is immediate, only surface roles with fast hiring cycles (2-4 weeks). Surface only what is actually reachable.\n\nThe surprise match is the only reason people pay.\n\n\n\' + bridgeContext + \'\nBackground weighting:\n- Healthcare/clinical: toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: toward advocacy, crisis work, program coordination\n- Restaurant/hospitality/ops: toward operations, startup ops, RevOps, program management\n- Creative: toward UX research, content design, community programs\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"operations","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"people_ops","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Unexpected Job Title","company":"Real Company","description":"Two sentences that explain what makes this surprising but right.","reason":"One sentence connecting their specific story to why this works.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"community","surprise":true,"bridge_match":false}\n]' +
+    (needsBridge ? ' + \',\\n  {"title":"Bridge Role -- what they can get in 4-8 weeks","company":"Real Company","description":"Two sentences. Realistic, reachable, hires fast. Uses actual background directly. Pays enough to be real while building toward the aspirational direction.","reason":"One sentence: why this is the door they can open right now, and what it builds toward.","bridge_sentence":"One sentence -- exactly how to describe their background to land this role. The words to use.","salary_category":"program_coord","surprise":false,"bridge_match":true}\\n]\'' : '') + bridgeContext;
 
   try {
     var data = await callAI({
@@ -2943,10 +2908,10 @@ var matchPrompt = 'You are Lune\'s matching engine. Generate ' + (needsBridge ? 
       var bridgeTypeStr = bridgeSalary.remote + ' · ' + bridgeSalary.range;
       // Build a warm intro that frames the bridge as part of a plan
 var bridgeIntroMsg = (constraints.timeline === 'immediate')
-  ? "Here's what I'd do first — something you can actually move on right now."
+  ? "Here's what I'd do first -- something you can actually move on right now."
   : (constraints.hardLimitType === 'credential')
-  ? "One thing to start with — builds toward where you're going without the gap."
-  : "Before the bigger picture — here's a place to start that's actually reachable.";
+  ? "One thing to start with -- builds toward where you're going without the gap."
+  : "Before the bigger picture -- here\'s a place to start that\'s actually reachable.";
 await showAIMessage(bridgeIntroMsg, 400);
       await delay(500);
       var bridgeMsg = document.createElement('div');
@@ -2973,10 +2938,10 @@ await showAIMessage(bridgeIntroMsg, 400);
       await delay(900);
     }
 
-    await showAIMessage("Found something. This one stood out — I want you to see it before anything else.");
+    await showAIMessage("Found something. This one stood out -- I want you to see it before anything else.");
     await delay(500);
 
-    // Render the FREE surprise card — clean, no label, no badge
+    // Render the FREE surprise card -- clean, no label, no badge
     var cardMsg = document.createElement('div');
     cardMsg.className = 'msg ai';
     cardMsg.style.animationDelay = '0s';
@@ -2995,7 +2960,7 @@ await showAIMessage(bridgeIntroMsg, 400);
       '</div>' +
       '<div style="font-size:12px;color:var(--muted);background:rgba(24,112,108,0.04);border:1px solid rgba(24,112,108,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;">' +
         '<span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">🔒 How to say this in an interview</span>' +
-        'Unlocked with your full matches — exactly how to describe your background for this role in language hiring managers search for.' +
+        'Unlocked with your full matches -- exactly how to describe your background for this role in language hiring managers search for.' +
       '</div>' +
       '<button id="saveMatchBtn" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.5px;">Save this match →</button>';
     cardMsg.appendChild(card);
@@ -3021,14 +2986,14 @@ await showAIMessage(bridgeIntroMsg, 400);
 
     await delay(1400);
 
-    // EMAIL CAPTURE — catch the midnight browser before the paywall
+    // EMAIL CAPTURE -- catch the midnight browser before the paywall
     var emailCapMsg = document.createElement('div');
     emailCapMsg.className = 'msg ai';
     emailCapMsg.style.animationDelay = '0s';
     var emailCapCard = document.createElement('div');
     emailCapCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.15);border-radius:12px;padding:18px 20px;max-width:92%;';
     emailCapCard.innerHTML =
-      '<div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.55;">Drop your email and we'll send your summary so you don't lose it. We'll also let you know when your full matches unlock.</div>' +
+      '<div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.55;">Drop your email and we'll send your summary so you don\'t lose it. We\'ll also let you know when your full matches unlock.</div>' +
       '<div style="display:flex;gap:8px;">' +
         '<input id="earlyEmailInput" type="email" placeholder="your@email.com" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box;" />' +
         '<button id="earlyEmailBtn" style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Save it →</button>' +
@@ -3055,7 +3020,7 @@ await showAIMessage(bridgeIntroMsg, 400);
         }
         if (emailBtn) emailBtn.addEventListener('click', captureEmail);
         if (emailSkip) emailSkip.addEventListener('click', function() { emailCapCard.style.display='none'; resolve(); });
-        // Auto-resolve after 30 seconds if they don't interact
+        // Auto-resolve after 30 seconds if they don\'t interact
         setTimeout(resolve, 30000);
       }, 300);
     });
@@ -3087,7 +3052,7 @@ await showAIMessage(bridgeIntroMsg, 400);
     lockedMsg.appendChild(lockedWrap);
     chat.appendChild(lockedMsg);
 
-    // Fix 3 — Geographic reality note for smaller markets
+    // Fix 3 -- Geographic reality note for smaller markets
     var loc = (responses.location || '').toLowerCase();
     var majorCities = ['new york','los angeles','chicago','houston','phoenix','philadelphia','san antonio','san diego','dallas','san jose','austin','jacksonville','fort worth','columbus','charlotte','san francisco','seattle','denver','boston','nashville','atlanta','miami','minneapolis','portland','las vegas','sacramento'];
     var isMajorCity = majorCities.some(function(c) { return loc.includes(c); });
@@ -3098,7 +3063,7 @@ await showAIMessage(bridgeIntroMsg, 400);
       var geoBubble = document.createElement('div');
       geoBubble.className = 'bubble';
       geoBubble.style.cssText = 'font-size:12px;color:var(--muted);font-style:italic;max-width:88%;padding:10px 14px;';
-      geoBubble.textContent = 'These matches are filtered to your area. Some roles may be hybrid or remote-eligible — the full cards show which ones travel well and which ones are truly local.';
+      geoBubble.textContent = 'These matches are filtered to your area. Some roles may be hybrid or remote-eligible -- the full cards show which ones travel well and which ones are truly local.';
       geoMsg.appendChild(geoBubble);
       chat.appendChild(geoMsg);
     }
@@ -3151,7 +3116,7 @@ await showAIMessage(bridgeIntroMsg, 400);
   }
 }
 
-// Global bridge state — set by showMatches, read by showEndActions
+// Global bridge state -- set by showMatches, read by showEndActions
 var lastBridgeState = { needsBridge: false, bridgeJob: null };
 
 function showEndActions() {
@@ -3161,10 +3126,10 @@ function showEndActions() {
 
   var yesBtn = document.createElement('button');
   yesBtn.className = 'end-btn primary';
-  yesBtn.textContent = "Yes — show me what fits";
+  yesBtn.textContent = "Yes -- show me what fits";
   yesBtn.addEventListener('click', function() {
     wrap.remove();
-    addMessage("Yes — show me what fits", 'user');
+    addMessage("Yes -- show me what fits", 'user');
     setTimeout(function() { showMatches(); }, 600);
   });
 
@@ -3195,7 +3160,7 @@ var REGULAR_PRICE_LINK = 'STRIPE_LINK';           // replace with $12 Stripe lin
 
 function getFoundingCount() {
   // In production this would be a Supabase query
-  // For now uses localStorage as a proxy — resets per browser
+  // For now uses localStorage as a proxy -- resets per browser
   // Replace with: fetch('/api/founding-count') once Supabase is set up
   try {
     return parseInt(localStorage.getItem('lune_founding_count') || '3', 10);
@@ -3224,7 +3189,7 @@ function initFoundingBanner() {
   if (remaining <= 10) {
     spotsLeft.style.color = '#e05a3a';
     if (spotsLeft.parentElement) {
-      spotsLeft.parentElement.querySelector('.founding-spots').textContent = 'spots left — almost gone';
+      spotsLeft.parentElement.querySelector('.founding-spots').textContent = 'spots left -- almost gone';
     }
   } else if (remaining <= 25) {
     if (spotsLeft.parentElement) {
@@ -3232,7 +3197,7 @@ function initFoundingBanner() {
     }
   }
 
-  // Claim button — goes to $7 Stripe link
+  // Claim button -- goes to $7 Stripe link
   if (claimBtn) {
     claimBtn.addEventListener('click', function() {
       var current = getFoundingCount();
@@ -3268,8 +3233,8 @@ function updateVotePricing() {
   var voteSub = document.querySelector('.vote-sub');
 
   if (remaining > 0 && voteQuestion) {
-    voteQuestion.innerHTML = 'After seeing all of this —<br>would you pay <em>$7</em> to lock it in?';
-    if (voteSub) voteSub.textContent = 'Founding member price — $7/month for life. Goes to $12 after the first 100.';
+    voteQuestion.innerHTML = 'After seeing all of this --<br>would you pay <em>$7</em> to lock it in?';
+    if (voteSub) voteSub.textContent = 'Founding member price -- $7/month for life. Goes to $12 after the first 100.';
   }
 }
 
@@ -3307,7 +3272,7 @@ function getFoundingMemberNumber() {
   } catch(e) { return null; }
 }
 
-// Called when someone claims founding pricing — marks them as a founder
+// Called when someone claims founding pricing -- marks them as a founder
 function claimFoundingMembership(memberNumber) {
   try {
     var p = getProfile();
@@ -3321,7 +3286,7 @@ function claimFoundingMembership(memberNumber) {
   } catch(e) {}
 }
 
-// Opt out of founders club emails (keeps the badge and $7 price — just no emails)
+// Opt out of founders club emails (keeps the badge and $7 price -- just no emails)
 function optOutFoundersEmails() {
   try {
     var p = getProfile();
@@ -3346,80 +3311,34 @@ function optInFoundersEmails() {
 }
 
 // ── FOUNDERS CLUB EMAIL CADENCE ───────────────────────────────────────────────
-// Quarterly — never more. Proactive, personal, genuinely useful.
+// Quarterly -- never more. Proactive, personal, genuinely useful.
 // NOT a newsletter. Reads like it came from a person who remembers them.
 
 function buildFoundersEmail(profile, quarter) {
   var name = profile.name ? profile.name.split(' ')[0] : 'there';
   var mood = getMoodLabel(profile);
-  var memberNum = profile.foundingMemberNumber || '—';
+  var memberNum = profile.foundingMemberNumber || '--';
   var conversationCount = profile.conversationCount || 1;
   var promotions = (profile.promotions || []).length;
 
-  // Four distinct quarterly emails — each one different
+  // Four distinct quarterly emails -- each one different
   var emails = {
     Q1: {
-      subject: 'a note from Lune — just checking in',
-      body: 'Hi ' + name + ',
-
-You're one of the first ' + memberNum + ' people who ever used Lune. I think about that a lot.
-
-' +
-            'One honest question: is the product doing what you hoped it would?
-
-' +
-            'Not looking for a polished answer — the critical ones help more. Reply whenever, if you want.
-
-' +
-            'And if there's someone in your life who should be having this conversation — you know where to find us.
-
-Lune'
+      subject: 'a note from Lune -- just checking in',
+      body: 'Hi ' + name + ',\n\nYou\'re one of the first ' + memberNum + ' people who ever used Lune. I think about that a lot.\n\nOne honest question: is the product doing what you hoped it would?\n\nNot looking for a polished answer -- the critical ones help more. Reply whenever, if you want.\n\nAnd if there\'s someone in your life who should be having this conversation -- you know where to find us.\n\nLune'
     },
     Q2: {
       subject: 'something we built because of people like you',
-      body: 'Hi ' + name + ',
-
-Every feature Lune has was shaped by what real people told us — including you.
-
-' +
-            'This quarter we're working on [FEATURE IN PROGRESS]. It came directly from conversations with founding members.
-
-' +
-            'If there's something you wish Lune did that it doesn't — now is a good time to say it. We're still small enough to actually build it.
-
-' +
-            'Reply to this email. It goes to a real person.
-
-Lune'
+      body: 'Hi ' + name + ',\n\nEvery feature Lune has was shaped by what real people told us -- including you.\n\nThis quarter we\'re working on [FEATURE IN PROGRESS]. It came directly from conversations with founding members.\n\nIf there\'s something you wish Lune did that it doesn\'t -- now is a good time to say it. We\'re still small enough to actually build it.\n\nReply to this email. It goes to a real person.\n\nLune'
     },
     Q3: {
-      subject: 'your profile — a year's worth of you',
-      body: 'Hi ' + name + ',
-
-You've had ' + conversationCount + ' conversation' + (conversationCount !== 1 ? 's' : '') + ' with Lune' +
-            (promotions > 0 ? ' and logged ' + promotions + ' milestone' + (promotions !== 1 ? 's' : '') : '') + '.
-
-' +
-            'The most interesting thing about your profile right now isn't where you're going — it's how far the starting point is from where you are.
-
-' +
-            'Open your profile when you have five minutes. The pattern section has been updating quietly.
-
-Lune'
+      subject: 'your profile -- a year's worth of you',
+      body: 'Hi ' + name + ',\n\nYou\'ve had ' + conversationCount + ' conversation' + (conversationCount !== 1 ? 's' : '') + ' with Lune' +
+            (promotions > 0 ? ' and logged ' + promotions + ' milestone' + (promotions !== 1 ? 's' : '') : '') + '.\n\nThe most interesting thing about your profile right now isn\'t where you\'re going -- it\'s how far the starting point is from where you are.\n\nOpen your profile when you have five minutes. The pattern section has been updating quietly.\n\nLune'
     },
     Q4: {
       subject: 'an honest question before the year ends',
-      body: 'Hi ' + name + ',
-
-You came to Lune ' + (mood.type === 'urgent' ? 'when things felt urgent' : mood.type === 'happy' ? 'when things were actually good' : 'when something felt off') + '.
-
-' +
-            'Before the year turns — what's true now that wasn't true then?
-
-' +
-            'No agenda. Just the kind of question Lune would ask if it could.
-
-Lune'
+      body: 'Hi ' + name + ',\n\nYou came to Lune ' + (mood.type === 'urgent' ? 'when things felt urgent' : mood.type === 'happy' ? 'when things were actually good' : 'when something felt off') + '.\n\nBefore the year turns -- what\'s true now that wasn\'t true then?\n\nNo agenda. Just the kind of question Lune would ask if it could.\n\nLune'
     }
   };
 
@@ -3432,7 +3351,7 @@ Lune'
 function buildFoundersBadgeHTML(profile) {
   if (!profile || !profile.foundingMember) return '';
 
-  var memberNum = profile.foundingMemberNumber || '—';
+  var memberNum = profile.foundingMemberNumber || '--';
   var since = profile.foundingMemberSince
     ? new Date(profile.foundingMemberSince).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : 'Early 2025';
@@ -3445,9 +3364,9 @@ function buildFoundersBadgeHTML(profile) {
     '</div>' +
     '<div class="founders-perks">' +
     '<div class="founders-perks-title">Your Founding Benefits</div>' +
-    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>$7/month for life — locked in, never changes</div>' +
-    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Direct line to the product — your feedback actually shapes what gets built</div>' +
-    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Quarterly check-ins from the team — never more than four times a year</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>$7/month for life -- locked in, never changes</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Direct line to the product -- your feedback actually shapes what gets built</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Quarterly check-ins from the team -- never more than four times a year</div>' +
     '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Early access to every new feature before it goes public</div>' +
     '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Member since ' + since + '</div>' +
     '</div>' +
