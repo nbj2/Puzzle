@@ -194,6 +194,30 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; di
 .response-title { font-family:'Instrument Serif',serif; font-size:30px; font-style:italic; color:var(--text); }
 .response-text { font-size:14px; color:var(--muted); max-width:360px; text-align:center; line-height:1.7; }
 .response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
+/* ── Founding member banner ── */
+.founding-banner { position:relative; z-index:10; background:linear-gradient(135deg,rgba(24,112,108,0.12),rgba(24,112,108,0.06)); border-bottom:1px solid rgba(24,112,108,0.2); padding:14px 24px; text-align:center; }
+.founding-banner-inner { display:inline-flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center; }
+.founding-pulse { width:7px; height:7px; border-radius:50%; background:var(--accent); animation:glow-dot 1.5s ease infinite; flex-shrink:0; }
+.founding-text { font-size:13px; color:var(--text); }
+.founding-text strong { color:var(--accent); font-weight:500; }
+.founding-text em { font-style:normal; color:var(--muted); font-size:12px; }
+.founding-count { font-family:'Instrument Serif',serif; font-size:22px; color:var(--accent); line-height:1; }
+.founding-spots { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.founding-cta-pill { font-size:12px; font-weight:500; color:#f5f0e8; background:var(--accent); border:none; border-radius:100px; padding:6px 16px; cursor:pointer; font-family:'Sora',sans-serif; white-space:nowrap; transition:transform 0.15s,box-shadow 0.15s; }
+.founding-cta-pill:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(24,112,108,0.3); }
+/* ── Founders Club ── */
+.founders-badge { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,rgba(24,112,108,0.15),rgba(24,112,108,0.06)); border:1px solid rgba(24,112,108,0.35); border-radius:100px; padding:6px 16px; margin-bottom:20px; }
+.founders-badge-icon { font-size:13px; }
+.founders-badge-text { font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); }
+.founders-badge-num { font-size:10px; color:var(--muted); margin-left:4px; }
+.founders-perks { background:linear-gradient(135deg,rgba(24,112,108,0.07),rgba(24,112,108,0.02)); border:1px solid rgba(24,112,108,0.2); border-radius:14px; padding:20px 24px; margin-bottom:24px; }
+.founders-perks-title { font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; opacity:0.8; }
+.founders-perk-item { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; font-size:13px; color:var(--muted); line-height:1.5; }
+.founders-perk-item:last-child { margin-bottom:0; }
+.founders-perk-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); flex-shrink:0; margin-top:6px; }
+.founders-opt-out { font-size:11px; color:var(--muted); text-align:center; margin-top:16px; }
+.founders-opt-out button { font-size:11px; color:var(--muted); background:none; border:none; cursor:pointer; font-family:'Sora',sans-serif; text-decoration:underline; padding:0; }
+.founders-opt-out button:hover { color:var(--text); }
 footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--border); position:relative; z-index:1; }
 .footer-logo { font-family:'Instrument Serif',serif; font-size:22px; color:var(--accent); margin-bottom:8px; }
 .footer-tagline { font-size:13px; color:var(--muted); letter-spacing:1px; font-style:italic; }
@@ -267,6 +291,22 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 
 <!-- PITCH PAGE -->
 <div id="pitchPage">
+  <!-- FOUNDING MEMBER BANNER — auto-hides at 100 paying members -->
+  <div class="founding-banner" id="foundingBanner">
+    <div class="founding-banner-inner">
+      <div class="founding-pulse"></div>
+      <div>
+        <div class="founding-text"><strong>Founding Member Pricing</strong> <em>— first 100 only</em></div>
+        <div class="founding-text" style="margin-top:2px;">Lock in <strong>$7/month for life</strong> before it becomes $12. <em>No price increases. Ever.</em></div>
+      </div>
+      <div style="text-align:center;">
+        <div class="founding-count" id="foundingSpotsLeft">97</div>
+        <div class="founding-spots">spots left</div>
+      </div>
+      <button class="founding-cta-pill" id="foundingClaimBtn">Claim your spot →</button>
+    </div>
+  </div>
+
   <nav>
     <div class="nav-logo" style="display:flex;align-items:center;">
       <svg width="108" height="32" viewBox="0 0 108 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
@@ -279,7 +319,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
       <button id="profileNavBtn" style="display:none;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:7px 14px;border-radius:100px;cursor:pointer;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">My Profile</button>
-      <button class="nav-pill" id="navPill">Early Access Open</button>
+      <button class="nav-pill" id="navPill" onclick="document.getElementById('foundingBanner').scrollIntoView({behavior:'smooth'})">Founding: $7/mo →</button>
     </div>
   </nav>
 
@@ -295,7 +335,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <p class="hero-subhead">Your resume tells half the story.</p>
     <div class="hero-mechanic">
       <div class="mechanic-icon">◐</div>
-      <div class="mechanic-text"><strong>Lune is a conversation, not a form.</strong> Ten questions nobody else thought to ask. A summary that sounds like someone actually listened. Matches nobody saw coming.</div>
+      <div class="mechanic-text"><strong>Lune is a conversation, not a form.</strong> Ten questions nobody else thought to ask. A summary that finally says the thing you've been trying to say about yourself. Matches nobody saw coming.</div>
     </div>
     <div class="hero-cta">
       <button class="cta-main" id="heroBtn">See what it said to me first ↓</button>
@@ -397,7 +437,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <div class="try-it-block">
       <div class="try-it-eyebrow">Your turn</div>
       <div class="try-it-title">What would Lune<br>say about <em>you?</em></div>
-      <div class="try-it-sub">Ten questions nobody else thought to ask. A summary that sounds like someone actually listened.</div>
+      <div class="try-it-sub">Ten questions nobody else thought to ask. A summary that finally says the thing you've been trying to say about yourself.</div>
       <button class="try-it-btn" id="tryItBtn">Start the conversation →</button>
       <span class="try-it-note">Always free. No resume required.</span>
     </div>
@@ -410,31 +450,31 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
           <div>
             <div class="how-step-num">01</div>
             <div class="how-step-title">A real conversation,<br>not a form</div>
-            <div class="how-step-desc">Ten exchanges that feel like talking to someone who actually listens. No resume upload. No keyword matching. Questions nobody else has thought to ask — and they adapt to what you say.</div>
+            <div class="how-step-desc">Ten questions that go where you go. No resume. No keyword box. Just the kind of exchange that leaves you thinking — that's the first time anyone has asked me that.</div>
           </div>
           <div class="how-step-visual"><div class="how-step-icon">◐</div></div>
         </div>
         <div class="how-step flip">
           <div>
             <div class="how-step-num">02</div>
-            <div class="how-step-title">Elimination first.<br>Then match.</div>
-            <div class="how-step-desc">If you're stuck, Lune starts with what you'll never tolerate again — a signal more durable than aspiration. If you're doing well, it maps what makes your current situation work. Either way, it learns what's actually true about you.</div>
+            <div class="how-step-title">Starts with what<br>you won't go back to</div>
+            <div class="how-step-desc">If you're stuck, Lune learns what you'll never tolerate again before it looks forward. If things are good, it maps what makes your situation work. Either way it builds from what's actually true — not what looks good on paper.</div>
           </div>
           <div class="how-step-visual"><div class="how-step-icon">◑</div></div>
         </div>
         <div class="how-step">
           <div>
             <div class="how-step-num">03</div>
-            <div class="how-step-title">A summary that sounds<br>like a person wrote it</div>
-            <div class="how-step-desc">Not a list of job categories. A paragraph that names a pattern you haven't been able to articulate yourself — and one match that will make you think: how did it know that about me?</div>
+            <div class="how-step-title">A summary that finally<br>gets it right</div>
+            <div class="how-step-desc">A paragraph written around your specific story — not a list of categories. It names the pattern. It shows you where to go next. And if there's a gap between where you are and what fits, it shows you how to close it.</div>
           </div>
           <div class="how-step-visual"><div class="how-step-icon">●</div></div>
         </div>
         <div class="how-step flip">
           <div>
             <div class="how-step-num">04</div>
-            <div class="how-step-title">Gets better<br>every time</div>
-            <div class="how-step-desc">The more people use Lune honestly, the sharper the matches get for everyone. People who love their jobs describe what makes them good from the inside. People looking for their next thing get matches built from that real signal — not HR copy.</div>
+            <div class="how-step-title">Remembers you<br>over time</div>
+            <div class="how-step-desc">The conversation is the beginning. Your profile grows every time something changes — a new role, a shift in what you want, a life that looks different than it did. Come back in a year and Lune knows who you were then and who you are now.</div>
           </div>
           <div class="how-step-visual"><div class="how-step-icon">◎</div></div>
         </div>
@@ -480,23 +520,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     </div>
 
     <!-- SECTION 6: PRICING — big, centered -->
-    <div class="section">
-      <div class="section-eyebrow">What it costs</div>
-      <div class="pricing-block">
-        <div class="pricing-amount"><span>$</span>12</div>
-        <div class="pricing-label">per month · cancel anytime</div>
-        <div class="pricing-features">
-          <div class="pricing-feature">Free conversation, always</div>
-          <div class="pricing-feature">Full summary included</div>
-          <div class="pricing-feature">Profile that remembers you</div>
-          <div class="pricing-feature">Matches that get sharper over time</div>
-        </div>
-        <button class="pricing-cta" onclick="startConversation()">Try it free first →</button>
-        <div style="margin-top:16px;font-size:12px;color:var(--muted);font-style:italic;">No paywall before value. Ever.</div>
-      </div>
     </div>
-
-  </div>
 
   <div class="vote-section" id="voteSection">
     <div class="urgency-bar">
@@ -506,7 +530,16 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <div id="voteMain">
       <div class="vote-question">After seeing all of this —<br>would you pay <em>$12</em> for it?</div>
       <div class="vote-sub">Not for a job board. For the conversation job boards were never willing to have.</div>
-      <div class="price-inline">Less than two coffees a week. <strong>No paywall before value. Ever.</strong></div>
+
+      <!-- What $12 actually gets you — folded into the ask, not a separate page -->
+      <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin:28px 0 8px;font-size:13px;color:var(--muted);">
+        <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Free conversation, always</span>
+        <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Profile that remembers you</span>
+        <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Matches that get sharper over time</span>
+        <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Cancel anytime</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:36px;">Less than two coffees a week. <strong style="color:var(--accent);font-style:normal;font-weight:400;">No paywall before value. Ever.</strong></div>
+
       <div class="vote-buttons">
         <button class="vote-btn yes" id="voteYes">Yes — take my money</button>
         <button class="vote-btn" id="voteMaybe">Maybe — I'd try it first</button>
@@ -517,8 +550,8 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <div class="response-block" id="r-yes">
       <div class="response-icon">🔥</div>
       <div class="response-title">That's the signal we needed.</div>
-      <div class="response-text">You're one of the founding 500. Lifetime early-access pricing and a direct line to shape what Lune becomes.</div>
-      <a href="/cdn-cgi/l/email-protection#82eae7eeeeedc2f2f7f8f8eee7e1e3f0e7e7f0f1ace1edef" class="response-cta">Claim your spot →</a>
+      <div class="response-text" id="yesResponseText">You're one of the founding 100. Lock in $7/month for life — that price never changes for you, no matter what happens after.</div>
+      <a href="STRIPE_FOUNDING_LINK" class="response-cta" id="yesCtaLink">Lock in $7/month →</a>
     </div>
     <div class="response-block" id="r-maybe">
       <div class="response-icon">👀</div>
@@ -763,11 +796,16 @@ function renderProfilePage() {
         '</div>');
 
   // ── Assemble the full page ──
+  // Build founders badge if applicable
+  var foundersBadgeHTML = buildFoundersBadgeHTML(profile);
+
   body.innerHTML =
     '<div class="profile-header">' +
     '<div class="profile-name">' + (profile.name || 'Your Profile') + '</div>' +
     '<div class="profile-meta">' + (profile.email || '') + (conversationCount > 1 ? ' · ' + conversationCount + ' conversations' : ' · 1 conversation') + '</div>' +
     '</div>' +
+
+    foundersBadgeHTML +
 
     '<div class="profile-mood-badge"><div class="profile-mood-dot" style="background:' + mood.dot + ';"></div>' + mood.label + '</div>' +
 
@@ -1114,6 +1152,86 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!name) { document.getElementById('profileNameInput').style.borderColor = 'var(--accent)'; return; }
     saveProfile({ name: name, email: email, created: new Date().toISOString(), relocationType: responses.relocationType || null, relocationMemory: responses.relocationMemory || null, targetLocation: responses.targetLocation || null, currentLocation: responses.currentLocation || null, whyFirst: responses.why || null });
     storeConversationMood();
+
+    // ── SEND WELCOME EMAIL via Resend ─────────────────────────────────────────
+    // Fires once when profile is first created with an email address
+    // Uses the tailored email system based on their mood/entry state
+    if (email && email.includes('@')) {
+      try {
+        var welcomeProfile = getProfile();
+        var welcomeMood = getMoodLabel(welcomeProfile);
+        var isFounder = welcomeProfile && welcomeProfile.foundingMember;
+
+        var welcomeSubject = isFounder
+          ? 'welcome to the founding 100'
+          : welcomeMood.type === 'urgent'
+          ? "you came in urgent — here's what comes next"
+          : welcomeMood.type === 'happy'
+          ? "glad you're here — your profile is saved"
+          : 'your lune profile is ready';
+
+        var welcomeBody = isFounder
+          ? 'Hi ' + name + ',
+
+You're one of the founding 100. Your price is locked at $7/month for life — that never changes.
+
+Your profile is saved at trylune.app. The conversation is the beginning. Come back anytime something shifts.
+
+And if you ever want to tell us something that would make the product better — just reply to this email. It goes to a real person.
+
+Lune'
+          : welcomeMood.type === 'urgent'
+          ? 'Hi ' + name + ',
+
+You came in with something urgent. Your profile is saved — the matches and your summary are waiting at trylune.app.
+
+We'll check in soon. If anything changes before then, just come back.
+
+Lune'
+          : welcomeMood.type === 'happy'
+          ? 'Hi ' + name + ',
+
+You came in curious, not stuck — which is actually the best time to do this. Your profile is saved at trylune.app.
+
+Come back whenever something shifts. Lune works best when it has a before and after to compare.
+
+Lune'
+          : 'Hi ' + name + ',
+
+Your Lune profile is saved. The summary and your matches are at trylune.app.
+
+If anything shifts — a new role, a change in what you want, something that makes you think — come back. The profile gets sharper every time.
+
+Lune';
+
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: email,
+            subject: welcomeSubject,
+            body: welcomeBody,
+            name: name,
+            emailType: 'welcome'
+          })
+        }).catch(function(e) {
+          // Silent fail — email is enhancement, never blocking
+          console.log('Welcome email failed silently:', e);
+        });
+      } catch(emailErr) {
+        // Silent fail
+      }
+    }
+
+    // Check if this person claimed founding membership before saving profile
+    try {
+      var foundingClaim = JSON.parse(localStorage.getItem('lune_founding_claimed') || 'null');
+      if (foundingClaim && foundingClaim.number) {
+        claimFoundingMembership(foundingClaim.number);
+        // Clear the claim flag so it doesn't re-trigger
+        localStorage.removeItem('lune_founding_claimed');
+      }
+    } catch(e) {}
     if (pendingSummaryData) {
       saveSummaryToHistory(pendingSummaryData.summaryText, pendingSummaryData.closingQuestion, pendingSummaryData.responsesSnap);
       pendingSummaryData = null;
@@ -1411,7 +1529,17 @@ function showTextInput(placeholder, onSubmit, rows) {
 function getConvoSoFar() {
   var parts = [];
   if (responses.why) parts.push('Why they came: ' + responses.why);
-  if (responses.duration) parts.push('Follow-up: ' + responses.duration);
+  if (responses.duration) {
+    var durVal = responses.duration || '';
+    // Flag the conditions-vs-work signal so summary and matches use it correctly
+    if (durVal.toLowerCase().includes('love the work') || durVal.toLowerCase().includes('hate the environment')) {
+      parts.push('IMPORTANT — CONDITIONS NOT WORK: They love the actual craft but hate the environment. Do NOT suggest they leave the field. Suggest better conditions within the field or adjacent roles.');
+    } else if (durVal.toLowerCase().includes('don\'t want to do this') || durVal.toLowerCase().includes('completely different')) {
+      parts.push('IMPORTANT — GENUINE PIVOT: They want to leave the type of work entirely, not just find better conditions. Suggest roles in a different direction.');
+    } else {
+      parts.push('Follow-up: ' + durVal);
+    }
+  }
   if (responses.loves) parts.push('What they love: ' + responses.loves);
   if (responses.loves_extra) parts.push('More on what they love: ' + responses.loves_extra);
   if (responses.bestDay) parts.push('Best work moment: ' + responses.bestDay);
@@ -1822,12 +1950,12 @@ async function step2() {
   var goal, seeds, fallbackQ, fallbackOpts;
 
   if (responses.why.includes("Ready for a change") || responses.why.includes("ready for a change")) {
-    goal = "what triggered them to finally start looking — what happened recently or what wore them down";
+    goal = "what finally pushed them toward change — and whether it's the work itself or the situation around it";
     seeds = [
-      "Something specific happened recently",
-      "Been building for a while, finally hit my limit",
-      "Someone showed me something that made me think",
-      "Hit a wall — nowhere left to go here"
+      "Something specific happened and it made it urgent",
+      "It's been building for a while — I finally hit my limit",
+      "I love what I do but not where I'm doing it",
+      "I want to do something completely different"
     ];
     fallbackQ = "What finally made you decide to start looking?";
     fallbackOpts = seeds;
@@ -1850,6 +1978,17 @@ async function step2() {
       "Needed a push to even think about this"
     ];
     fallbackQ = "What made you click though?";
+    fallbackOpts = seeds;
+  } else if (responses.why.toLowerCase().includes("feels off") || responses.why.toLowerCase().includes("can't name it")) {
+    // Brendan's fix: ask conditions vs work FIRST — this changes everything downstream
+    goal = "whether the feeling is about the work itself or the conditions and environment around the work — critical distinction";
+    seeds = [
+      "It's the work itself — I don't want to do this anymore",
+      "I love what I do but not where or how I'm doing it",
+      "Honestly I'm not sure which one",
+      "A bit of both — the work and the situation"
+    ];
+    fallbackQ = "Is it the work itself — or what surrounds it?";
     fallbackOpts = seeds;
   } else {
     goal = "how long this feeling has been going on";
@@ -2392,7 +2531,7 @@ async function generateReveal() {
 
   var prompt = happyMode
     ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven't been able to say themselves — not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically — not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said — a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a warm invitation to save this profile — framed as capturing who they are now, while things are good, before anything changes\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
-    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- RELOCATION: if relocationType is 'active', orient ALL geography to target location only. If 'urgent', mix current and target, acknowledge the goal. If 'eventual', focus on current city but end with one warm sentence about the future goal — something like 'and when California becomes more than eventually, what you're building now travels with you.' Never make the eventual goal the main point. If their relevant location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear AND tells you what to do first. PLAN FRAMING: If constraints show timeline=immediate or soon, or a hard limit exists, add one warm grounding sentence before the closing question that signals the matches include something to start this week and something to build toward.\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
+    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened — not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person — reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- RELOCATION: if relocationType is 'active', orient ALL geography to target location only. If 'urgent', mix current and target, acknowledge the goal. If 'eventual', focus on current city but end with one warm sentence about the future goal — something like 'and when California becomes more than eventually, what you're building now travels with you.' Never make the eventual goal the main point. If their relevant location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear AND tells you what to do first.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, or a hard limit exists, add one warm grounding sentence before the closing question that signals the matches include something to start this week and something to build toward.\n- LATE-CAREER COURAGE: If the person appears to be over 40 and making a significant career pivot into a different field, add one sentence that acknowledges the courage of what they're doing — not the logic, the courage. Something like 'What you're describing takes something most people talk themselves out of.' The real barrier for late-career pivoters is self-belief not information. Name it.\n- CONDITIONS VS WORK: If they expressed frustration with their job, distinguish clearly between hating the work itself versus hating the conditions around the work. These need completely different matches. If they love the craft but hate the environment — name that explicitly. It changes everything about what comes next.\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
 
   try {
     var data = await callAI({
@@ -2842,6 +2981,7 @@ await showAIMessage(bridgeIntroMsg, 400);
       '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">' + surpriseJob.company + ' · ' + surpriseJob.type + '</div>' +
       '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:14px;">' + surpriseJob.description + '</div>' +
       (surpriseJob.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(24,112,108,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + surpriseJob.reason + '"</div>' : '') +
+      (surpriseJob.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(24,112,108,0.05);border:1px solid rgba(24,112,108,0.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to describe your background for this role</span>' + surpriseJob.bridge + '</div>' : '') +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
       '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#f7f6f3;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
       '<a href="' + surpriseJob.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
@@ -2973,7 +3113,7 @@ await showAIMessage(bridgeIntroMsg, 400);
         '<span style="font-family:\'Instrument Serif\',serif;font-size:38px;color:var(--accent);line-height:1;">$12</span>' +
         '<span style="font-size:12px;color:var(--muted);text-align:left;line-height:1.5;">per month<br>cancel anytime</span>' +
       '</div>' +
-      '<a href="STRIPE_LINK" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">Unlock my matches →</a>' +
+      '<a href="' + getActiveStripeLink() + '" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#f7f6f3;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">Unlock my matches →</a>' +
       '<div style="font-size:11px;color:var(--muted);font-style:italic;">The conversation is always free. No resume required.</div>';
     paywallMsg.appendChild(paywallCard);
     chat.appendChild(paywallMsg);
@@ -3045,6 +3185,281 @@ function showEndActions() {
     }
     scrollToBottom();
 }
+// ── FOUNDING MEMBER SYSTEM ────────────────────────────────────────────────────
+// Tracks founding member count in localStorage (real version needs Supabase)
+// Banner auto-hides when 100 founding members claimed
+// Founding price: $7/month for life | Regular price: $12/month
+
+var FOUNDING_LIMIT = 100;
+var FOUNDING_PRICE_LINK = 'STRIPE_FOUNDING_LINK'; // replace with $7 Stripe link
+var REGULAR_PRICE_LINK = 'STRIPE_LINK';           // replace with $12 Stripe link
+
+function getFoundingCount() {
+  // In production this would be a Supabase query
+  // For now uses localStorage as a proxy — resets per browser
+  // Replace with: fetch('/api/founding-count') once Supabase is set up
+  try {
+    return parseInt(localStorage.getItem('lune_founding_count') || '3', 10);
+  } catch(e) { return 3; }
+}
+
+function initFoundingBanner() {
+  var banner = document.getElementById('foundingBanner');
+  var spotsLeft = document.getElementById('foundingSpotsLeft');
+  var claimBtn = document.getElementById('foundingClaimBtn');
+  if (!banner) return;
+
+  var count = getFoundingCount();
+  var remaining = FOUNDING_LIMIT - count;
+
+  // Hide banner if founding period is over
+  if (remaining <= 0) {
+    banner.style.display = 'none';
+    return;
+  }
+
+  // Update spots remaining
+  if (spotsLeft) spotsLeft.textContent = remaining;
+
+  // Add urgency tones at different thresholds
+  if (remaining <= 10) {
+    spotsLeft.style.color = '#e05a3a';
+    if (spotsLeft.parentElement) {
+      spotsLeft.parentElement.querySelector('.founding-spots').textContent = 'spots left — almost gone';
+    }
+  } else if (remaining <= 25) {
+    if (spotsLeft.parentElement) {
+      spotsLeft.parentElement.querySelector('.founding-spots').textContent = 'spots remaining';
+    }
+  }
+
+  // Claim button — goes to $7 Stripe link
+  if (claimBtn) {
+    claimBtn.addEventListener('click', function() {
+      var current = getFoundingCount();
+      if (current < FOUNDING_LIMIT) {
+        var newCount = current + 1;
+        localStorage.setItem('lune_founding_count', newCount);
+        // Mark this browser session as a founding member claim
+        // Full membership confirmed after Stripe payment completes
+        // In production: POST to /api/claim-founding with member number
+        localStorage.setItem('lune_founding_claimed', JSON.stringify({
+          number: newCount,
+          claimedAt: new Date().toISOString()
+        }));
+      }
+      window.open(FOUNDING_PRICE_LINK !== 'STRIPE_FOUNDING_LINK'
+        ? FOUNDING_PRICE_LINK
+        : '#', '_blank');
+    });
+  }
+}
+
+// Also update the vote section Yes button and paywall to use right price
+function getActiveStripeLink() {
+  var count = getFoundingCount();
+  return count < FOUNDING_LIMIT ? FOUNDING_PRICE_LINK : REGULAR_PRICE_LINK;
+}
+
+// Update vote section CTA to reflect founding vs regular price
+function updateVotePricing() {
+  var count = getFoundingCount();
+  var remaining = FOUNDING_LIMIT - count;
+  var voteQuestion = document.querySelector('.vote-question');
+  var voteSub = document.querySelector('.vote-sub');
+
+  if (remaining > 0 && voteQuestion) {
+    voteQuestion.innerHTML = 'After seeing all of this —<br>would you pay <em>$7</em> to lock it in?';
+    if (voteSub) voteSub.textContent = 'Founding member price — $7/month for life. Goes to $12 after the first 100.';
+  }
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', function() {
+  initFoundingBanner();
+  updateVotePricing();
+});
+
+// ── FOUNDERS CLUB SYSTEM ──────────────────────────────────────────────────────
+// Founding 100: $7/month for life, special badge, tailored emails, opt-out anytime
+
+function isFoundingMember() {
+  try {
+    var p = getProfile();
+    return p && p.foundingMember === true;
+  } catch(e) { return false; }
+}
+
+function setFoundingMember(val) {
+  try {
+    var p = getProfile();
+    if (!p) return;
+    p.foundingMember = val;
+    p.foundingMemberSince = val ? new Date().toISOString() : null;
+    p.foundingEmailsOptIn = val; // defaults to opted in
+    setProfile(p);
+  } catch(e) {}
+}
+
+function getFoundingMemberNumber() {
+  try {
+    var p = getProfile();
+    return p && p.foundingMemberNumber ? p.foundingMemberNumber : null;
+  } catch(e) { return null; }
+}
+
+// Called when someone claims founding pricing — marks them as a founder
+function claimFoundingMembership(memberNumber) {
+  try {
+    var p = getProfile();
+    if (!p) return;
+    p.foundingMember = true;
+    p.foundingMemberNumber = memberNumber || getFoundingCount();
+    p.foundingMemberSince = new Date().toISOString();
+    p.foundingEmailsOptIn = true;
+    p.foundingEmailCadence = 'quarterly'; // quarterly by default, not monthly
+    setProfile(p);
+  } catch(e) {}
+}
+
+// Opt out of founders club emails (keeps the badge and $7 price — just no emails)
+function optOutFoundersEmails() {
+  try {
+    var p = getProfile();
+    if (!p) return;
+    p.foundingEmailsOptIn = false;
+    p.foundingEmailOptOutDate = new Date().toISOString();
+    setProfile(p);
+    renderProfilePage(); // refresh to show updated state
+  } catch(e) {}
+}
+
+// Opt back in
+function optInFoundersEmails() {
+  try {
+    var p = getProfile();
+    if (!p) return;
+    p.foundingEmailsOptIn = true;
+    delete p.foundingEmailOptOutDate;
+    setProfile(p);
+    renderProfilePage();
+  } catch(e) {}
+}
+
+// ── FOUNDERS CLUB EMAIL CADENCE ───────────────────────────────────────────────
+// Quarterly — never more. Proactive, personal, genuinely useful.
+// NOT a newsletter. Reads like it came from a person who remembers them.
+
+function buildFoundersEmail(profile, quarter) {
+  var name = profile.name ? profile.name.split(' ')[0] : 'there';
+  var mood = getMoodLabel(profile);
+  var memberNum = profile.foundingMemberNumber || '—';
+  var conversationCount = profile.conversationCount || 1;
+  var promotions = (profile.promotions || []).length;
+
+  // Four distinct quarterly emails — each one different
+  var emails = {
+    Q1: {
+      subject: 'a note from Lune — just checking in',
+      body: 'Hi ' + name + ',
+
+You're one of the first ' + memberNum + ' people who ever used Lune. I think about that a lot.
+
+' +
+            'One honest question: is the product doing what you hoped it would?
+
+' +
+            'Not looking for a polished answer — the critical ones help more. Reply whenever, if you want.
+
+' +
+            'And if there's someone in your life who should be having this conversation — you know where to find us.
+
+Lune'
+    },
+    Q2: {
+      subject: 'something we built because of people like you',
+      body: 'Hi ' + name + ',
+
+Every feature Lune has was shaped by what real people told us — including you.
+
+' +
+            'This quarter we're working on [FEATURE IN PROGRESS]. It came directly from conversations with founding members.
+
+' +
+            'If there's something you wish Lune did that it doesn't — now is a good time to say it. We're still small enough to actually build it.
+
+' +
+            'Reply to this email. It goes to a real person.
+
+Lune'
+    },
+    Q3: {
+      subject: 'your profile — a year's worth of you',
+      body: 'Hi ' + name + ',
+
+You've had ' + conversationCount + ' conversation' + (conversationCount !== 1 ? 's' : '') + ' with Lune' +
+            (promotions > 0 ? ' and logged ' + promotions + ' milestone' + (promotions !== 1 ? 's' : '') : '') + '.
+
+' +
+            'The most interesting thing about your profile right now isn't where you're going — it's how far the starting point is from where you are.
+
+' +
+            'Open your profile when you have five minutes. The pattern section has been updating quietly.
+
+Lune'
+    },
+    Q4: {
+      subject: 'an honest question before the year ends',
+      body: 'Hi ' + name + ',
+
+You came to Lune ' + (mood.type === 'urgent' ? 'when things felt urgent' : mood.type === 'happy' ? 'when things were actually good' : 'when something felt off') + '.
+
+' +
+            'Before the year turns — what's true now that wasn't true then?
+
+' +
+            'No agenda. Just the kind of question Lune would ask if it could.
+
+Lune'
+    }
+  };
+
+  return emails[quarter] || emails.Q1;
+}
+
+// ── ADD founders section to profile page ─────────────────────────────────────
+// This is called from renderProfilePage when foundingMember === true
+
+function buildFoundersBadgeHTML(profile) {
+  if (!profile || !profile.foundingMember) return '';
+
+  var memberNum = profile.foundingMemberNumber || '—';
+  var since = profile.foundingMemberSince
+    ? new Date(profile.foundingMemberSince).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    : 'Early 2025';
+  var optedIn = profile.foundingEmailsOptIn !== false;
+
+  return '<div class="founders-badge">' +
+    '<span class="founders-badge-icon">◐</span>' +
+    '<span class="founders-badge-text">Founding Member</span>' +
+    '<span class="founders-badge-num">· #' + memberNum + ' of 100</span>' +
+    '</div>' +
+    '<div class="founders-perks">' +
+    '<div class="founders-perks-title">Your Founding Benefits</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>$7/month for life — locked in, never changes</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Direct line to the product — your feedback actually shapes what gets built</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Quarterly check-ins from the team — never more than four times a year</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Early access to every new feature before it goes public</div>' +
+    '<div class="founders-perk-item"><div class="founders-perk-dot"></div>Member since ' + since + '</div>' +
+    '</div>' +
+    '<div class="founders-opt-out">' +
+    (optedIn
+      ? 'Getting the quarterly emails · <button onclick="optOutFoundersEmails()">opt out</button>'
+      : 'Quarterly emails paused · <button onclick="optInFoundersEmails()">opt back in anytime</button>'
+    ) +
+    '</div>';
+}
+
 </script>
 </body>
 </html>
