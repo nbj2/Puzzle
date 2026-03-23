@@ -338,7 +338,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="mechanic-text"><strong>Lune is a conversation, not a form.</strong> Ten questions nobody else thought to ask. A summary that finally says the thing you've been trying to say about yourself. Matches nobody saw coming.</div>
     </div>
     <div class="hero-cta">
-      <button class="cta-main" id="heroBtn">See what it said to me first ↓</button>
+      <button class="cta-main" id="heroBtn">Start the conversation →</button>
       <span class="cta-hint">The conversation is always free.</span>
     </div>
     <div class="scroll-line">
@@ -1347,9 +1347,7 @@ Lune';
   document.getElementById('navPill').addEventListener('click', function() {
     document.getElementById('voteSection').scrollIntoView({ behavior: 'smooth' });
   });
-  document.getElementById('heroBtn').addEventListener('click', function() {
-    document.querySelector('.content').scrollIntoView({ behavior: 'smooth' });
-  });
+  document.getElementById('heroBtn').addEventListener('click', startConversation);
   document.getElementById('tryItBtn').addEventListener('click', startConversation);
   document.getElementById('convoBack').addEventListener('click', backToPitch);
   document.getElementById('voteYes').addEventListener('click', function() { vote('yes'); });
