@@ -1432,7 +1432,7 @@ function quickOptionAck(val) {
     [['completely different'],             "Completely different is on the table."],
     // Step 2 -- stuck path
     [['credentials i don\'t have'],        "That gap is smaller than it feels."],
-    [['translate my experience'],          "Translation is exactly what this does."],
+    [['translate my experience'],          "That gap between what you've done and how to say it is real -- and closable."],
     [['can\'t find roles'],                "We'll look harder."],
     [['know the direction'],               "Direction is most of it."],
     // Step 2 -- feels off path
@@ -1762,19 +1762,35 @@ function isHappyUser() {
          (responses.happyFlag === true);
 }
 
+// Tracks specific details (names, phrases) already acknowledged this session
+// Prevents the product from replaying the same anchor detail multiple times
+var acknowledgedDetails = new Set();
+
 // Generates a one-sentence acknowledgment after someone shares something real
 // Proves the product was listening before asking the next question
 async function getAcknowledgment(whatTheyShared) {
   try {
+    // Build a list of already-acknowledged details to suppress repetition
+    var alreadySaid = acknowledgedDetails.size > 0
+      ? '\n\nDo NOT reference any of these details -- they have already been acknowledged: ' + Array.from(acknowledgedDetails).join(', ') + '. Find something new in what they just shared, or return empty string.'
+      : '';
+
     var data = await callAI({
       model: 'claude-sonnet-4-6',
       max_tokens: 80,
       messages: [{ role: 'user', content:
-        TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail -- a person, moment, or phrase they used. NEVER write anything generic like that sounds tough. (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) If no specific detail exists return empty string -- silence beats generic.\n\nWhat they shared: ' + whatTheyShared
+        TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail -- a person, moment, or phrase they used. NEVER write anything generic like that sounds tough. (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) Match the emotional weight of what they said -- if they described something casually or briefly, respond with light curiosity, not deep significance. If they said they chased something or it changed everything, then you can give it full weight. (5) If no specific detail exists return empty string -- silence beats generic.' + alreadySaid + '\n\nWhat they shared: ' + whatTheyShared
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
-    return (text && text.trim()) || null;
+    var result = (text && text.trim()) || null;
+
+    // Extract any name mentioned and add to acknowledged set
+    if (result) {
+      var nameMatch = whatTheyShared.match(/\b([A-Z][a-z]+)\b/g);
+      if (nameMatch) nameMatch.forEach(function(n) { acknowledgedDetails.add(n); });
+    }
+    return result;
   } catch(e) {
     return null;
   }
@@ -2722,8 +2738,6 @@ async function step5() {
       else {
         responses.neverAgain1 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain1');
-        var ack1h = quickMultiAck(val);
-        if (ack1h) { await showAIMessage(ack1h, 320); await delay(400); }
         step6();
       }
     });
@@ -2754,8 +2768,6 @@ async function step5() {
       else {
         responses.neverAgain1 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain1');
-        var ack1s = quickMultiAck(val);
-        if (ack1s) { await showAIMessage(ack1s, 320); await delay(400); }
         step6();
       }
     });
@@ -2852,8 +2864,6 @@ async function step6() {
       else {
         responses.neverAgain2 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain2');
-        var ack2h = quickMultiAck(val);
-        if (ack2h) { await showAIMessage(ack2h, 320); await delay(400); }
         step7();
       }
     });
@@ -2884,8 +2894,6 @@ async function step6() {
       else {
         responses.neverAgain2 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain2');
-        var ack2s = quickMultiAck(val);
-        if (ack2s) { await showAIMessage(ack2s, 320); await delay(400); }
         step7();
       }
     });
@@ -2916,11 +2924,11 @@ async function step7() {
   updateProgress(7);
   var q = await getAdaptiveQuestion(
     "what they actually do day to day -- the real version, not the job title",
-    "Walk me through what your days actually look like.",
-    "Most of my day is actually…"
+    "Walk me through what your days look like.",
+    "Most of my day is…"
   );
   await showAIMessage(q);
-  showTextInput("Most of my day is actually…", async function(val) {
+  showTextInput("Most of my day is…", async function(val) {
     responses.background = val;
     addMessage(val, 'user');
     // Background answer is the best signal for entry-level detection (Theo fix)
@@ -2986,7 +2994,7 @@ async function step9() {
       "Hybrid -- depends on the day",
       "Honestly not sure -- never been in the right setup"
     ],
-    "Where do you actually do your best work?",
+    "Where do you do your best work?",
     [
       "Fully remote -- I thrive alone",
       "In person -- I need people around",
@@ -3020,12 +3028,7 @@ async function step9b() {
 }
 
 async function step9c() {
-  var q = await getAdaptiveQuestion(
-    "what city or region they're in -- this helps personalize the job matches, keep it light",
-    "Last one -- where are you based?",
-    "I'm in…"
-  );
-  await showAIMessage(q);
+  await showAIMessage("Last one -- where are you based?", 400);
   showTextInput("I'm in…", async function(val) {
     responses.location = val;
     addMessage(val, 'user');
@@ -3105,17 +3108,63 @@ async function step9c() {
       await delay(500);
 
     } else {
-      // No relocation -- acknowledge the location warmly then move on
+      // No relocation -- one warm city-aware line, nothing more
       responses.currentLocation = val;
       passiveConstraintCheck(val, 'location');
-      // Build a warm location ack -- personalizes the experience
+
+      var locName = val.trim().split(/[,\s]/)[0];
+      var locLower = (locName || '').toLowerCase();
+
+      // City-specific market comments -- proves the product knows the geography
+      var cityComments = {
+        'chicago':     'Chicago -- strong market for what you\'re describing, especially edtech and workforce dev.',
+        'new york':    'New York -- competitive but deep market for this kind of work.',
+        'nyc':         'NYC -- competitive but deep market for this kind of work.',
+        'los angeles': 'LA -- good ecosystem for creative and content roles.',
+        'la':          'LA -- good ecosystem for creative and content roles.',
+        'san francisco':'SF -- expensive to live but strong for the roles we\'re looking at.',
+        'sf':          'SF -- expensive to live but strong for the roles we\'re looking at.',
+        'austin':      'Austin -- growing fast, especially for tech-adjacent roles.',
+        'seattle':     'Seattle -- strong for ops, tech, and mission-driven orgs.',
+        'denver':      'Denver -- good market, especially remote-friendly companies.',
+        'boston':      'Boston -- strong for healthcare, edtech, and research roles.',
+        'atlanta':     'Atlanta -- growing fast for ops and community-facing work.',
+        'columbus':    'Columbus -- smaller market but strong in healthcare, edtech, and nonprofit.',
+        'nashville':   'Nashville -- growing, especially healthcare and operations.',
+        'miami':       'Miami -- bilingual skills travel well here.',
+        'minneapolis': 'Minneapolis -- solid market for ops, healthcare, and community work.',
+        'phoenix':     'Phoenix -- expanding fast, good for ops and healthcare roles.',
+        'dallas':      'Dallas -- big market, especially for ops and corporate L&D.',
+        'houston':     'Houston -- strong for healthcare, energy, and ops.',
+        'philadelphia':'Philly -- good for healthcare, nonprofit, and trades.',
+        'detroit':     'Detroit -- manufacturing, logistics, and a growing tech scene.',
+        'memphis':     'Memphis -- logistics hub, good for ops and community roles.',
+        'louisville':  'Louisville -- healthcare and logistics are strong here.',
+        'baltimore':   'Baltimore -- strong in healthcare and nonprofit.',
+        'portland':    'Portland -- good for mission-driven and creative roles.',
+        'pittsburgh':  'Pittsburgh -- healthcare, robotics, and ops are strong there.',
+        'charlotte':   'Charlotte -- growing fast, especially finance and ops.',
+        'sacramento':  'Sacramento -- good for government, healthcare, and nonprofit.',
+        'san antonio': 'San Antonio -- military, healthcare, and bilingual skills are valued there.',
+        'el paso':     'El Paso -- bilingual skills are a real edge there.',
+      };
+
       var locAck = null;
       if (compassion && compassion.trim().length > 4) {
         locAck = compassion;
       } else {
-        var locName = val.trim().split(/[,\s]/)[0];
-        locAck = locName && locName.length > 1 ? locName + " -- got it." : "Got it.";
+        // Check for city match
+        for (var city in cityComments) {
+          if (locLower.includes(city)) {
+            locAck = cityComments[city];
+            break;
+          }
+        }
+        if (!locAck) {
+          locAck = locName && locName.length > 1 ? locName + ' -- got it.' : 'Got it.';
+        }
       }
+
       await delay(300);
       await showAIMessage(locAck, 350);
       await delay(400);
