@@ -243,7 +243,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
 .option-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; text-align:left; line-height:1.4; }
 .option-btn:hover { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
-.option-btn.selected { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); pointer-events:none; }
+.option-btn.selected { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
 .option-btn.selected::after { content:' ✓'; }
 .convo-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 14px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; font-weight:300; line-height:1.6; resize:none; min-height:44px; outline:none; box-sizing:border-box; }
 .convo-textarea:focus { border-color:var(--accent); }
@@ -1612,12 +1612,19 @@ function showOptions(options, onSelect, singleSelect) {
     btn.textContent = opt;
     btn.addEventListener('click', function() {
       if (singleSelect) {
+        // If already selected, deselect it
+        if (btn.classList.contains('selected')) {
+          btn.classList.remove('selected');
+          return;
+        }
         wrap.querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('selected'); });
         btn.classList.add('selected');
         setTimeout(function() {
-          wrap.remove();
-          onSelect(opt);
-        }, 300);
+          if (btn.classList.contains('selected')) {
+            wrap.remove();
+            onSelect(opt);
+          }
+        }, 400);
       } else {
         var idx = selected.indexOf(opt);
         if (idx === -1) {
@@ -3956,10 +3963,21 @@ function buildCredentialContext() {
   }
 
   if (responses.credGap && responses.credGap.trim().length > 3) {
-    var isNegative = responses.credGap.toLowerCase().includes('nothing') ||
-                     responses.credGap.toLowerCase().includes('nope') ||
-                     responses.credGap.toLowerCase().includes('not really');
-    if (!isNegative) {
+    var gapLower = responses.credGap.toLowerCase();
+    var isNegative = gapLower.includes('nothing') ||
+                     gapLower.includes('nope') ||
+                     gapLower.includes('not really') ||
+                     gapLower.includes('nah') ||
+                     gapLower.includes('no ') ||
+                     gapLower.trim() === 'no';
+
+    // Role exclusion signal -- "I'm already X and don't want to be one again"
+    var isRoleExclusion = (gapLower.includes('already') && (gapLower.includes('don\'t want') || gapLower.includes('do not want') || gapLower.includes('not again') || gapLower.includes('never again'))) ||
+                          (gapLower.includes('don\'t want to be') || gapLower.includes('do not want to be'));
+
+    if (isRoleExclusion) {
+      parts.push('ROLE EXCLUSION: User explicitly said they do not want to return to their current role type. Their exact words: "' + responses.credGap + '". Do NOT surface any matches in that same role category. This is a hard exclusion -- treat it like a never-again constraint.');
+    } else if (!isNegative) {
       parts.push('KNOWN GAP: ' + responses.credGap + '. CRITICAL: Do not show roles that require this gap to be filled unless showing it as a bridge path explicitly. For the free match card, only show roles they qualify for TODAY without the missing credential.');
     }
   }
@@ -4062,7 +4080,7 @@ var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
 
     if (!jobs.length) {
       addMessage('Something went wrong finding your matches. Please try again.', 'ai');
-      showEndActions();
+      showEndActions(true);
       return;
     }
 
@@ -4314,7 +4332,7 @@ await showAIMessage(bridgeIntroMsg, 400);
     removeTyping(t);
     inputArea.innerHTML = '';
     addMessage("Something went wrong loading your matches. Please try again.", 'ai');
-    showEndActions();
+    showEndActions(true);
   }
 }
 
@@ -4374,19 +4392,30 @@ function getMatchFraming() {
   return framings[mode] || framings.standard;
 }
 
-function showEndActions() {
+function showEndActions(retryMatches) {
   var chat = document.getElementById('chat');
   var wrap = document.createElement('div');
   wrap.className = 'end-actions';
 
   var yesBtn = document.createElement('button');
   yesBtn.className = 'end-btn primary';
-  yesBtn.textContent = "Yes -- show me what fits";
-  yesBtn.addEventListener('click', function() {
-    wrap.remove();
-    addMessage("Yes -- show me what fits", 'user');
-    setTimeout(function() { credentialCapture(); }, 600);
-  });
+
+  if (retryMatches) {
+    // Match generation failed -- retry directly
+    yesBtn.textContent = "Try again →";
+    yesBtn.addEventListener('click', function() {
+      wrap.remove();
+      addMessage("Try again", 'user');
+      setTimeout(function() { showMatches(); }, 600);
+    });
+  } else {
+    yesBtn.textContent = "Yes -- show me what fits";
+    yesBtn.addEventListener('click', function() {
+      wrap.remove();
+      addMessage("Yes -- show me what fits", 'user');
+      setTimeout(function() { credentialCapture(); }, 600);
+    });
+  }
 
   var againBtn = document.createElement('button');
   againBtn.className = 'end-btn';
