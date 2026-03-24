@@ -17,14 +17,14 @@ body { background:var(--bg); color:var(--text); font-family:'Sora',system-ui,-ap
 body::before { content:''; position:fixed; top:-20vh; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(24,112,108,0.04) 0%, transparent 70%); pointer-events:none; z-index:0; }
 #pitchPage { display:block; }
 #convoPage { display:none; }
-nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(to bottom,var(--bg) 70%,transparent); }
+nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); border-bottom:1px solid var(--border); }
 .nav-logo { font-family:'Instrument Serif',serif; font-size:26px; font-weight:700; color:var(--accent); letter-spacing:-0.5px; }
 .nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(24,112,108,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
-.hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:100px 40px 60px; max-width:1000px; margin:0 auto; position:relative; z-index:1; }
+.hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:100px 48px 60px; max-width:1000px; margin:0 auto; position:relative; z-index:1; overflow:visible; }
 .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:36px; opacity:0; animation:rise 0.6s ease 0.1s forwards; }
 .eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
 .eyebrow-text { font-size:11px; font-weight:500; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
-.hero-title { font-family:'Instrument Serif',serif; font-size:clamp(48px,7.5vw,108px); font-weight:400; line-height:1.0; letter-spacing:-2px; margin-bottom:36px; opacity:0; animation:rise 0.7s ease 0.25s forwards; }
+.hero-title { font-family:'Instrument Serif',serif; font-size:clamp(40px,6.5vw,96px); font-weight:400; line-height:1.05; letter-spacing:-2px; margin-bottom:36px; opacity:0; animation:rise 0.7s ease 0.25s forwards; overflow:visible; word-wrap:break-word; }
 .hero-title em { font-style:italic; color:var(--accent); }
 .hero-subhead { font-family:'Sora',sans-serif; font-size:clamp(18px,2.5vw,26px); font-weight:300; color:var(--muted); letter-spacing:0.2px; margin-bottom:12px; opacity:0; animation:rise 0.6s ease 0.4s forwards; }
 .hero-curious { font-family:'Sora',sans-serif; font-size:clamp(13px,1.4vw,15px); font-weight:300; color:var(--muted); opacity:0; animation:rise 0.6s ease 0.55s forwards; margin-bottom:36px; font-style:italic; }
@@ -301,13 +301,13 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 
 <!-- PITCH PAGE -->
 <div id="pitchPage">
-  <!-- FOUNDING MEMBER BANNER — auto-hides at 100 paying members -->
+  <!-- FOUNDING MEMBER BANNER — sits above nav, auto-hides at 100 paying members -->
   <div class="founding-banner" id="foundingBanner">
     <div class="founding-banner-inner">
       <div class="founding-pulse"></div>
       <div>
         <div class="founding-text"><strong>Founding Member Pricing</strong> <em>— first 100 only</em></div>
-        <div class="founding-text" style="margin-top:2px;">Lock in <strong>$7/month for life</strong> before it becomes $12. <em>No price increases. Ever.</em></div>
+        <div class="founding-text" style="margin-top:2px;">Lock in <strong>$7/month for life</strong> before it goes to $19.</div>
       </div>
       <div style="text-align:center;">
         <div class="founding-count" id="foundingSpotsLeft">97</div>
@@ -328,7 +328,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       </svg>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <button id="profileNavBtn" style="display:none;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:7px 14px;border-radius:100px;cursor:pointer;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">My Profile</button>
+      <button id="profileNavBtn" style="display:none;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">My Profile</button>
       <button class="nav-pill" id="navPill" onclick="document.getElementById('foundingBanner').scrollIntoView({behavior:'smooth'})">Founding: $7/mo →</button>
     </div>
   </nav>
@@ -470,7 +470,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
           <div>
             <div class="how-step-num">02</div>
             <div class="how-step-title">Starts with what<br>you won't go back to</div>
-            <div class="how-step-desc">If you're stuck, Lune learns what you'll never tolerate again before it looks forward. If things are good, it maps what makes your situation work. Either way it builds from what's actually true — not what looks good on paper.</div>
+            <div class="how-step-desc">If you're stuck, Lune figures out what's actually in the way before it looks forward. If things are good, it maps what makes your situation work. Either way it builds from what's actually true — not what looks good on paper.</div>
           </div>
           <div class="how-step-visual"><div class="how-step-icon">◑</div></div>
         </div>
@@ -536,28 +536,27 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 
   <div class="vote-section" id="voteSection">
     <div class="urgency-bar">
-      <div class="urgency-top"><div class="urgency-dot"></div> Founding 500 — Early Access Open</div>
-      <div class="urgency-sub">Before we build anything else, we're having this conversation with 500 real people. What they tell us shapes what Lune becomes. Founding users get lifetime early-access pricing and a direct line to the product.</div>
+      <div class="urgency-top"><div class="urgency-dot"></div> Founding Member Pricing — First 100 Only</div>
+      <div class="urgency-sub">Lock in $7/month for life. Goes to $19 after the first 100 members. Founding members get a direct line to the product.</div>
     </div>
     <div id="voteMain">
       <div class="vote-question">Founding price — <em>$7/month</em>, locked for life.</div>
-      <div class="vote-sub">Goes to $19 after the first 100 members. The conversation is always free — this unlocks everything else.</div>
+      <div class="vote-sub">Goes to $19 after the first 100 members.</div>
 
       <!-- What $7 actually gets you -->
-      <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin:28px 0 8px;font-size:13px;color:var(--muted);">
+      <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin:28px 0 36px;font-size:13px;color:var(--muted);">
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Free conversation, always</span>
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Profile that remembers you</span>
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Matches that get sharper over time</span>
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Cancel anytime</span>
       </div>
-      <div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:36px;">Less than two coffees a week. <strong style="color:var(--accent);font-style:normal;font-weight:400;">The conversation is always free. This unlocks everything else.</strong></div>
 
       <div class="vote-buttons">
         <button class="vote-btn yes" id="voteYes">Lock it in →</button>
         <button class="vote-btn" id="voteMaybe">Start for free</button>
         <button class="vote-btn" id="voteNo">No, here's why</button>
       </div>
-      <div class="vote-honest">Your honest answer builds the real product. All three responses matter.</div>
+      <div class="vote-honest">All three responses matter.</div>
     </div>
     <div class="response-block" id="r-yes">
       <div class="response-icon">🔥</div>
