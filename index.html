@@ -531,21 +531,21 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="urgency-sub">Before we build anything else, we're having this conversation with 500 real people. What they tell us shapes what Lune becomes. Founding users get lifetime early-access pricing and a direct line to the product.</div>
     </div>
     <div id="voteMain">
-      <div class="vote-question">After seeing all of this —<br>would you pay <em>$12</em> for it?</div>
-      <div class="vote-sub">Not for a job board. For the conversation job boards were never willing to have.</div>
+      <div class="vote-question">Founding price — <em>$7/month</em>, locked for life.</div>
+      <div class="vote-sub">Goes to $19 after the first 100 members. The conversation is always free — this unlocks everything else.</div>
 
-      <!-- What $12 actually gets you — folded into the ask, not a separate page -->
+      <!-- What $7 actually gets you -->
       <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin:28px 0 8px;font-size:13px;color:var(--muted);">
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Free conversation, always</span>
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Profile that remembers you</span>
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Matches that get sharper over time</span>
         <span style="display:flex;align-items:center;gap:7px;"><span style="color:var(--accent);font-size:11px;">◐</span> Cancel anytime</span>
       </div>
-      <div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:36px;">Less than two coffees a week. <strong style="color:var(--accent);font-style:normal;font-weight:400;">No paywall before value. Ever.</strong></div>
+      <div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:36px;">Less than two coffees a week. <strong style="color:var(--accent);font-style:normal;font-weight:400;">The conversation is always free. This unlocks everything else.</strong></div>
 
       <div class="vote-buttons">
-        <button class="vote-btn yes" id="voteYes">I\'m in</button>
-        <button class="vote-btn" id="voteMaybe">Create account for free</button>
+        <button class="vote-btn yes" id="voteYes">Lock it in →</button>
+        <button class="vote-btn" id="voteMaybe">Start for free</button>
         <button class="vote-btn" id="voteNo">No, here's why</button>
       </div>
       <div class="vote-honest">Your honest answer builds the real product. All three responses matter.</div>
@@ -4323,7 +4323,7 @@ function showEndActions() {
 
 var FOUNDING_LIMIT = 100;
 var FOUNDING_PRICE_LINK = 'https://buy.stripe.com/dRm28rbBHbxl2tK7oLdby00'; // $7/month founding
-var REGULAR_PRICE_LINK = 'https://buy.stripe.com/14A14naxD8l91pG24rdby01';   // $12/month standard
+var REGULAR_PRICE_LINK = 'https://buy.stripe.com/bJe28rdJP6d16K08sPdby02';   // $19/month standard
 
 function getFoundingCount() {
   // In production this would be a Supabase query
@@ -4400,8 +4400,8 @@ function updateVotePricing() {
   var voteSub = document.querySelector('.vote-sub');
 
   if (remaining > 0 && voteQuestion) {
-    voteQuestion.innerHTML = 'After seeing all of this --<br>would you pay <em>$7</em> to lock it in?';
-    if (voteSub) voteSub.textContent = 'Founding member price -- $7/month for life. Goes to $12 after the first 100.';
+    voteQuestion.innerHTML = 'Founding price — <em>$7/month</em>, locked for life.';
+    if (voteSub) voteSub.textContent = 'Goes to $19 after the first 100 members. The conversation is always free — this unlocks everything else.';
   }
 }
 
