@@ -1725,7 +1725,7 @@ async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
         '\n\nNext thing to find out: ' + goal +
         optionContext +
         '\n\nWrite a short, warm follow-up message (under 20 words) and ' + (optionSeeds ? optionSeeds.length : 0) + ' answer options that match its tone exactly.' +
-        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
+        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation in the question -- questions move forward, they do not recap. Names and stories belong in the summary, not in transition questions.\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
       }]
     });
     var raw = data.content && data.content[0] && data.content[0].text;
@@ -1747,7 +1747,7 @@ async function getAdaptiveQuestion(goal, fallback, placeholder) {
       messages: [{ role: 'user', content:
         TONE_SYSTEM + '\n\nConversation so far:\n' + getConvoSoFar() +
         '\n\nNext thing to find out: ' + goal +
-        '\n\nWrite ONE warm, short follow-up message (under 20 words). No em dashes. Never start with "I" or "So". Just the message, nothing else.'
+        '\n\nWrite ONE warm, short follow-up message (under 20 words). No em dashes. Never start with "I" or "So". CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation -- questions move forward, they do not recap. Names and stories belong in the summary only. Just the message, nothing else.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -1763,32 +1763,25 @@ function isHappyUser() {
 }
 
 // Tracks specific details (names, phrases) already acknowledged this session
-// Prevents the product from replaying the same anchor detail multiple times
+// Used to prevent showing the same name twice in acks
 var acknowledgedDetails = new Set();
 
 // Generates a one-sentence acknowledgment after someone shares something real
-// Proves the product was listening before asking the next question
 async function getAcknowledgment(whatTheyShared) {
   try {
-    // Build a list of already-acknowledged details to suppress repetition
-    var alreadySaid = acknowledgedDetails.size > 0
-      ? '\n\nDo NOT reference any of these details -- they have already been acknowledged: ' + Array.from(acknowledgedDetails).join(', ') + '. Find something new in what they just shared, or return empty string.'
-      : '';
-
     var data = await callAI({
       model: 'claude-sonnet-4-6',
       max_tokens: 80,
       messages: [{ role: 'user', content:
-        TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail -- a person, moment, or phrase they used. NEVER write anything generic like that sounds tough. (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) Match the emotional weight of what they said -- if they described something casually or briefly, respond with light curiosity, not deep significance. If they said they chased something or it changed everything, then you can give it full weight. (5) If no specific detail exists return empty string -- silence beats generic.' + alreadySaid + '\n\nWhat they shared: ' + whatTheyShared
+        TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail -- a person, moment, or phrase they used. NEVER write anything generic like "that sounds tough." (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) Match the emotional weight of what they said -- if they described something briefly or casually, respond with light curiosity, not heavy significance. Only give full weight if they used language like "I couldn\'t stop thinking about it" or "that changed everything." (5) If no specific detail exists return empty string -- silence beats generic.\n\nWhat they shared: ' + whatTheyShared
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
     var result = (text && text.trim()) || null;
-
-    // Extract any name mentioned and add to acknowledged set
+    // Track any proper names acknowledged
     if (result) {
-      var nameMatch = whatTheyShared.match(/\b([A-Z][a-z]+)\b/g);
-      if (nameMatch) nameMatch.forEach(function(n) { acknowledgedDetails.add(n); });
+      var names = whatTheyShared.match(/\b([A-Z][a-z]{1,})\b/g) || [];
+      names.forEach(function(n) { acknowledgedDetails.add(n); });
     }
     return result;
   } catch(e) {
@@ -2050,16 +2043,18 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
     await showAIMessage(compassion, 500);
     // Breathing pause after compassion -- let it land before anything else
     await delay(700);
-    // Only suppress acknowledgment if it's genuinely redundant with compassion --
-    // meaning it references the SAME specific detail in the SAME way.
-    // Two sentences about Corey from different angles are NOT redundant.
-    // We check: does the ack start the same way or contain the same key phrase?
+    // Suppress acknowledgment if it's redundant with compassion
+    // Redundant means: same first 4 words OR both reference the same proper name
     var isTrulyRedundant = false;
     if (ack && compassion) {
       var ackWords = ack.trim().toLowerCase().split(' ').slice(0, 4).join(' ');
       var compWords = compassion.trim().toLowerCase().split(' ').slice(0, 4).join(' ');
-      // Only suppress if first 4 words are identical (truly the same sentence)
-      isTrulyRedundant = (ackWords === compWords);
+      var sameStart = (ackWords === compWords);
+      // Also check: do both reference the same proper name?
+      var namesInAck = (ack.match(/\b([A-Z][a-z]+)\b/g) || []);
+      var namesInComp = (compassion.match(/\b([A-Z][a-z]+)\b/g) || []);
+      var sharedName = namesInAck.some(function(n) { return namesInComp.includes(n); });
+      isTrulyRedundant = sameStart || sharedName;
     }
     if (ack && ack.trim().length > 5 && !isTrulyRedundant) {
       await showAIMessage(ack, 600);
@@ -3176,12 +3171,16 @@ async function step9c() {
 
 async function step10() {
   updateProgress(10);
-  var q = await getAdaptiveQuestion(
-    "that you\'ve heard everything and want to share what you're seeing -- make it feel like a real moment of connection, warm and genuine",
-    "Okay. I think I\'ve got a real picture of you. Can I share what I'm seeing?",
-    ""
-  );
-  await showAIMessage(q);
+  // Hardcoded -- this is a pivotal transition moment.
+  // getAdaptiveQuestion was picking up location and injecting city commentary here.
+  // The message should be about connection and readiness, nothing else.
+  var closingMessages = [
+    "Okay. I think I've got a real picture of you. Can I share what I'm seeing?",
+    "Okay -- I think I see you pretty clearly now. Want to hear what stands out?",
+    "Think I've got enough. Can I tell you what I'm seeing?"
+  ];
+  var q = closingMessages[Math.floor(Math.random() * closingMessages.length)];
+  await showAIMessage(q, 400);
   await delay(1200);
   addMessage("Yeah.", 'user');
   await delay(600);
