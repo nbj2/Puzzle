@@ -279,12 +279,21 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   .vote-section{padding:72px 20px}
   .vote-buttons{flex-direction:column;align-items:center}
   .vote-btn{width:100%;max-width:300px;text-align:center}
-  .option-btn{padding:14px 16px;font-size:15px;min-height:48px}
-  .convo-textarea{font-size:16px;min-height:80px}
-  .submit-btn{padding:14px 20px;font-size:15px;min-height:48px;width:100%}
-  .bubble{font-size:15px;padding:14px 16px}
-  .chat{padding:24px 16px 180px}
+
+  /* Chat UI mobile fixes */
+  .chat{padding:20px 12px 200px}
+  .bubble{font-size:15px;padding:12px 14px;max-width:92%;word-wrap:break-word;overflow-wrap:break-word}
+  .msg.user .bubble{max-width:85%}
+  .option-btn{padding:13px 14px;font-size:14px;min-height:48px;width:100%;box-sizing:border-box;word-wrap:break-word;white-space:normal;line-height:1.5}
+  .convo-textarea{font-size:16px;min-height:80px;width:100%;box-sizing:border-box}
+  .submit-btn{padding:14px 20px;font-size:15px;min-height:48px;width:100%;box-sizing:border-box}
+  .input-area{padding:16px 12px 28px}
+  .input-inner{width:100%;max-width:100%;padding:0}
   .result-pull-quote{font-size:20px}
+
+  /* Options container full width on mobile */
+  .options{width:100%;max-width:100%}
+  .multi-confirm{width:100%;margin-top:8px;box-sizing:border-box}
 }
 </style>
 </head>
@@ -1565,7 +1574,20 @@ function quickMultiAck(val) {
       var line = combos[i][1];
       if (keys.every(function(k) { return v.includes(k); })) return line;
     }
-    return "More than one thing. That's honest -- and it matters.";
+  // Rotating fallbacks -- never say the same thing twice in one session
+  var multiFallbacks = [
+    "More than one thing. That's honest -- and it matters.",
+    "Both of those together tell a more specific story.",
+    "That combination is actually pretty rare.",
+    "Not just one thing -- that's useful to know.",
+    "Two things at once. We'll see where they overlap.",
+    "More than one direction pulling at you. That's real data."
+  ];
+  // Track which fallbacks have fired this session
+  if (!window._multiAckIndex) window._multiAckIndex = 0;
+  var fallback = multiFallbacks[window._multiAckIndex % multiFallbacks.length];
+  window._multiAckIndex++;
+  return fallback;
   }
 
   return quickOptionAck(val);
@@ -1768,12 +1790,36 @@ function isHappyUser() {
 // Used to prevent showing the same name twice in acks
 var acknowledgedDetails = new Set();
 
+// Generates a city-aware one-liner for any location in the world
+// Replaces the hardcoded lookup table -- works for Montreal, Lagos, Glasgow, anywhere
+// Tuned to the person's specific profile context, not generic market commentary
+async function getLocationAck(city, loves, background) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 60,
+      messages: [{ role: 'user', content:
+        'Someone just told you they are based in ' + city + '. Write ONE short, warm, specific line (under 15 words) that acknowledges their location with a relevant job market insight for someone whose interests are: ' + (loves || 'helping people, solving problems') + '. Background context: ' + (background || 'not specified') + '.\n\nRules:\n- Name the city or region naturally\n- Give ONE specific true insight about that market as it relates to their interests\n- No em dashes. No generic filler like "great city" or "good to know"\n- If it is a smaller or international city you are less certain about, lean on what you do know (industries, remote work culture, language, economy) rather than inventing specifics\n- Under 15 words total\n- Just the line, nothing else'
+      }]
+    });
+    var text = data.content && data.content[0] && data.content[0].text;
+    var result = (text && text.trim()) || null;
+    // Fallback if AI returns nothing useful
+    if (!result || result.length < 4) {
+      var cityName = city.trim().split(/[,\s]/)[0];
+      return cityName + ' -- got it.';
+    }
+    return result;
+  } catch(e) {
+    var cityName = city.trim().split(/[,\s]/)[0];
+    return cityName + ' -- got it.';
+  }
+}
+
 // Generates a one-sentence acknowledgment after someone shares something real
 async function getAcknowledgment(whatTheyShared) {
   try {
     var data = await callAI({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 80,
       messages: [{ role: 'user', content:
         TONE_SYSTEM + '\n\nSomeone just shared something real. Write ONE sentence proving you were paying attention. RULES: (1) Name a SPECIFIC detail -- a person, moment, or phrase they used. NEVER write anything generic like "that sounds tough." (2) Under 15 words. (3) No em dashes. Never start with I. No advice, no questions. (4) Match the emotional weight of what they said -- if they described something briefly or casually, respond with light curiosity, not heavy significance. Only give full weight if they used language like "I couldn\'t stop thinking about it" or "that changed everything." (5) If no specific detail exists return empty string -- silence beats generic.\n\nWhat they shared: ' + whatTheyShared
       }]
@@ -2088,7 +2134,7 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
   if (compassion && compassion.trim().length > 4) {
     await showAIMessage(compassion, 500);
     // Breathing pause after compassion -- let it land before anything else
-    await delay(700);
+    await delay(350);
     // Suppress acknowledgment if it's redundant with compassion
     // Redundant means: same first 4 words OR both reference the same proper name
     var isTrulyRedundant = false;
@@ -2123,9 +2169,45 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
   await showAIMessage(followUp, 500);
 
   return new Promise(function(resolve) {
-    showTextInput('', function(extraVal) {
+    showTextInput('', async function(extraVal) {
       addMessage(extraVal, 'user');
-      // Append extra context to the original response
+
+      // Acknowledge the follow-up answer if it has substance
+      // Specifically catch directional signals like "want out of X" / "trying to leave" / "done with this"
+      var extraLower = extraVal.trim().toLowerCase();
+      var wordCountExtra = extraVal.trim().split(/\s+/).length;
+      var directionalSignals = [
+        'want out', 'trying to leave', 'done with', 'get out of',
+        'leaving', 'ready to leave', 'moving on from', 'not doing this',
+        'over it', 'can\'t do this', 'need something different', 'want to change'
+      ];
+      var hasDirectional = directionalSignals.some(function(s) { return extraLower.includes(s); });
+
+      if (wordCountExtra >= 3) {
+        if (hasDirectional) {
+          // Directional signal -- warm validating ack that acknowledges the shift
+          var directionalAck = await getAcknowledgment(extraVal);
+          if (directionalAck && directionalAck.trim().length > 4) {
+            await delay(300);
+            await showAIMessage(directionalAck, 400);
+            await delay(350);
+          } else {
+            // Fallback for directional with no specific ack
+            await delay(300);
+            await showAIMessage("That's worth knowing -- we'll make sure the matches reflect that.", 350);
+            await delay(350);
+          }
+        } else if (wordCountExtra >= 5) {
+          // Non-directional but substantial -- light ack
+          var extraAck = await getAcknowledgment(extraVal);
+          if (extraAck && extraAck.trim().length > 4) {
+            await delay(300);
+            await showAIMessage(extraAck, 400);
+            await delay(350);
+          }
+        }
+      }
+
       var combined = val + ' -- ' + extraVal;
       if (contextKey) responses[contextKey + '_extra'] = extraVal;
       resolve(combined);
@@ -2274,7 +2356,7 @@ async function stepVertical5() {
   // Location for market-specific ladder data
   var q = await getAdaptiveQuestion(
     "what city or region they are in -- for market-specific salary and ladder info",
-    "Last one -- where are you based?",
+    "Almost there -- where are you based?",
     "I'm in..."
   );
   await showAIMessage(q);
@@ -2987,18 +3069,18 @@ async function step7() {
 async function step8() {
   updateProgress(8);
   var result = await getAdaptiveStep(
-    "how the people who know them best outside of work would describe them as a person",
+    "how the people who have worked with them would describe them professionally -- what stands out about how they show up at work specifically",
     [
-      "The person everyone comes to with their problems",
+      "The person everyone comes to when something needs solving",
       "The one who figures things out when nobody else can",
-      "The creative one -- always making or thinking of something",
+      "The creative one -- always making or thinking of something new",
       "The competitive one -- hates losing, loves winning",
       "The quiet one who somehow always gets more done",
       "🎯 None of these feel right -- let me say it"
     ],
-    "How would people who really know you describe you?",
+    "How would people who've worked with you describe you at your best?",
     [
-      "The one people come to when they need help",
+      "The one people come to when they need it solved",
       "The one who always figures it out",
       "The creative one -- always making something",
       "The competitive one -- I hate losing",
@@ -3012,9 +3094,7 @@ async function step8() {
     else {
       responses.identity = val; addMessage(val, 'user');
       passiveConstraintCheck(val, 'identity');
-      var ack = quickMultiAck(val);
-      if (ack) { await showAIMessage(ack, 320); await delay(400); }
-      step9();
+      setTimeout(step9, 700);
     }
   });
 }
@@ -3069,7 +3149,7 @@ async function step9b() {
 }
 
 async function step9c() {
-  await showAIMessage("Last one -- where are you based?", 400);
+  await showAIMessage("Almost there -- where are you based?", 400);
   showTextInput("I'm in…", async function(val) {
     responses.location = val;
     addMessage(val, 'user');
@@ -3095,7 +3175,7 @@ async function step9c() {
       await showAIMessage(msg, 500);
       // Active move -- offer a beat for elaboration before continuing
       // Short open door, not a forced question. If they want to say more, they can.
-      await delay(700);
+      await delay(350);
       await showAIMessage("Anything about the move worth knowing before we get into the rest?", 400);
       await new Promise(function(resolve) {
         showOptions([
@@ -3153,57 +3233,12 @@ async function step9c() {
       responses.currentLocation = val;
       passiveConstraintCheck(val, 'location');
 
-      var locName = val.trim().split(/[,\s]/)[0];
-      var locLower = (locName || '').toLowerCase();
-
-      // City-specific market comments -- proves the product knows the geography
-      var cityComments = {
-        'chicago':     'Chicago -- strong market for what you\'re describing, especially edtech and workforce dev.',
-        'new york':    'New York -- competitive but deep market for this kind of work.',
-        'nyc':         'NYC -- competitive but deep market for this kind of work.',
-        'los angeles': 'LA -- good ecosystem for creative and content roles.',
-        'la':          'LA -- good ecosystem for creative and content roles.',
-        'san francisco':'SF -- expensive to live but strong for the roles we\'re looking at.',
-        'sf':          'SF -- expensive to live but strong for the roles we\'re looking at.',
-        'austin':      'Austin -- growing fast, especially for tech-adjacent roles.',
-        'seattle':     'Seattle -- strong for ops, tech, and mission-driven orgs.',
-        'denver':      'Denver -- good market, especially remote-friendly companies.',
-        'boston':      'Boston -- strong for healthcare, edtech, and research roles.',
-        'atlanta':     'Atlanta -- growing fast for ops and community-facing work.',
-        'columbus':    'Columbus -- smaller market but strong in healthcare, edtech, and nonprofit.',
-        'nashville':   'Nashville -- growing, especially healthcare and operations.',
-        'miami':       'Miami -- bilingual skills travel well here.',
-        'minneapolis': 'Minneapolis -- solid market for ops, healthcare, and community work.',
-        'phoenix':     'Phoenix -- expanding fast, good for ops and healthcare roles.',
-        'dallas':      'Dallas -- big market, especially for ops and corporate L&D.',
-        'houston':     'Houston -- strong for healthcare, energy, and ops.',
-        'philadelphia':'Philly -- good for healthcare, nonprofit, and trades.',
-        'detroit':     'Detroit -- manufacturing, logistics, and a growing tech scene.',
-        'memphis':     'Memphis -- logistics hub, good for ops and community roles.',
-        'louisville':  'Louisville -- healthcare and logistics are strong here.',
-        'baltimore':   'Baltimore -- strong in healthcare and nonprofit.',
-        'portland':    'Portland -- good for mission-driven and creative roles.',
-        'pittsburgh':  'Pittsburgh -- healthcare, robotics, and ops are strong there.',
-        'charlotte':   'Charlotte -- growing fast, especially finance and ops.',
-        'sacramento':  'Sacramento -- good for government, healthcare, and nonprofit.',
-        'san antonio': 'San Antonio -- military, healthcare, and bilingual skills are valued there.',
-        'el paso':     'El Paso -- bilingual skills are a real edge there.',
-      };
-
       var locAck = null;
       if (compassion && compassion.trim().length > 4) {
         locAck = compassion;
       } else {
-        // Check for city match
-        for (var city in cityComments) {
-          if (locLower.includes(city)) {
-            locAck = cityComments[city];
-            break;
-          }
-        }
-        if (!locAck) {
-          locAck = locName && locName.length > 1 ? locName + ' -- got it.' : 'Got it.';
-        }
+        // AI-generated city ack -- works for any city in the world, tuned to their profile
+        locAck = await getLocationAck(val, responses.loves, responses.background || responses.bg || '');
       }
 
       await delay(300);
@@ -3259,7 +3294,7 @@ async function generateReveal() {
 
   var prompt = happyMode
     ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven\'t been able to say themselves -- not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically -- not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said -- a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a warm invitation to save this profile -- framed as capturing who they are now, while things are good, before anything changes\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
-    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened -- not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person -- reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- RELOCATION: if relocationType is 'active', orient ALL geography to target location only. If 'urgent', mix current and target, acknowledge the goal. If 'eventual', focus on current city but end with one warm sentence about the future goal -- something like 'and when California becomes more than eventually, what you're building now travels with you.' Never make the eventual goal the main point. If their relevant location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear AND tells you what to do first.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, or a hard limit exists, add one warm grounding sentence before the closing question that signals the matches include something to start this week and something to build toward.\n- LATE-CAREER COURAGE: If the person appears to be over 40 and making a significant career pivot into a different field, add one sentence that acknowledges the courage of what they're doing -- not the logic, the courage. Something like 'What you're describing takes something most people talk themselves out of.' The real barrier for late-career pivoters is self-belief not information. Name it.\n- CONDITIONS VS WORK: If they expressed frustration with their job, distinguish clearly between hating the work itself versus hating the conditions around the work. These need completely different matches. If they love the craft but hate the environment -- name that explicitly. It changes everything about what comes next.\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
+    : "You are the core AI behind Lune, a career alignment product. You've just finished a 10-exchange conversation with someone feeling stuck in their career. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened -- not a chatbot.\n\nThe paragraph should:\n- Reference specific things they said (not generic career advice)\n- If they mentioned a specific moment, story, or person -- reference it by name or detail. A summary that says the moment with Maya is worth ten that say you care about people\'s growth\n- Name a pattern they probably haven't articulated themselves\n- Suggest the kind of role/environment that would fit them (a shape of work, not a specific job title)\n- RELOCATION: if relocationType is 'active', orient ALL geography to target location only. If 'urgent', mix current and target, acknowledge the goal. If 'eventual', focus on current city but end with one warm sentence about the future goal -- something like 'and when California becomes more than eventually, what you're building now travels with you.' Never make the eventual goal the main point. If their relevant location is a smaller or mid-size city (not NYC or SF or LA or Chicago or Seattle), briefly acknowledge the geographic reality in one sentence -- but ONLY if the city has NOT already been acknowledged earlier in the conversation. Do not repeat the city name in the closing question.\n- End with a single question that opens the door to showing them matched opportunities\n- Feel like the moment a good mentor finally says the thing you needed to hear AND tells you what to do first.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, or a hard limit exists, add one warm grounding sentence before the closing question that signals the matches include something to start this week and something to build toward.\n- LATE-CAREER COURAGE: If the person appears to be over 40 and making a significant career pivot into a different field, add one sentence that acknowledges the courage of what they're doing -- not the logic, the courage. Something like 'What you're describing takes something most people talk themselves out of.' The real barrier for late-career pivoters is self-belief not information. Name it.\n- CONDITIONS VS WORK: If they expressed frustration with their job, distinguish clearly between hating the work itself versus hating the conditions around the work. These need completely different matches. If they love the craft but hate the environment -- name that explicitly. It changes everything about what comes next.\n\nDo NOT use bullet points. Do NOT say 'Based on your responses.' Do NOT be generic. Write one paragraph of 5-7 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nPace: " + responses.pace + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
 
   try {
     var data = await callAI({
@@ -3633,7 +3668,7 @@ function injectProofSentence(card, job) {
 async function credentialCapture() {
   await delay(400);
   await showAIMessage("One more thing before I show you what I found — I want to make sure everything I surface is something you can actually walk into today.", 500);
-  await delay(700);
+  await delay(350);
 
   // Q1: Degree
   await showAIMessage("Do you have a degree?", 400);
@@ -3823,7 +3858,7 @@ async function credentialCapture4() {
       if (compassion && compassion.trim().length > 4) {
         await delay(300);
         await showAIMessage(compassion, 400);
-        await delay(700);
+        await delay(350);
         // Only show ack if it adds something different
         var ackWords = (ack||'').trim().toLowerCase().split(' ').slice(0,4).join(' ');
         var compWords = compassion.trim().toLowerCase().split(' ').slice(0,4).join(' ');
@@ -4085,7 +4120,7 @@ await showAIMessage(bridgeIntroMsg, 400);
       await delay(900);
     }
 
-    await showAIMessage("Found something. This one stood out -- I want you to see it before anything else.");
+    await showAIMessage(getMatchFraming().intro);
     await delay(500);
 
     // Render the FREE surprise card -- clean, no label, no badge
@@ -4244,15 +4279,16 @@ await showAIMessage(bridgeIntroMsg, 400);
     paywallMsg.style.animationDelay = '0s';
     var paywallCard = document.createElement('div');
     paywallCard.style.cssText = 'background:linear-gradient(135deg,#f0eeea,#e8e5e0);border:1px solid rgba(24,112,108,0.25);border-radius:16px;padding:28px 24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
+    var framing = getMatchFraming();
     paywallCard.innerHTML =
       '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
-      '<div style="font-family:Instrument Serif,serif;font-size:19px;color:var(--text);margin-bottom:8px;line-height:1.3;">Two more roles are waiting.</div>' +
-      '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">Unlock your full matches, the interview coaching, and a profile that remembers you every time you come back.</div>' +
+      '<div style="font-family:Instrument Serif,serif;font-size:19px;color:var(--text);margin-bottom:8px;line-height:1.3;">' + framing.paywallTitle + '</div>' +
+      '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">' + framing.paywallSub + '</div>' +
       '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;">' +
-        '<span style="font-family:Instrument Serif,serif;font-size:38px;color:var(--accent);line-height:1;">$12</span>' +
+        '<span style="font-family:Instrument Serif,serif;font-size:38px;color:var(--accent);line-height:1;">$' + (getFoundingCount() < FOUNDING_LIMIT ? '7' : '19') + '</span>' +
         '<span style="font-size:12px;color:var(--muted);text-align:left;line-height:1.5;">per month<br>cancel anytime</span>' +
       '</div>' +
-      '<a href="' + getActiveStripeLink() + '" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">Unlock my matches →</a>' +
+      '<a href="' + getActiveStripeLink() + '" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">' + framing.paywallCta + '</a>' +
       '<div style="font-size:11px;color:var(--muted);font-style:italic;">The conversation is always free. No resume required.</div>';
     paywallMsg.appendChild(paywallCard);
     chat.appendChild(paywallMsg);
@@ -4283,8 +4319,61 @@ await showAIMessage(bridgeIntroMsg, 400);
   }
 }
 
-// Global bridge state -- set by showMatches, read by showEndActions
-var lastBridgeState = { needsBridge: false, bridgeJob: null };
+// Reads how the person arrived and returns their entry mode
+// Used to adapt match presentation, intro framing, and paywall copy
+function getEntryMode() {
+  var why = (responses.why || '').toLowerCase();
+  if (responses.crisisFlag || why.includes('urgent') || why.includes('limit') || why.includes('need something')) return 'urgent';
+  if (why.includes('good') || why.includes('exploring') || why.includes('curious') || isHappyUser()) return 'curious';
+  if (why.includes('matter') || why.includes('purpose') || why.includes('meaningful') || why.includes('impact')) return 'values';
+  if (why.includes('feels off') || why.includes("can't name") || why.includes('something off') || why.includes('not sure')) return 'stuck';
+  if (why.includes('know what i want') || why.includes('how to get there') || why.includes('direction')) return 'directed';
+  return 'standard';
+}
+
+// Returns adapted copy based on entry mode
+function getMatchFraming() {
+  var mode = getEntryMode();
+  var framings = {
+    urgent: {
+      intro: "Found something. This one is reachable -- and hiring now.",
+      paywallTitle: "Two more roles -- both hirable within the next few weeks.",
+      paywallSub: "Your profile is ready. The matches are waiting. Let's move.",
+      paywallCta: "See what's reachable now →"
+    },
+    curious: {
+      intro: "Found something. You came in curious -- this one might actually surprise you.",
+      paywallTitle: "You came in just looking. Something found you anyway.",
+      paywallSub: "Three more matches -- including two you wouldn't have thought to search for.",
+      paywallCta: "See what found you →"
+    },
+    values: {
+      intro: "Found something. This one is work where the point is the point.",
+      paywallTitle: "Three more roles where the work itself is the reason.",
+      paywallSub: "Unlock the full matches, interview coaching, and a profile that remembers what matters to you.",
+      paywallCta: "Unlock my matches →"
+    },
+    stuck: {
+      intro: "Found something. You came in not knowing what was wrong -- this one names it.",
+      paywallTitle: "You came in stuck. Now you have a direction.",
+      paywallSub: "Three more matches that fit the shape of what you actually want -- not what you've been applying to.",
+      paywallCta: "See the full picture →"
+    },
+    directed: {
+      intro: "Found something. You knew the direction -- this one has your name on it.",
+      paywallTitle: "You already knew what you wanted. Here's how to get there.",
+      paywallSub: "Three more matches plus exactly how to describe yourself for each one.",
+      paywallCta: "Unlock my matches →"
+    },
+    standard: {
+      intro: "Found something. This one stood out -- I want you to see it before anything else.",
+      paywallTitle: "Two more roles are waiting.",
+      paywallSub: "Unlock your full matches, the interview coaching, and a profile that remembers you every time you come back.",
+      paywallCta: "Unlock my matches →"
+    }
+  };
+  return framings[mode] || framings.standard;
+}
 
 function showEndActions() {
   var chat = document.getElementById('chat');
