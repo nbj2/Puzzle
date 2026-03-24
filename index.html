@@ -1478,7 +1478,9 @@ function quickOptionAck(val) {
     [['becoming boring','pointless'],     "You need the work to stay interesting. Noted."],
     [['no more room to grow'],            "A ceiling is a ceiling, no matter how nice the room is."],
     [['stops fitting my life'],           "Life-fit isn't a perk. It's a requirement."],
-    // Identity / how others describe you
+    // Pacing / credential
+    [['none required'],                    "Got it -- field doesn't need them."],
+    [['not yet but working'],              "Working toward one counts. We'll factor that in."],
     [['gets things done','reliable'],      "That reputation follows you somewhere better."],
     [['people person','connector'],        "People who bring people together are hard to replace."],
     [['creative','different angle'],       "Seeing differently is a skill most places forget to hire for."],
@@ -1535,7 +1537,7 @@ function quickMultiAck(val) {
     [['solving','making'],                 "Rare combination. The work has to use both or it won't hold."],
     [['people','analytical'],              "Someone who reads people AND data -- that's a real edge."],
     [['helping','solving'],                "Solving for people specifically. That's a real direction."],
-    [['people','creative'],                "Creative people work is some of the most human work there is."],
+    [['people','creative'],                "Making things for people. That combination goes a long way."],
     [['connecting','making'],              "Building things that connect people. Strong combination."],
     [['analytical','hands-on'],            "Thinking and doing in the same person. Not common."],
     [['solving','physical'],               "Problem-solving with your hands. That's a specific kind of smart."],
@@ -2066,6 +2068,9 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
   }
 
   // Step 2: check for a micro follow-up hook
+  // Don't fire on short answers (under 4 words) -- they're usually obvious or rushed
+  var wordCount = val.trim().split(/\s+/).length;
+  if (wordCount < 4) return val;
   var followUp = await getMicroFollowUp(val, getConvoSoFar());
   if (!followUp) return val; // no hook, just return original
 
@@ -2859,7 +2864,7 @@ async function step6() {
       else {
         responses.neverAgain2 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain2');
-        step7();
+        setTimeout(step7, 900);
       }
     });
   } else {
@@ -2889,7 +2894,7 @@ async function step6() {
       else {
         responses.neverAgain2 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain2');
-        step7();
+        setTimeout(step7, 900);
       }
     });
   }
@@ -2917,16 +2922,17 @@ async function step6b_happy() {
 
 async function step7() {
   updateProgress(7);
-  var q = await getAdaptiveQuestion(
-    "what they actually do day to day -- the real version, not the job title",
+  // Hardcoded -- adaptive engine kept inserting "actually" and referencing prior answers
+  var backgroundQs = [
+    "What does a typical day look like for you right now?",
     "Walk me through what your days look like.",
-    "Most of my day is…"
-  );
-  await showAIMessage(q);
+    "What does most of your day actually involve -- the real version?"
+  ];
+  var q = backgroundQs[Math.floor(Math.random() * backgroundQs.length)];
+  await showAIMessage(q, 400);
   showTextInput("Most of my day is…", async function(val) {
     responses.background = val;
     addMessage(val, 'user');
-    // Background answer is the best signal for entry-level detection (Theo fix)
     checkLowConfidence(val);
     var enriched = await acknowledgeAndMaybeFollowUp(val, 'background');
     responses.background = enriched;
@@ -2981,24 +2987,20 @@ async function step8b() {
 
 async function step9() {
   updateProgress(9);
-  var result = await getAdaptiveStep(
-    "where they do their best work -- fully remote, in person, or hybrid",
-    [
-      "Fully remote -- I work better alone",
-      "In person -- I need people around me",
-      "Hybrid -- depends on the day",
-      "Honestly not sure -- never been in the right setup"
-    ],
+  var envQs = [
     "Where do you do your best work?",
-    [
-      "Fully remote -- I thrive alone",
-      "In person -- I need people around",
-      "Hybrid -- some of both",
-      "Honestly haven't figured that out yet"
-    ]
-  );
-  await showAIMessage(result.q);
-  showOptions(result.opts, function(val) { responses.environment = val; addMessage(val, 'user'); withOptionAck(val, step9b); }, true);
+    "Remote, in person, or somewhere in between?",
+    "Where do you work best?"
+  ];
+  var envQ = envQs[Math.floor(Math.random() * envQs.length)];
+  await showAIMessage(envQ, 400);
+  var envOpts = [
+    "Fully remote -- I thrive alone",
+    "In person -- I need people around",
+    "Hybrid -- depends on the day",
+    "Honestly not sure yet"
+  ];
+  showOptions(envOpts, function(val) { responses.environment = val; addMessage(val, 'user'); withOptionAck(val, step9b); }, true);
 }
 
 async function step9b() {
@@ -3171,9 +3173,6 @@ async function step9c() {
 
 async function step10() {
   updateProgress(10);
-  // Hardcoded -- this is a pivotal transition moment.
-  // getAdaptiveQuestion was picking up location and injecting city commentary here.
-  // The message should be about connection and readiness, nothing else.
   var closingMessages = [
     "Okay. I think I've got a real picture of you. Can I share what I'm seeing?",
     "Okay -- I think I see you pretty clearly now. Want to hear what stands out?",
@@ -3181,9 +3180,29 @@ async function step10() {
   ];
   var q = closingMessages[Math.floor(Math.random() * closingMessages.length)];
   await showAIMessage(q, 400);
-  await delay(1200);
-  addMessage("Yeah.", 'user');
   await delay(600);
+  await new Promise(function(resolve) {
+    showOptions([
+      "Yeah -- let's hear it",
+      "Give me a second"
+    ], async function(val) {
+      addMessage(val, 'user');
+      if (val.toLowerCase().includes('second') || val.toLowerCase().includes('minute')) {
+        await showAIMessage("Take your time. Still here when you're ready.", 300);
+        await delay(800);
+        await new Promise(function(resolve2) {
+          showOptions([
+            "Okay, I'm ready"
+          ], async function() {
+            addMessage("Okay, I'm ready.", 'user');
+            resolve2();
+          }, true);
+        });
+      }
+      resolve();
+    }, true);
+  });
+  await delay(400);
   generateReveal();
 }
 
