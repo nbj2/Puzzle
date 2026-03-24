@@ -554,7 +554,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="response-icon">🔥</div>
       <div class="response-title">That's the signal we needed.</div>
       <div class="response-text" id="yesResponseText">You're one of the founding 100. Lock in $7/month for life — that price never changes for you, no matter what happens after.</div>
-      <a href="STRIPE_FOUNDING_LINK" class="response-cta" id="yesCtaLink">Lock in $7/month →</a>
+      <a href="https://buy.stripe.com/dRm28rbBHbxl2tK7oLdby00" class="response-cta" id="yesCtaLink">Lock in $7/month →</a>
     </div>
     <div class="response-block" id="r-maybe">
       <div class="response-icon">👀</div>
@@ -1431,7 +1431,7 @@ function quickOptionAck(val) {
     [['love what i do but not where'],     "That's a real and fixable problem."],
     [['completely different'],             "Completely different is on the table."],
     // Step 2 -- stuck path
-    [['credentials i don\'t have'],        "That gap is smaller than it feels."],
+    [['credentials i don\'t have','qualifications i don\'t','want credentials'], "That gap is smaller than it feels."],
     [['translate my experience'],          "That gap between what you've done and how to say it is real -- and closable."],
     [['can\'t find roles'],                "We'll look harder."],
     [['know the direction'],               "Direction is most of it."],
@@ -1727,7 +1727,7 @@ async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
         '\n\nNext thing to find out: ' + goal +
         optionContext +
         '\n\nWrite a short, warm follow-up message (under 20 words) and ' + (optionSeeds ? optionSeeds.length : 0) + ' answer options that match its tone exactly.' +
-        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation in the question -- questions move forward, they do not recap. Names and stories belong in the summary, not in transition questions.\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
+        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation in the question -- questions move forward, they do not recap. Names and stories belong in the summary, not in transition questions.\n- CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer (no "That\'s great", "That makes sense", "That gap is real", etc.) -- just ask the next question cleanly. Acknowledgments are handled separately.\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
       }]
     });
     var raw = data.content && data.content[0] && data.content[0].text;
@@ -1749,7 +1749,7 @@ async function getAdaptiveQuestion(goal, fallback, placeholder) {
       messages: [{ role: 'user', content:
         TONE_SYSTEM + '\n\nConversation so far:\n' + getConvoSoFar() +
         '\n\nNext thing to find out: ' + goal +
-        '\n\nWrite ONE warm, short follow-up message (under 20 words). No em dashes. Never start with "I" or "So". CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation -- questions move forward, they do not recap. Names and stories belong in the summary only. Just the message, nothing else.'
+        '\n\nWrite ONE warm, short follow-up message (under 20 words). No em dashes. Never start with "I" or "So". CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation -- questions move forward, they do not recap. Names and stories belong in the summary only. CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer -- just ask the next question cleanly. Just the message, nothing else.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -1863,8 +1863,47 @@ var constraints = {
   hardLimitType: null,   // 'location' | 'income' | 'credential' | 'caregiving' | 'health' | 'legal' | 'other'
   hardLimitRaw: null,    // the actual words they used
   softLimits: [],        // other constraints that matter but aren't walls
-  acknowledged: []       // which constraints have already been acknowledged to the user
+  acknowledged: [],      // which constraints have already been acknowledged to the user
+  youthSignal: false     // true if conversation signals the user is likely under 18 -- detected silently, never confirmed
 };
+
+// ── YOUTH SIGNAL DETECTOR ─────────────────────────────────────────────────────
+// Fires silently when the full conversation stack suggests the user is likely a minor.
+// Never asks age. Never confirms. Just infers from what people naturally say.
+// Requires MULTIPLE signals -- one signal alone (e.g. "still in school") is not enough.
+// Only tightens salary floors and match reachability -- never blocks ambition or categories.
+// An older person in school part-time would not have the full stack and would not trigger this.
+function checkYouthSignal() {
+  if (constraints.youthSignal) return; // already set
+  var allText = [
+    responses.why || '', responses.duration || '', responses.loves || '',
+    responses.bestDay || '', responses.neverAgain1 || '', responses.neverAgain2 || '',
+    responses.background || '', responses.identity || ''
+  ].join(' ').toLowerCase();
+
+  var youthSignals = [
+    /\bin high school\b/,
+    /\bjunior\b|\bsenior year\b|\bsophomore\b|\bfreshman\b/,
+    /\bstill in school\b/,
+    /\bgraduate[sd]? (next|this) year\b/,
+    /\bafter school\b/,
+    /\bbefore school\b/,
+    /\bmy (younger )?(brother|sister|sibling)/,
+    /\braise (my|a) (sibling|brother|sister)/,
+    /\blook after (my )?(sibling|brother|sister)/,
+    /\bget (them|him|her) (on the bus|to school|ready)\b/,
+    /\bmy parents (are gone|aren't around|left)\b/,
+    /\b(can't|cannot) (get|have) a (full[- ]time )?job\b.*school/,
+    /\bwork (after|before) school\b/,
+  ];
+
+  var matches = youthSignals.filter(function(r) { return r.test(allText); });
+
+  // Require at least 2 distinct signals to fire -- prevents false positives
+  if (matches.length >= 2) {
+    constraints.youthSignal = true;
+  }
+}
 
 async function detectConstraints(whatTheyShared, stepContext) {
   try {
@@ -1934,6 +1973,8 @@ async function passiveConstraintCheck(val, stepContext) {
   try {
     var detected = await detectConstraints(val, stepContext);
     if (detected) await integrateConstraint(detected, val);
+    // Run youth signal check on every answer -- silent, accumulative, no AI call needed
+    checkYouthSignal();
   } catch(e) {
     // Silent fail -- constraints are enhancement, never blocking
   }
@@ -1956,6 +1997,9 @@ function getConstraintContext() {
   }
   if (constraints.softLimits.length > 0) {
     parts.push('Other constraints worth knowing: ' + constraints.softLimits.join('; '));
+  }
+  if (constraints.youthSignal) {
+    parts.push('YOUTH SIGNAL DETECTED -- conversation strongly suggests this user is under 18. REACHABILITY RULES: (1) Every match must be a role a minor can legally hold. (2) Salary ranges must reflect youth-realistic wages ($25-40K, or stipend/apprenticeship structures). (3) Never surface a role requiring a professional degree, license, or adult-only work permit. (4) Paid apprenticeships, YouthBuild programs, paid internships, and stipend-based positions are the right tier. (5) The aspirational direction is real and valid -- use it to choose the category, but the specific role must be reachable now. This is a reachability filter, not an ambition filter.');
   }
   return parts.length > 0 ? '\n\nCONSTRAINTS -- filter matches through these:\n' + parts.join('\n') : '';
 }
@@ -3956,7 +4000,7 @@ async function showMatches() {
   'The other 3 matches (including the surprise) generate normally after the bridge.'
 ) : '';
 
-var matchPrompt = 'You are Lune matching engine. Generate ' + (needsBridge ? '4' : '3') + ' job matches for this person.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBest day intent: ' + (responses.bestDayIntent === 'recurring' ? 'They actively look for these moments -- weight this heavily as a primary match signal.' : responses.bestDayIntent === 'incidental' ? 'This was meaningful but incidental -- use as supporting context only, not a primary match signal.' : 'Somewhere in between -- use judgment.') + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid -- weight toward companies with regional presence or remote-first roles') + '\n\nRULES FOR MATCHES 1 AND 2:\n- Must come from DIFFERENT conceptual categories. Force variety.\n- Real companies. Geographically accessible.\n- 2-sentence day-to-day description. Human, not HR-speak.\n- ONE reason sentence referencing a specific moment or detail they gave.\n' + (needsTranslation ? '- Include a bridge sentence: exactly how to describe their background in an interview for this role.\n' : '') + '\nRULE FOR MATCH 3 -- THIS IS THE ONLY ONE THAT SHOWS FREE. EVERYTHING DEPENDS ON IT:\\nSTRICT REQUIREMENTS: (1) MUST cross an industry line completely -- if healthcare background give no healthcare role; if restaurant background give no food/hospitality role; reframe skills into a different industry entirely. (2) The reason sentence MUST name a specific story, moment, or exact phrase from their answers -- never a generic background summary. (3) A title upgrade from their current role is NOT surprising enough -- find a different direction. (4) Must feel slightly uncomfortable -- like someone saw something they had not named yet. (5) CRITICAL: The industry cross must feel like a natural extension of who this specific person is -- not just the most dramatic pivot available. Ask: does this role fit the whole person, or just one trait? The surprise should make them think: I never would have thought of that but it makes complete sense -- not: that came out of nowhere. If a trait could point to 10 different industries, pick the one that fits everything else they said -- their values, their bestDay, their never-again list. Do NOT default to fraud, investigation, or law-enforcement-adjacent roles just because someone is detail-oriented -- that is the most predictable cross and usually the least true to the person. This card shows free. The other two are locked. The CONSTRAINTS FILTER: Before generating any match, check the constraint context in the conversation. A match that violates a hard constraint (location lock, income floor, credential gap, caregiving situation) is wrong even if professionally perfect. If timeline is immediate, only surface roles with fast hiring cycles (2-4 weeks). Surface only what is actually reachable.\n\nThe surprise match is the only reason people pay.\n\n\n' + bridgeContext + '\nBackground weighting:\n- Healthcare/clinical: toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: toward advocacy, crisis work, program coordination\n- Restaurant/hospitality/ops: toward operations, startup ops, RevOps, program management\n- Creative: toward UX research, content design, community programs\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"operations","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"people_ops","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Unexpected Job Title","company":"Real Company","description":"Two sentences that explain what makes this surprising but right.","reason":"One sentence connecting their specific story to why this works.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"community","surprise":true,"bridge_match":false}\n]' +(needsBridge ? ',\\n  {"title":"Bridge Role -- what they can get in 4-8 weeks","company":"Real Company","description":"Two sentences. Realistic, reachable, hires fast. Uses actual background directly. Pays enough to be real while building toward the aspirational direction.","reason":"One sentence: why this is the door they can open right now, and what it builds toward.","bridge_sentence":"One sentence -- exactly how to describe their background to land this role. The words to use.","salary_category":"program_coord","surprise":false,"bridge_match":true}\\n]' : '') + bridgeContext;
+var matchPrompt = 'You are Lune matching engine. Generate ' + (needsBridge ? '4' : '3') + ' job matches for this person.\n\nWhat they shared:\nWhat they love: ' + responses.loves + '\nBest day at work: ' + responses.bestDay + '\nBest day intent: ' + (responses.bestDayIntent === 'recurring' ? 'They actively look for these moments -- weight this heavily as a primary match signal.' : responses.bestDayIntent === 'incidental' ? 'This was meaningful but incidental -- use as supporting context only, not a primary match signal.' : 'Somewhere in between -- use judgment.') + '\nBackground (their words): ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nHow others describe them: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nOpen to remote: ' + (isRemoteOk ? 'yes' : 'prefers in-person or hybrid -- weight toward companies with regional presence or remote-first roles') + '\n\nRULES FOR MATCHES 1 AND 2:\n- Must come from DIFFERENT conceptual categories. Force variety.\n- Real companies. Geographically accessible.\n- 2-sentence day-to-day description. Human, not HR-speak.\n- ONE reason sentence referencing a specific moment or detail they gave.\n' + (needsTranslation ? '- Include a bridge sentence: exactly how to describe their background in an interview for this role.\n' : '') + '\nRULE FOR MATCH 3 -- THIS IS THE ONLY ONE THAT SHOWS FREE. EVERYTHING DEPENDS ON IT:\\nSTRICT REQUIREMENTS: (1) MUST cross an industry line completely -- if healthcare background give no healthcare role; if restaurant background give no food/hospitality role; reframe skills into a different industry entirely. (2) The reason sentence MUST name a specific story, moment, or exact phrase from their answers -- never a generic background summary. (3) A title upgrade from their current role is NOT surprising enough -- find a different direction. (4) Must feel slightly uncomfortable -- like someone saw something they had not named yet. (5) CRITICAL: The industry cross must feel like a natural extension of who this specific person is -- not just the most dramatic pivot available. Ask: does this role fit the whole person, or just one trait? The surprise should make them think: I never would have thought of that but it makes complete sense -- not: that came out of nowhere. If a trait could point to 10 different industries, pick the one that fits everything else they said -- their values, their bestDay, their never-again list. Do NOT default to fraud, investigation, or law-enforcement-adjacent roles just because someone is detail-oriented -- that is the most predictable cross and usually the least true to the person. Additional exclusions by background: if billing/medical-billing/finance background, do NOT cross into fraud investigation, forensic accounting, or compliance -- those are the same world with a different label, not a real industry cross. If restaurant/kitchen background, do NOT cross into food science, nutrition, or culinary education -- too close. If warehouse/logistics background, do NOT cross into supply chain management -- that is a title change, not an industry cross. A real cross means the industry is genuinely different: a billing coordinator crossing into product education, instructional design, or quality systems in manufacturing is a real cross. Fraud investigation is not. This card shows free. The other two are locked. The CONSTRAINTS FILTER: Before generating any match, check the constraint context in the conversation. A match that violates a hard constraint (location lock, income floor, credential gap, caregiving situation) is wrong even if professionally perfect. If timeline is immediate, only surface roles with fast hiring cycles (2-4 weeks). Surface only what is actually reachable. REACHABILITY CHECK: For immediate-timeline users with GED only or less than 2 years experience, do NOT surface roles that typically require a degree or clinical certification (Patient Navigator, Case Manager, Clinical roles) unless the job posting explicitly states no degree required. For these users, reachable means: crew lead, team lead, customer service coordinator, community health worker, peer support, workforce development assistant, retail lead, food service supervisor. The bridge sentence matters more than aspirational accuracy for immediate-timeline users. MINOR REACHABILITY: If the user is under 18, ALL matches must be roles a minor can legally hold -- no roles requiring a degree, professional license, or adult-only work permit. Salary ranges for minors must reflect actual youth wages (2-22/hour, 5-40K annually). Paid apprenticeships, YouthBuild programs, paid internships, and stipend programs are the right match tier. The aspirational direction (architecture, design, medicine) can inform the match category but the actual role must be reachable at 17 with no credentials. Never surface a 0-85K role for a 17-year-old.\n\nThe surprise match is the only reason people pay.\n\n\n' + bridgeContext + '\nBackground weighting:\n- Healthcare/clinical: toward care navigation, community health, patient advocacy\n- Social services/probation/nonprofit: toward advocacy, crisis work, program coordination\n- Restaurant/hospitality/ops: toward operations, startup ops, RevOps, program management\n- Creative: toward UX research, content design, community programs\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON, no markdown:\n[\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"operations","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Job Title","company":"Company Name","description":"Two sentences.","reason":"One specific sentence referencing what they said.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"people_ops","surprise":false,"bridge":false,"bridge_note":""},\n  {"title":"Unexpected Job Title","company":"Real Company","description":"Two sentences that explain what makes this surprising but right.","reason":"One sentence connecting their specific story to why this works.",' + (needsTranslation ? '"bridge":"One sentence on how to frame their background for this role.",' : '') + '"salary_category":"community","surprise":true,"bridge_match":false}\n]' +(needsBridge ? ',\\n  {"title":"Bridge Role -- what they can get in 4-8 weeks","company":"Real Company","description":"Two sentences. Realistic, reachable, hires fast. Uses actual background directly. Pays enough to be real while building toward the aspirational direction.","reason":"One sentence: why this is the door they can open right now, and what it builds toward.","bridge_sentence":"One sentence -- exactly how to describe their background to land this role. The words to use.","salary_category":"program_coord","surprise":false,"bridge_match":true}\\n]' : '') + bridgeContext;
 
 
 try {
@@ -4278,8 +4322,8 @@ function showEndActions() {
 // Founding price: $7/month for life | Regular price: $12/month
 
 var FOUNDING_LIMIT = 100;
-var FOUNDING_PRICE_LINK = 'STRIPE_FOUNDING_LINK'; // replace with $7 Stripe link
-var REGULAR_PRICE_LINK = 'STRIPE_LINK';           // replace with $12 Stripe link
+var FOUNDING_PRICE_LINK = 'https://buy.stripe.com/dRm28rbBHbxl2tK7oLdby00'; // $7/month founding
+var REGULAR_PRICE_LINK = 'https://buy.stripe.com/14A14naxD8l91pG24rdby01';   // $12/month standard
 
 function getFoundingCount() {
   // In production this would be a Supabase query
@@ -4335,7 +4379,7 @@ function initFoundingBanner() {
           claimedAt: new Date().toISOString()
         }));
       }
-      window.open(FOUNDING_PRICE_LINK !== 'STRIPE_FOUNDING_LINK'
+      window.open(FOUNDING_PRICE_LINK !== 'https://buy.stripe.com/dRm28rbBHbxl2tK7oLdby00'
         ? FOUNDING_PRICE_LINK
         : '#', '_blank');
     });
