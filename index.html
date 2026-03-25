@@ -1454,7 +1454,7 @@ function quickOptionAck(val) {
     [['longer than i\'d like'],            "Longer than you'd like is still not too late."],
     [['so long i forgot'],                 "Time to remember what else feels like."],
     // Step 3 -- loves / what lights you up
-    [['creative','making','designing'],    "Creative people show up differently -- in a good way."],
+    [['creative','creating','making','designing','building something'],    "Creative people show up differently -- in a good way."],
     [['people-focused','helping','connecting'], "People work done well is rare."],
     [['analytical','solving','figuring'],  "Pattern-finders are needed everywhere."],
     [['physical','hands-on'],              "Hands-on people keep the world running."],
@@ -1587,8 +1587,9 @@ function quickMultiAck(val) {
   var fallback = multiFallbacks[window._multiAckIndex % multiFallbacks.length];
   window._multiAckIndex++;
   return fallback;
-  }
+  } // end if(isMulti)
 
+  // Single selection -- use single-pick ack or silence
   return quickOptionAck(val);
 }
 
@@ -2879,8 +2880,8 @@ async function step3b() {
 async function step4() {
   updateProgress(4);
   var q = await getAdaptiveQuestion(
-    "a specific real moment at work that stuck with them -- not their job, an actual memory",
-    "Tell me about a moment at work that actually stuck with you.",
+    "a specific moment at work that stuck with them -- one real memory, not a description of their job",
+    "Tell me about a moment at work that stuck with you.",
     "It was when…"
   );
   await showAIMessage(q);
@@ -3396,7 +3397,6 @@ async function step9c() {
     } else {
       // No relocation -- one warm city-aware line, nothing more
       responses.currentLocation = val;
-      passiveConstraintCheck(val, 'location');
 
       var locAck = null;
       if (compassion && compassion.trim().length > 4) {
@@ -3887,7 +3887,7 @@ async function credentialCapture() {
         responses.credCerts = certDetail;
         addMessage(certDetail, 'user');
         passiveConstraintCheck(certDetail, 'credential-certs');
-        var ack = await getAcknowledgment(certDetail);
+        var ack = certDetail.trim().split(/\s+/).length >= 3 ? await getAcknowledgment(certDetail) : null;
         if (ack && ack.trim().length > 4) {
           await delay(300);
           await showAIMessage(ack, 400);
@@ -3898,7 +3898,7 @@ async function credentialCapture() {
     } else {
       credentialCapture2();
     }
-  }, true);
+  }, true); // no ack on simple button picks -- silence beats generic for yes/no
 }
 
 async function credentialCapture2() {
@@ -3924,7 +3924,7 @@ async function credentialCapture2() {
         responses.credLicenseDetail = licDetail;
         addMessage(licDetail, 'user');
         passiveConstraintCheck(licDetail, 'credential-license');
-        var ack = await getAcknowledgment(licDetail);
+        var ack = licDetail.trim().split(/\s+/).length >= 3 ? await getAcknowledgment(licDetail) : null;
         if (ack && ack.trim().length > 4) {
           await delay(300);
           await showAIMessage(ack, 400);
