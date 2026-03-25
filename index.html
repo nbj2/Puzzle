@@ -4216,7 +4216,7 @@ var matchPrompt = 'You are Lune matching engine. Generate ' + (needsBridge ? '4'
 try {
 var data = await callAI({
   model: 'claude-sonnet-4-6',
-  max_tokens: 1800,
+  max_tokens: 2400,
   messages: [{ role: 'user', content: matchPrompt }]
 });
 var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
