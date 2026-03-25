@@ -3324,7 +3324,9 @@ async function step9c() {
     ]);
 
     // Handle relocation signal -- branch on urgency level
-    var rtype = relocation && relocation.relocationType;
+    // 'none' means no relocation -- skip relocation ack entirely, just show city ack below
+    var rtype = relocation && relocation.relocationType && relocation.relocationType !== 'none'
+      ? relocation.relocationType : null;
 
     if (rtype === 'active') {
       // Moving imminently -- orient everything to destination
@@ -4145,6 +4147,7 @@ function buildCredentialContext() {
   }
 }
 
+var lastBridgeState = { needsBridge: false, bridgeJob: null };
 async function showMatches() {
   var chat = document.getElementById('chat');
   var inputArea = document.getElementById('inputArea');
