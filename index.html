@@ -1575,12 +1575,12 @@ function quickMultiAck(val) {
     }
   // Rotating fallbacks -- never say the same thing twice in one session
   var multiFallbacks = [
-    "More than one thing. That's honest -- and it matters.",
-    "Both of those together tell a more specific story.",
-    "That combination is actually pretty rare.",
-    "Not just one thing -- that's useful to know.",
-    "Two things at once. We'll see where they overlap.",
-    "More than one direction pulling at you. That's real data."
+    "More than one thing. That's useful to know.",
+    "Got it -- both of those matter.",
+    "That's a specific combination.",
+    "Not just one thing. We'll see where they overlap.",
+    "Two things pulling at once. That's real.",
+    "Both noted."
   ];
   // Track which fallbacks have fired this session
   if (!window._multiAckIndex) window._multiAckIndex = 0;
@@ -1592,7 +1592,7 @@ function quickMultiAck(val) {
   return quickOptionAck(val);
 }
 
-function showOptions(options, onSelect, singleSelect) {
+function showOptions(options, onSelect, singleSelect, suppressAck) {
   var chat = document.getElementById('chat');
   var wrap = document.createElement('div');
   wrap.className = 'options';
@@ -1647,9 +1647,11 @@ function showOptions(options, onSelect, singleSelect) {
               var val = selected.join(', ');
               wrap.remove();
               onSelect(val);
-              var ack = quickMultiAck(val);
-              if (ack) {
-                setTimeout(function() { showAIMessage(ack, 320); }, 150);
+              if (!suppressAck) {
+                var ack = quickMultiAck(val);
+                if (ack) {
+                  setTimeout(function() { showAIMessage(ack, 320); }, 150);
+                }
               }
             });
             wrap.appendChild(confirmBtn);
@@ -1800,25 +1802,171 @@ var acknowledgedDetails = new Set();
 // Replaces the hardcoded lookup table -- works for Montreal, Lagos, Glasgow, anywhere
 // Tuned to the person's specific profile context, not generic market commentary
 async function getLocationAck(city, loves, background) {
+  // Comprehensive city lookup -- no API call for known cities
+  var cityLower = city.trim().toLowerCase();
+  var quickLookup = {
+    // US Major Cities
+    'columbus': 'Columbus -- strong in healthcare, edtech, and nonprofit.',
+    'chicago': 'Chicago -- strong market for what you\'re describing.',
+    'new york': 'New York -- competitive but deep market.',
+    'nyc': 'New York -- competitive but deep market.',
+    'los angeles': 'LA -- good ecosystem for creative and people-facing roles.',
+    'san francisco': 'SF -- strong for tech-adjacent and mission-driven roles.',
+    'austin': 'Austin -- growing fast, especially tech-adjacent roles.',
+    'seattle': 'Seattle -- strong for ops, tech, and mission-driven orgs.',
+    'denver': 'Denver -- good market, especially remote-friendly companies.',
+    'boston': 'Boston -- strong for healthcare, edtech, and research.',
+    'atlanta': 'Atlanta -- growing fast for ops and community-facing work.',
+    'nashville': 'Nashville -- growing, especially healthcare and operations.',
+    'miami': 'Miami -- bilingual skills travel well here.',
+    'dallas': 'Dallas -- big market, especially ops and corporate roles.',
+    'houston': 'Houston -- strong for healthcare, energy, and ops.',
+    'philadelphia': 'Philly -- good for healthcare, nonprofit, and trades.',
+    'detroit': 'Detroit -- manufacturing, logistics, and a growing tech scene.',
+    'memphis': 'Memphis -- logistics hub, good for ops and community roles.',
+    'minneapolis': 'Minneapolis -- solid market for ops, healthcare, and community work.',
+    'phoenix': 'Phoenix -- expanding fast, good for ops and healthcare.',
+    'portland': 'Portland -- good for mission-driven and creative roles.',
+    'charlotte': 'Charlotte -- growing fast, especially finance and ops.',
+    'pittsburgh': 'Pittsburgh -- healthcare, robotics, and ops are strong there.',
+    'san diego': 'San Diego -- strong for healthcare, biotech, and military-adjacent roles.',
+    'san jose': 'San Jose -- deep tech market, strong for analytical roles.',
+    'sacramento': 'Sacramento -- good for government, healthcare, and nonprofit.',
+    'salt lake': 'Salt Lake City -- growing tech hub, strong for ops and healthcare.',
+    'kansas city': 'Kansas City -- logistics, healthcare, and a growing creative scene.',
+    'st. louis': 'St. Louis -- strong for healthcare, logistics, and nonprofit.',
+    'st louis': 'St. Louis -- strong for healthcare, logistics, and nonprofit.',
+    'indianapolis': 'Indianapolis -- healthcare, logistics, and ops are strong.',
+    'cincinnati': 'Cincinnati -- strong for ops, healthcare, and consumer brands.',
+    'cleveland': 'Cleveland -- healthcare corridor is one of the strongest in the country.',
+    'baltimore': 'Baltimore -- strong in healthcare, government, and nonprofit.',
+    'raleigh': 'Raleigh -- Research Triangle is one of the fastest growing tech markets.',
+    'durham': 'Durham -- Research Triangle has strong biotech and healthcare.',
+    'tampa': 'Tampa -- growing fast, good for healthcare, finance, and ops.',
+    'orlando': 'Orlando -- hospitality, healthcare, and a growing tech sector.',
+    'jacksonville': 'Jacksonville -- logistics, healthcare, and financial services are strong.',
+    'louisville': 'Louisville -- healthcare and logistics are strong here.',
+    'new orleans': 'New Orleans -- hospitality, healthcare, and a growing creative economy.',
+    'birmingham': 'Birmingham -- strong for healthcare, finance, and nonprofit.',
+    'oklahoma city': 'Oklahoma City -- energy, healthcare, and government are the major sectors.',
+    'tulsa': 'Tulsa -- energy, aerospace, and a growing startup scene.',
+    'albuquerque': 'Albuquerque -- government, healthcare, and a growing tech presence.',
+    'tucson': 'Tucson -- healthcare, education, and military-adjacent roles.',
+    'las vegas': 'Las Vegas -- hospitality and operations run this market.',
+    'boise': 'Boise -- fast-growing market, strong for tech and healthcare.',
+    'omaha': 'Omaha -- insurance, logistics, and a solid nonprofit sector.',
+    'des moines': 'Des Moines -- insurance, finance, and healthcare are strong.',
+    'madison': 'Madison -- strong for healthcare, research, and government.',
+    'milwaukee': 'Milwaukee -- manufacturing, healthcare, and nonprofit.',
+    'buffalo': 'Buffalo -- healthcare and education are strong anchors.',
+    'rochester': 'Rochester -- healthcare, optics, and education are strong.',
+    'hartford': 'Hartford -- insurance, healthcare, and finance are strong.',
+    'providence': 'Providence -- healthcare, education, and creative industries.',
+    'richmond': 'Richmond -- growing market, strong for government and healthcare.',
+    'norfolk': 'Norfolk -- military, healthcare, and logistics.',
+    'washington': 'DC -- government, nonprofit, and policy work runs deep here.',
+    'anchorage': 'Anchorage -- government, healthcare, and resource industries.',
+    'honolulu': 'Honolulu -- tourism, military, and healthcare are the main sectors.',
+    'gary': 'Gary -- manufacturing and logistics, with proximity to Chicago.',
+    'fargo': 'Fargo -- healthcare, technology, and agriculture-adjacent industries.',
+    'sioux falls': 'Sioux Falls -- healthcare, finance, and logistics.',
+    // Canada
+    'toronto': 'Toronto -- strong for healthcare, tech, and nonprofit.',
+    'montreal': 'Montreal -- English-language tech corridor is strong, especially remote-first.',
+    'vancouver': 'Vancouver -- growing tech and creative sector.',
+    'calgary': 'Calgary -- energy, tech, and a growing startup scene.',
+    'edmonton': 'Edmonton -- energy, healthcare, and government.',
+    'ottawa': 'Ottawa -- government, tech, and healthcare.',
+    'winnipeg': 'Winnipeg -- healthcare, government, and logistics.',
+    'waterloo': 'Waterloo -- one of Canada\'s strongest tech corridors.',
+    'kitchener': 'Kitchener-Waterloo -- one of Canada\'s strongest tech corridors.',
+    // UK
+    'london': 'London -- deep market across almost every sector.',
+    'manchester': 'Manchester -- strong for tech, creative, and healthcare.',
+    'glasgow': 'Glasgow -- healthcare, creative industries, and tech.',
+    'edinburgh': 'Edinburgh -- finance, tech, and tourism are strong.',
+    'bristol': 'Bristol -- creative, tech, and aerospace are strong.',
+    'liverpool': 'Liverpool -- healthcare, creative industries, and logistics.',
+    'cardiff': 'Cardiff -- healthcare, government, and creative sectors.',
+    'belfast': 'Belfast -- tech, healthcare, and finance are growing.',
+    // Europe
+    'berlin': 'Berlin -- one of Europe\'s strongest startup and creative markets.',
+    'amsterdam': 'Amsterdam -- tech, finance, and international organizations are strong.',
+    'paris': 'Paris -- fashion, tech, and international organizations.',
+    'madrid': 'Madrid -- finance, tech, and a strong nonprofit sector.',
+    'barcelona': 'Barcelona -- tech, creative industries, and tourism.',
+    'zurich': 'Zurich -- finance, pharma, and tech are dominant.',
+    'geneva': 'Geneva -- international organizations, finance, and healthcare.',
+    'stockholm': 'Stockholm -- one of Europe\'s strongest tech hubs.',
+    'oslo': 'Oslo -- energy, tech, and a strong public sector.',
+    'copenhagen': 'Copenhagen -- tech, design, and sustainability-focused industries.',
+    'dublin': 'Dublin -- tech multinationals and a strong financial sector.',
+    'lisbon': 'Lisbon -- growing fast as a tech and creative hub.',
+    'warsaw': 'Warsaw -- tech and finance are growing fast.',
+    'brussels': 'Brussels -- EU institutions, nonprofit, and finance.',
+    // Asia
+    'tokyo': 'Tokyo -- tech, finance, and one of the world\'s most diverse job markets.',
+    'seoul': 'Seoul -- tech, entertainment, and manufacturing are dominant.',
+    'beijing': 'Beijing -- government, tech, and finance.',
+    'shanghai': 'Shanghai -- finance, tech, and international business.',
+    'singapore': 'Singapore -- finance, tech, and international organizations.',
+    'hong kong': 'Hong Kong -- finance, trade, and a deep international business market.',
+    'mumbai': 'Mumbai -- finance, media, and tech.',
+    'bangalore': 'Bangalore -- one of the world\'s strongest tech markets.',
+    'delhi': 'Delhi -- government, tech, and a growing startup scene.',
+    'dubai': 'Dubai -- finance, real estate, and international business.',
+    'tel aviv': 'Tel Aviv -- one of the world\'s strongest startup ecosystems.',
+    'istanbul': 'Istanbul -- finance, tech, and a large consumer market.',
+    'bangkok': 'Bangkok -- tourism, finance, and a growing tech scene.',
+    'manila': 'Manila -- BPO, healthcare, and a growing tech scene.',
+    // Africa
+    'nairobi': 'Nairobi -- one of Africa\'s strongest tech and finance hubs.',
+    'lagos': 'Lagos -- tech, finance, and the largest economy in Africa.',
+    'johannesburg': 'Johannesburg -- finance, mining, and a strong tech scene.',
+    'cape town': 'Cape Town -- tech, creative industries, and tourism.',
+    'cairo': 'Cairo -- government, finance, and a growing startup scene.',
+    'dakar': 'Dakar -- international organizations, finance, and a growing tech scene.',
+    'kigali': 'Kigali -- one of Africa\'s fastest-growing tech and development hubs.',
+    // Latin America
+    'mexico city': 'Mexico City -- one of Latin America\'s largest and most diverse markets.',
+    'sao paulo': 'São Paulo -- finance, tech, and the largest economy in Latin America.',
+    'buenos aires': 'Buenos Aires -- tech, creative industries, and finance.',
+    'bogota': 'Bogotá -- tech and finance are growing fast.',
+    'santiago': 'Santiago -- finance, tech, and mining are strong.',
+    'medellin': 'Medellín -- tech and innovation are booming there.',
+    'guadalajara': 'Guadalajara -- known as the Silicon Valley of Mexico.',
+    // Australia & NZ
+    'sydney': 'Sydney -- finance, tech, and healthcare are strong.',
+    'melbourne': 'Melbourne -- creative industries, healthcare, and finance.',
+    'brisbane': 'Brisbane -- growing fast, especially tech and healthcare.',
+    'perth': 'Perth -- mining, healthcare, and a growing tech scene.',
+    'auckland': 'Auckland -- tech, healthcare, and finance.',
+    'wellington': 'Wellington -- government, tech, and creative industries.',
+    // Remote
+    'remote': 'Remote -- that opens up the full market.',
+    'anywhere': 'Remote-open -- that gives you the whole market to work with.',
+  };
+
+  for (var key in quickLookup) {
+    if (cityLower.includes(key)) return quickLookup[key];
+  }
+
+  // Unknown city -- AI fallback with minimal tokens
   try {
     var data = await callAI({
       model: 'claude-sonnet-4-6',
-      max_tokens: 60,
+      max_tokens: 40,
       messages: [{ role: 'user', content:
-        'Someone just told you they are based in ' + city + '. Write ONE short, warm, specific line (under 15 words) that acknowledges their location with a relevant job market insight for someone whose interests are: ' + (loves || 'helping people, solving problems') + '. Background context: ' + (background || 'not specified') + '.\n\nRules:\n- Name the city or region naturally\n- Give ONE specific true insight about that market as it relates to their interests\n- No em dashes. No generic filler like "great city" or "good to know"\n- If it is a smaller or international city you are less certain about, lean on what you do know (industries, remote work culture, language, economy) rather than inventing specifics\n- Under 15 words total\n- Just the line, nothing else'
+        'Someone is based in ' + city + '. Write ONE line under 12 words with a true job market insight. No em dashes. Just the line.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
     var result = (text && text.trim()) || null;
-    // Fallback if AI returns nothing useful
-    if (!result || result.length < 4) {
-      var cityName = city.trim().split(/[,\s]/)[0];
-      return cityName + ' -- got it.';
-    }
+    if (!result || result.length < 4) throw new Error('empty');
     return result;
   } catch(e) {
     var cityName = city.trim().split(/[,\s]/)[0];
-    return cityName + ' -- got it.';
+    return cityName.charAt(0).toUpperCase() + cityName.slice(1) + ' -- got it.';
   }
 }
 
@@ -3008,7 +3156,8 @@ async function step6() {
         "Being expected to be on 24/7",
         "Work that leads nowhere",
         "A team that doesn't care about quality",
-        "🎯 Something else I want to add"
+        "🎯 Something else I want to add",
+        "Nope -- that covers it"
       ],
       "Anything else on that list?",
       [
@@ -3017,12 +3166,17 @@ async function step6() {
         "Always being expected to be available",
         "Work that feels pointless",
         "A team that doesn't care about doing it right",
-        "🎯 Something else"
+        "🎯 Something else",
+        "Nope -- that covers it"
       ]
     );
     await showAIMessage(result.q);
     showOptions(result.opts, async function(val) {
       if (val.toLowerCase().includes("something else") || val.toLowerCase().includes("want to add")) { step6b(); }
+      else if (val.toLowerCase().includes("nope") || val.toLowerCase().includes("covers it")) {
+        addMessage(val, 'user');
+        setTimeout(step7, 600);
+      }
       else {
         responses.neverAgain2 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain2');
@@ -3096,13 +3250,16 @@ async function step8() {
   );
   await showAIMessage(result.q);
   showOptions(result.opts, async function(val) {
-    if (val.toLowerCase().includes("none of these") || val.toLowerCase().includes("let me describe") || val.toLowerCase().includes("let me say")) { step8b(); }
+    if (val.toLowerCase().includes("none of these") || val.toLowerCase().includes("let me describe") || val.toLowerCase().includes("let me say")) {
+      // Don't show ack before the text input -- it fires at wrong time
+      step8b();
+    }
     else {
       responses.identity = val; addMessage(val, 'user');
       passiveConstraintCheck(val, 'identity');
       setTimeout(step9, 700);
     }
-  });
+  }, false, true); // last param: suppressAck when routing to free text
 }
 
 async function step8b() {
@@ -3288,6 +3445,7 @@ async function step10() {
     }, true);
   });
   await delay(400);
+  await delay(800);
   generateReveal();
 }
 
@@ -4062,9 +4220,20 @@ var data = await callAI({
   messages: [{ role: 'user', content: matchPrompt }]
 });
 var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
+    console.log('MATCH RAW RESPONSE:', raw.substring(0, 500));
     var clean = raw.replace(/```json|```/g, '').trim();
+    // JSON repair -- if response was truncated, try to close the array
+    if (!clean.endsWith(']')) {
+      var lastBrace = clean.lastIndexOf('}');
+      if (lastBrace > -1) clean = clean.substring(0, lastBrace + 1) + ']';
+      else clean = '[]';
+    }
     var jobs;
-    try { jobs = JSON.parse(clean); } catch(e) { jobs = []; }
+    try { jobs = JSON.parse(clean); } catch(e) {
+      // Second attempt -- strip trailing comma
+      try { jobs = JSON.parse(clean.replace(/,\s*\]/g, ']').replace(/,\s*\}/g, '}')); }
+      catch(e2) { jobs = []; }
+    }
 
     jobs = jobs.map(function(job) {
       var salaryData = getSalaryType(job.salary_category);
