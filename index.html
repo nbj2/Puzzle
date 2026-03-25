@@ -4213,27 +4213,38 @@ async function showMatches() {
 var matchPrompt = 'You are Lune matching engine. Generate ' + (needsBridge ? '4' : '3') + ' job matches.\n\nPerson:\nLoves: ' + responses.loves + '\nBest day: ' + responses.bestDay + '\nBest day signal: ' + (responses.bestDayIntent === 'recurring' ? 'recurring -- weight heavily' : responses.bestDayIntent === 'incidental' ? 'incidental -- supporting context only' : 'unclear') + '\nBackground: ' + responses.background + '\nNever again: ' + (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||'') + '\nIdentity: ' + responses.identity + '\nEnvironment: ' + responses.environment + '\nPace: ' + responses.pace + '\nLocation: ' + userLocation + '\nRemote ok: ' + (isRemoteOk ? 'yes' : 'no') + '\n\nMATCH RULES:\n1. Matches 1+2: different categories, real companies, 2-sentence description, 1 reason sentence naming specific detail they shared.' + (needsTranslation ? ' Include bridge sentence.' : '') + '\n2. Match 3 (SURPRISE -- shows free, others locked): MUST cross industry completely. Not a title upgrade. Reason MUST name specific story/phrase. Should feel like someone saw something they hadnt named. Do NOT default to fraud/investigation for analytical people. No food science for kitchen backgrounds. No supply chain for warehouse. Pick the cross that fits the WHOLE person.\n3. Respect all constraints -- hard limits are walls not preferences. Immediate timeline = fast-hire roles only (2-4 weeks). Under 18 = legally holdable roles, youth wages only.\n' + bridgeContext + '\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON array, no markdown:\n[{"title":"","company":"","description":"","reason":"","salary_category":"operations","surprise":false,"bridge":false,"bridge_note":""}]';
 
 
-try {
-var data = await callAI({
-  model: 'claude-sonnet-4-6',
-  max_tokens: 2400,
-  messages: [{ role: 'user', content: matchPrompt }]
-});
-var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
-    console.log('MATCH RAW RESPONSE:', raw.substring(0, 500));
+// ── SPLIT MATCH GENERATION -- 3 separate calls, one per match ──
+  // Each call is small enough to complete within Vercel's 10s function limit
+  async function generateOneMatch(type, context) {
+    var typeInstructions = {
+      match1: 'Generate exactly 1 job match. It should be a realistic, reachable role that directly uses their background. Real company. 2-sentence description. 1 reason sentence naming a specific detail they shared. Return as a JSON array with one object.',
+      match2: 'Generate exactly 1 job match. It must come from a DIFFERENT industry category than match 1. Real company. 2-sentence description. 1 reason sentence naming a specific detail they shared. Return as a JSON array with one object.',
+      surprise: 'Generate exactly 1 SURPRISE job match. MUST cross industry completely -- not a title upgrade. The reason sentence MUST name a specific story, moment, or phrase from their answers. Should feel like someone saw something they had not named. Do NOT default to fraud/investigation for analytical people. No food science for kitchen. No supply chain for warehouse. Return as a JSON array with one object with surprise:true.'
+    };
+    var singlePrompt = 'You are Lune matching engine.\n\nPerson:\nLoves: ' + context.loves + '\nBest day: ' + context.bestDay + '\nBackground: ' + context.background + '\nNever again: ' + context.neverAgain + '\nIdentity: ' + context.identity + '\nLocation: ' + context.location + '\nEnvironment: ' + context.environment + (context.credentialContext ? '\n' + context.credentialContext : '') + (context.constraintCtx ? '\n' + context.constraintCtx : '') + '\n\n' + typeInstructions[type] + (context.needsTranslation ? ' Include a bridge field: one sentence on how to frame their background for this role.' : '') + '\n\nSalary categories: operations, people_ops, community, learning, healthcare_nav, community_health, crisis, clinical_ops, ux_research, content_design, data_analytics, program_coord, advocacy, training, startup_ops\n\nRespond ONLY with valid JSON array, no markdown:\n[{"title":"","company":"","description":"","reason":"","salary_category":"operations","surprise":false,"bridge":false,"bridge_note":""}]';
+    var data = await callAI({ model: 'claude-sonnet-4-6', max_tokens: 600, messages: [{ role: 'user', content: singlePrompt }] });
+    var raw = (data.content && data.content[0] && data.content[0].text) || '[]';
     var clean = raw.replace(/```json|```/g, '').trim();
-    // JSON repair -- if response was truncated, try to close the array
-    if (!clean.endsWith(']')) {
-      var lastBrace = clean.lastIndexOf('}');
-      if (lastBrace > -1) clean = clean.substring(0, lastBrace + 1) + ']';
-      else clean = '[]';
-    }
-    var jobs;
-    try { jobs = JSON.parse(clean); } catch(e) {
-      // Second attempt -- strip trailing comma
-      try { jobs = JSON.parse(clean.replace(/,\s*\]/g, ']').replace(/,\s*\}/g, '}')); }
-      catch(e2) { jobs = []; }
-    }
+    if (!clean.endsWith(']')) { var lb = clean.lastIndexOf('}'); clean = lb > -1 ? clean.substring(0, lb+1) + ']' : '[]'; }
+    try { return JSON.parse(clean); } catch(e) { return []; }
+  }
+
+  var matchContext = {
+    loves: responses.loves, bestDay: responses.bestDay, background: responses.background,
+    neverAgain: (responses.neverAgain1||'') + ' / ' + (responses.neverAgain2||''),
+    identity: responses.identity, location: userLocation, environment: responses.environment,
+    needsTranslation: needsTranslation, credentialContext: responses.credentialContext || '',
+    constraintCtx: getConstraintContext()
+  };
+
+try {
+  var [m1arr, m2arr, surpriseArr] = await Promise.all([
+    generateOneMatch('match1', matchContext),
+    generateOneMatch('match2', matchContext),
+    generateOneMatch('surprise', matchContext)
+  ]);
+  var jobs = [].concat(m1arr, m2arr, surpriseArr).filter(function(j) { return j && j.title; });
+  console.log('MATCHES:', jobs.length, jobs.map(function(j){return j.title;}).join(', '));
 
     jobs = jobs.map(function(job) {
       var salaryData = getSalaryType(job.salary_category);
