@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lune — Your resume tells half the story.</title>
+<title>Lune — Tell us what actually happened.</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #f5f0e8; --surface: #faf7f2; --surface2: #ede8df;
-  --border: #ddd7ce; --text: #1a1916; --muted: #7a756e;
-  --accent: #18706C; --accent-soft: rgba(24,112,108,0.08);
-  --accent-dim: rgba(24,112,108,0.04); --bubble-ai: #faf7f2;
+  --bg: #0d0d0d; --surface: #141414; --surface2: #1a1a1a;
+  --border: #2a2a2a; --text: #f0ead8; --muted: #6b6560;
+  --accent: #c9a84c; --accent-soft: rgba(201,168,76,0.08);
+  --accent-dim: rgba(201,168,76,0.04); --bubble-ai: #141414;
 }
 body { background:var(--bg); color:var(--text); font-family:'Sora',system-ui,-apple-system,sans-serif; font-weight:300; line-height:1.7; min-height:100vh; }
-body::before { content:''; position:fixed; top:-20vh; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(24,112,108,0.04) 0%, transparent 70%); pointer-events:none; z-index:0; }
+body::before { content:''; position:fixed; top:-20vh; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%); pointer-events:none; z-index:0; }
 #pitchPage { display:block; }
 #convoPage { display:none; }
 nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); border-bottom:1px solid var(--border); }
 .nav-logo { font-family:'Instrument Serif',serif; font-size:26px; font-weight:700; color:var(--accent); letter-spacing:-0.5px; }
-.nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(24,112,108,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
+.nav-pill { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); border:1px solid rgba(201,168,76,0.3); padding:7px 14px; border-radius:100px; background:var(--accent-soft); cursor:pointer; text-decoration:none; display:inline-block; }
 .hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:100px 48px 60px; max-width:1000px; margin:0 auto; position:relative; z-index:1; overflow:visible; }
 .hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:36px; opacity:0; animation:rise 0.6s ease 0.1s forwards; }
 .eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
@@ -33,7 +33,7 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .mechanic-icon { font-size:18px; flex-shrink:0; padding-top:1px; }
 .mechanic-text strong { color:var(--text); font-weight:400; }
 .hero-cta { opacity:0; animation:rise 0.6s ease 0.6s forwards; }
-.cta-main { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; background:var(--accent); border:none; border-radius:12px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; }
+.cta-main { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; background:var(--accent); border:none; border-radius:12px; color:#0d0d0d; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; }
 .cta-hint { display:block; margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; }
 .scroll-line { display:flex; align-items:center; gap:8px; margin-top:32px; opacity:0; animation:rise 0.6s ease 0.85s forwards; }
 .scroll-line-bar { width:40px; height:1px; background:linear-gradient(to right,var(--accent),transparent); }
@@ -50,7 +50,7 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .profile-meta { font-size:13px; color:var(--muted); }
 .profile-section-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:12px; }
 .profile-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
-.profile-summary-card { background:linear-gradient(150deg,#ffffff 0%,#f5f3ef 100%); border:1px solid rgba(24,112,108,0.28); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; margin-bottom:12px; }
+.profile-summary-card { background:linear-gradient(150deg,#1a1a1a 0%,#141414 100%); border:1px solid rgba(201,168,76,0.28); border-radius:16px; padding:28px 32px; position:relative; overflow:hidden; margin-bottom:12px; }
 .profile-summary-card::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .profile-summary-date { font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:14px; text-transform:uppercase; }
 .profile-summary-text { font-family:'Instrument Serif',serif; font-size:16px; line-height:1.75; color:var(--text); font-style:italic; }
@@ -59,7 +59,7 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .profile-empty { text-align:center; padding:60px 20px; }
 .profile-empty-title { font-family:'Instrument Serif',serif; font-size:24px; font-style:italic; color:var(--muted); margin-bottom:12px; }
 .profile-empty-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
-.profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
+.profile-cta { padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#0d0d0d; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; }
 .profile-retake { padding:11px 22px; background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; cursor:pointer; }
 .profile-retake:hover { border-color:var(--accent); color:var(--accent); }
 /* ── Enhanced profile sections ── */
@@ -72,22 +72,22 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .profile-chapter-edit:hover { color:var(--accent); background:var(--accent-soft); }
 .profile-resume-zone { border:1.5px dashed var(--border); border-radius:14px; padding:28px; text-align:center; margin-bottom:24px; cursor:pointer; transition:all 0.2s; }
 .profile-resume-zone:hover { border-color:var(--accent); background:var(--accent-soft); }
-.profile-resume-zone.has-resume { border-style:solid; border-color:rgba(24,112,108,0.3); background:rgba(24,112,108,0.04); cursor:default; }
+.profile-resume-zone.has-resume { border-style:solid; border-color:rgba(201,168,76,0.3); background:rgba(201,168,76,0.04); cursor:default; }
 .profile-resume-title { font-size:14px; color:var(--text); margin-bottom:4px; font-weight:400; }
 .profile-resume-sub { font-size:12px; color:var(--muted); line-height:1.5; }
 .profile-mood-badge { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); border:1px solid var(--border); border-radius:100px; padding:4px 12px; margin-bottom:20px; }
 .profile-mood-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); }
-.profile-promotion-card { background:linear-gradient(135deg,rgba(24,112,108,0.06),rgba(24,112,108,0.02)); border:1px solid rgba(24,112,108,0.2); border-radius:14px; padding:20px 24px; margin-bottom:16px; }
+.profile-promotion-card { background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02)); border:1px solid rgba(201,168,76,0.2); border-radius:14px; padding:20px 24px; margin-bottom:16px; }
 .profile-promotion-title { font-size:14px; font-weight:500; color:var(--text); margin-bottom:4px; }
 .profile-promotion-reflection { font-size:13px; color:var(--muted); font-style:italic; line-height:1.6; }
 .profile-modal-overlay { position:fixed; inset:0; background:rgba(26,25,22,0.6); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; }
-.profile-modal { background:var(--surface2); border:1px solid rgba(24,112,108,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
+.profile-modal { background:var(--surface2); border:1px solid rgba(201,168,76,0.2); border-radius:20px; padding:40px; max-width:440px; width:100%; }
 .profile-modal-title { font-family:'Instrument Serif',serif; font-size:28px; font-style:italic; color:var(--text); margin-bottom:8px; }
 .profile-modal-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:28px; }
 .profile-modal input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; outline:none; box-sizing:border-box; margin-bottom:12px; }
 .profile-modal input:focus { border-color:var(--accent); }
 .profile-modal input::placeholder { color:var(--muted); }
-.profile-modal-save { width:100%; padding:13px; background:var(--accent); border:none; border-radius:10px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-bottom:10px; }
+.profile-modal-save { width:100%; padding:13px; background:var(--accent); border:none; border-radius:10px; color:#0d0d0d; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; margin-bottom:10px; }
 .profile-modal-skip { width:100%; padding:10px; background:transparent; border:none; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; cursor:pointer; }
 .profile-modal-skip:hover { color:var(--text); }
 .content { max-width:860px; margin:0 auto; padding:40px 40px 120px; position:relative; z-index:1; }
@@ -99,13 +99,13 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .result-card { position:relative; margin-bottom:80px; padding-top:20px; }
 .result-card::before { content:''; position:absolute; top:0; left:0; width:40px; height:2px; background:var(--accent); border-radius:2px; }
 .result-persona { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-.persona-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#dde8ee,#c8dbe6); border:1px solid rgba(24,112,108,0.25); display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-size:15px; color:var(--accent); flex-shrink:0; }
+.persona-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#1e1e1e,#252525); border:1px solid rgba(201,168,76,0.25); display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-size:15px; color:var(--accent); flex-shrink:0; }
 .persona-info { flex:1; }
 .persona-name { font-size:13px; font-weight:500; color:var(--text); margin-bottom:1px; }
 .persona-detail { font-size:11px; color:var(--muted); }
 .result-live-badge { display:flex; align-items:center; gap:5px; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); font-weight:500; opacity:0.7; }
 .live-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:glow-dot 2s ease infinite; }
-@keyframes glow-dot { 0%,100%{opacity:0.5} 50%{opacity:1;box-shadow:0 0 0 4px rgba(24,112,108,0.15)} }
+@keyframes glow-dot { 0%,100%{opacity:0.5} 50%{opacity:1;box-shadow:0 0 0 4px rgba(201,168,76,0.15)} }
 /* Pull quote — the big punchy line */
 .result-pull-quote { font-family:'Instrument Serif',serif; font-size:clamp(20px,3vw,32px); font-weight:400; line-height:1.3; color:var(--text); margin-bottom:20px; letter-spacing:-0.3px; }
 .result-pull-quote em { font-style:italic; color:var(--accent); }
@@ -124,13 +124,13 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 
 /* ── TRY IT BLOCK — centered, spacious ── */
 .try-it-block { text-align:center; padding:80px 40px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); position:relative; }
-.try-it-block::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; height:500px; background:radial-gradient(circle,rgba(24,112,108,0.05) 0%,transparent 70%); pointer-events:none; }
+.try-it-block::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; height:500px; background:radial-gradient(circle,rgba(201,168,76,0.05) 0%,transparent 70%); pointer-events:none; }
 .try-it-eyebrow { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:20px; opacity:0.6; }
 .try-it-title { font-family:'Instrument Serif',serif; font-size:clamp(32px,5vw,60px); font-weight:400; line-height:1.1; letter-spacing:-1px; margin-bottom:16px; color:var(--text); }
 .try-it-title em { font-style:italic; color:var(--accent); }
 .try-it-sub { font-size:15px; color:var(--muted); max-width:420px; margin:0 auto 36px; line-height:1.7; }
-.try-it-btn { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:var(--accent); border:none; border-radius:100px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; position:relative; z-index:1; transition:transform 0.15s,box-shadow 0.15s; }
-.try-it-btn:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(24,112,108,0.25); }
+.try-it-btn { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:var(--accent); border:none; border-radius:100px; color:#0d0d0d; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; position:relative; z-index:1; transition:transform 0.15s,box-shadow 0.15s; }
+.try-it-btn:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(201,168,76,0.25); }
 .try-it-note { display:block; margin-top:16px; font-size:12px; color:var(--muted); font-style:italic; }
 
 /* ── HOW IT WORKS — flowing story layout ── */
@@ -150,12 +150,12 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .bigger-idea-intro { font-size:clamp(18px,2.5vw,24px); color:var(--muted); line-height:1.75; margin-bottom:60px; max-width:600px; font-weight:300; }
 .bigger-idea-intro strong { color:var(--text); font-weight:400; }
 .timeline { display:flex; flex-direction:column; gap:0; position:relative; }
-.timeline::before { content:''; position:absolute; left:14px; top:12px; bottom:12px; width:1px; background:linear-gradient(to bottom,var(--accent),rgba(24,112,108,0.08)); }
-.tl-item { display:grid; grid-template-columns:29px 1fr; gap:28px; padding:28px 0; border-bottom:1px solid rgba(24,112,108,0.06); }
+.timeline::before { content:''; position:absolute; left:14px; top:12px; bottom:12px; width:1px; background:linear-gradient(to bottom,var(--accent),rgba(201,168,76,0.08)); }
+.tl-item { display:grid; grid-template-columns:29px 1fr; gap:28px; padding:28px 0; border-bottom:1px solid rgba(201,168,76,0.06); }
 .tl-item:last-child { border-bottom:none; }
 .tl-dot-wrap { display:flex; align-items:flex-start; justify-content:center; padding-top:8px; }
 .tl-dot { width:9px; height:9px; border-radius:50%; background:var(--accent); z-index:1; flex-shrink:0; }
-.tl-dot.future { background:transparent; border:1px solid rgba(24,112,108,0.3); }
+.tl-dot.future { background:transparent; border:1px solid rgba(201,168,76,0.3); }
 .tl-age { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
 .tl-age.future { color:var(--muted); }
 .tl-text { font-size:15px; color:var(--muted); line-height:1.7; }
@@ -169,13 +169,13 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .pricing-features { display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-bottom:40px; }
 .pricing-feature { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:8px; }
 .pricing-feature::before { content:'◐'; color:var(--accent); font-size:10px; }
-.pricing-cta { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:var(--accent); border:none; border-radius:100px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; transition:transform 0.15s,box-shadow 0.15s; }
-.pricing-cta:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(24,112,108,0.25); }
+.pricing-cta { display:inline-flex; align-items:center; gap:10px; padding:16px 36px; background:var(--accent); border:none; border-radius:100px; color:#0d0d0d; font-family:'Sora',sans-serif; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; transition:transform 0.15s,box-shadow 0.15s; }
+.pricing-cta:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(201,168,76,0.25); }
 
 /* ── VOTE SECTION ── */
 .vote-section { padding:100px 40px; text-align:center; border-top:1px solid var(--border); position:relative; z-index:1; overflow:hidden; }
-.vote-section::before { content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(circle,rgba(24,112,108,0.05) 0%,transparent 65%); pointer-events:none; }
-.urgency-bar { display:inline-flex; flex-direction:column; align-items:center; gap:8px; background:rgba(24,112,108,0.05); border:1px solid rgba(24,112,108,0.15); border-radius:16px; padding:14px 24px; margin-bottom:48px; max-width:480px; }
+.vote-section::before { content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(circle,rgba(201,168,76,0.05) 0%,transparent 65%); pointer-events:none; }
+.urgency-bar { display:inline-flex; flex-direction:column; align-items:center; gap:8px; background:rgba(201,168,76,0.05); border:1px solid rgba(201,168,76,0.15); border-radius:16px; padding:14px 24px; margin-bottom:48px; max-width:480px; }
 .urgency-top { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--accent); font-weight:500; letter-spacing:1px; text-transform:uppercase; }
 .urgency-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:glow-dot 1.5s ease infinite; flex-shrink:0; }
 .urgency-sub { font-size:13px; color:var(--muted); line-height:1.6; text-align:center; max-width:400px; }
@@ -187,16 +187,16 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .vote-buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
 .vote-btn { padding:14px 28px; border-radius:100px; font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.15s; }
 .vote-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
-.vote-btn.yes { background:var(--accent); border-color:var(--accent); color:#f7f6f3; font-weight:500; }
+.vote-btn.yes { background:var(--accent); border-color:var(--accent); color:#0d0d0d; font-weight:500; }
 .vote-honest { font-size:12px; color:var(--muted); opacity:0.5; font-style:italic; }
 .response-block { display:none; flex-direction:column; align-items:center; gap:16px; }
 .response-block.active { display:flex; animation:rise 0.5s ease forwards; }
 .response-icon { font-size:40px; }
 .response-title { font-family:'Instrument Serif',serif; font-size:30px; font-style:italic; color:var(--text); }
 .response-text { font-size:14px; color:var(--muted); max-width:360px; text-align:center; line-height:1.7; }
-.response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#f7f6f3; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
+.response-cta { margin-top:6px; padding:13px 26px; background:var(--accent); border:none; border-radius:12px; color:#0d0d0d; font-family:'Sora',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-block; }
 /* ── Founding member banner ── */
-.founding-banner { position:relative; z-index:10; background:linear-gradient(135deg,rgba(24,112,108,0.12),rgba(24,112,108,0.06)); border-bottom:1px solid rgba(24,112,108,0.2); padding:14px 24px; text-align:center; }
+.founding-banner { position:relative; z-index:10; background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.06)); border-bottom:1px solid rgba(201,168,76,0.2); padding:14px 24px; text-align:center; }
 .founding-banner-inner { display:inline-flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center; }
 .founding-pulse { width:7px; height:7px; border-radius:50%; background:var(--accent); animation:glow-dot 1.5s ease infinite; flex-shrink:0; }
 .founding-text { font-size:13px; color:var(--text); }
@@ -205,13 +205,13 @@ nav { position:sticky; top:0; left:0; right:0; z-index:100; padding:16px 40px; d
 .founding-count { font-family:'Instrument Serif',serif; font-size:22px; color:var(--accent); line-height:1; }
 .founding-spots { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
 .founding-cta-pill { font-size:12px; font-weight:500; color:#f5f0e8; background:var(--accent); border:none; border-radius:100px; padding:6px 16px; cursor:pointer; font-family:'Sora',sans-serif; white-space:nowrap; transition:transform 0.15s,box-shadow 0.15s; }
-.founding-cta-pill:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(24,112,108,0.3); }
+.founding-cta-pill:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(201,168,76,0.3); }
 /* ── Founders Club ── */
-.founders-badge { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,rgba(24,112,108,0.15),rgba(24,112,108,0.06)); border:1px solid rgba(24,112,108,0.35); border-radius:100px; padding:6px 16px; margin-bottom:20px; }
+.founders-badge { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.06)); border:1px solid rgba(201,168,76,0.35); border-radius:100px; padding:6px 16px; margin-bottom:20px; }
 .founders-badge-icon { font-size:13px; }
 .founders-badge-text { font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); }
 .founders-badge-num { font-size:10px; color:var(--muted); margin-left:4px; }
-.founders-perks { background:linear-gradient(135deg,rgba(24,112,108,0.07),rgba(24,112,108,0.02)); border:1px solid rgba(24,112,108,0.2); border-radius:14px; padding:20px 24px; margin-bottom:24px; }
+.founders-perks { background:linear-gradient(135deg,rgba(201,168,76,0.07),rgba(201,168,76,0.02)); border:1px solid rgba(201,168,76,0.2); border-radius:14px; padding:20px 24px; margin-bottom:24px; }
 .founders-perks-title { font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; opacity:0.8; }
 .founders-perk-item { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; font-size:13px; color:var(--muted); line-height:1.5; }
 .founders-perk-item:last-child { margin-bottom:0; }
@@ -237,8 +237,8 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .msg.user { align-items:flex-end; }
 .bubble { max-width:88%; padding:14px 18px; border-radius:18px; font-size:15px; line-height:1.65; }
 .msg.ai .bubble { background:var(--bubble-ai); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text); }
-.msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(24,112,108,0.2); border-bottom-right-radius:4px; color:var(--text); }
-.reveal-bubble { background:linear-gradient(135deg,#f0eeea 0%,#161410 100%); border:1px solid rgba(24,112,108,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
+.msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(201,168,76,0.2); border-bottom-right-radius:4px; color:var(--text); }
+.reveal-bubble { background:linear-gradient(135deg,#f0eeea 0%,#161410 100%); border:1px solid rgba(201,168,76,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
 .reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
 .option-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; text-align:left; line-height:1.4; }
@@ -310,7 +310,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
         <div class="founding-text" style="margin-top:2px;">Lock in <strong>$7/month for life</strong> before it goes to $19.</div>
       </div>
       <div style="text-align:center;">
-        <div class="founding-count" id="foundingSpotsLeft">97</div>
+        <div class="founding-count" id="foundingSpotsLeft">—</div>
         <div class="founding-spots">spots left</div>
       </div>
       <button class="founding-cta-pill" id="foundingClaimBtn">Claim your spot →</button>
@@ -320,11 +320,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   <nav>
     <div class="nav-logo" style="display:flex;align-items:center;">
       <svg width="108" height="32" viewBox="0 0 108 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-        <circle cx="13" cy="16" r="13" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.3"/>
-        <circle cx="22" cy="16" r="13" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.3"/>
+        <circle cx="13" cy="16" r="13" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.3"/>
+        <circle cx="22" cy="16" r="13" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.3"/>
         <path d="M 13.7,3.1 A 13,13 0 1,0 13.7,28.9 A 13,13 0 0,1 13.7,3.1 Z"
-          fill="rgba(24,112,108,0.2)" stroke="#18706C" stroke-width="1.4"/>
-        <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-0.5px;" x="40" y="22" dominant-baseline="auto">Lune</text>
+          fill="rgba(201,168,76,0.2)" stroke="#c9a84c" stroke-width="1.4"/>
+        <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#c9a84c;letter-spacing:-0.5px;" x="40" y="22" dominant-baseline="auto">Lune</text>
       </svg>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
@@ -339,10 +339,10 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="eyebrow-text">The workforce, building itself.</div>
     </div>
     <h1 class="hero-title">
-      For everyone the<br>
-      <span class="indent">algorithm <em>missed.</em></span>
+      Tell us what<br>
+      <span class="indent">actually <em>happened.</em></span>
     </h1>
-    <p class="hero-subhead">Your resume tells half the story.</p>
+    <p class="hero-subhead">We'll find the words.</p>
     <p class="hero-curious">Even if everything's fine — some people just want to know how the story reads.</p>
     <div class="hero-mechanic">
       <div class="mechanic-icon">◐</div>
@@ -363,26 +363,26 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <svg viewBox="0 0 560 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;height:auto;">
 
       <!-- Left pill: Your Story -->
-      <rect x="0" y="30" width="200" height="80" rx="40" fill="rgba(24,112,108,0.06)" stroke="#18706C" stroke-width="1.2" opacity="0.6"/>
-      <text font-family="Instrument Serif, serif" font-size="15" font-style="italic" fill="#18706C" x="76" y="62" text-anchor="middle" opacity="0.9">Your story.</text>
+      <rect x="0" y="30" width="200" height="80" rx="40" fill="rgba(201,168,76,0.06)" stroke="#c9a84c" stroke-width="1.2" opacity="0.6"/>
+      <text font-family="Instrument Serif, serif" font-size="15" font-style="italic" fill="#c9a84c" x="76" y="62" text-anchor="middle" opacity="0.9">Your story.</text>
       <text font-family="Sora, sans-serif" font-size="10" fill="#7a756e" x="76" y="80" text-anchor="middle" opacity="0.7">who you actually are</text>
 
       <!-- Right pill: The Role -->
-      <rect x="360" y="30" width="200" height="80" rx="40" fill="rgba(24,112,108,0.06)" stroke="#18706C" stroke-width="1.2" opacity="0.6"/>
-      <text font-family="Instrument Serif, serif" font-size="15" font-style="italic" fill="#18706C" x="484" y="62" text-anchor="middle" opacity="0.9">The role.</text>
+      <rect x="360" y="30" width="200" height="80" rx="40" fill="rgba(201,168,76,0.06)" stroke="#c9a84c" stroke-width="1.2" opacity="0.6"/>
+      <text font-family="Instrument Serif, serif" font-size="15" font-style="italic" fill="#c9a84c" x="484" y="62" text-anchor="middle" opacity="0.9">The role.</text>
       <text font-family="Sora, sans-serif" font-size="10" fill="#7a756e" x="484" y="80" text-anchor="middle" opacity="0.7">what it actually needs</text>
 
       <!-- Connector lines from both sides meeting in the middle -->
-      <line x1="200" y1="70" x2="260" y2="70" stroke="#18706C" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
-      <line x1="300" y1="70" x2="360" y2="70" stroke="#18706C" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
+      <line x1="200" y1="70" x2="260" y2="70" stroke="#c9a84c" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
+      <line x1="300" y1="70" x2="360" y2="70" stroke="#c9a84c" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
 
       <!-- Center lune mark — the overlap -->
-      <circle cx="267" cy="70" r="30" fill="none" stroke="#18706C" stroke-width="1" opacity="0.25"/>
-      <circle cx="293" cy="70" r="30" fill="none" stroke="#18706C" stroke-width="1" opacity="0.25"/>
+      <circle cx="267" cy="70" r="30" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.25"/>
+      <circle cx="293" cy="70" r="30" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.25"/>
       <path d="M 279.5,40.5 A 30,30 0 1,0 279.5,99.5 A 30,30 0 0,1 279.5,40.5 Z"
-        fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="1.5"/>
-      <text font-family="Instrument Serif, serif" font-size="9" font-style="italic" fill="#18706C" x="272" y="67" text-anchor="middle" opacity="0.9">the</text>
-      <text font-family="Instrument Serif, serif" font-size="9" font-style="italic" fill="#18706C" x="272" y="78" text-anchor="middle" opacity="0.9">match</text>
+        fill="rgba(24,112,108,0.18)" stroke="#c9a84c" stroke-width="1.5"/>
+      <text font-family="Instrument Serif, serif" font-size="9" font-style="italic" fill="#c9a84c" x="272" y="67" text-anchor="middle" opacity="0.9">the</text>
+      <text font-family="Instrument Serif, serif" font-size="9" font-style="italic" fill="#c9a84c" x="272" y="78" text-anchor="middle" opacity="0.9">match</text>
 
     </svg>
   </div>
@@ -581,15 +581,15 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   <footer>
     <div class="footer-logo" style="display:flex;justify-content:center;align-items:center;margin-bottom:12px;">
     <svg width="160" height="52" viewBox="0 0 240 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="28" cy="34" r="28" fill="none" stroke="#18706C" stroke-width="1.5" opacity="0.25"/>
-      <circle cx="47" cy="34" r="28" fill="none" stroke="#18706C" stroke-width="1.5" opacity="0.25"/>
+      <circle cx="28" cy="34" r="28" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.25"/>
+      <circle cx="47" cy="34" r="28" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.25"/>
       <path d="M 29.8,6.5 A 28,28 0 1,0 29.8,61.5 A 28,28 0 0,1 29.8,6.5 Z"
-        fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="2"/>
-      <text style="font-family:'Instrument Serif',serif;font-size:34px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-1px;"
+        fill="rgba(24,112,108,0.18)" stroke="#c9a84c" stroke-width="2"/>
+      <text style="font-family:'Instrument Serif',serif;font-size:34px;font-weight:700;font-style:italic;fill:#c9a84c;letter-spacing:-1px;"
         x="84" y="44" text-anchor="start">Lune</text>
     </svg>
   </div>
-    <div class="footer-tagline">Your resume tells half the story.</div>
+    <div class="footer-tagline">Tell us what actually happened. We'll find the words.</div>
   </footer>
 </div>
 
@@ -599,11 +599,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <button class="convo-back" id="convoBack">← Back</button>
     <div class="convo-logo" style="display:flex;align-items:center;justify-content:center;">
     <svg width="100" height="32" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="17" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
-      <circle cx="29" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
+      <circle cx="17" cy="22" r="17" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.25"/>
+      <circle cx="29" cy="22" r="17" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.25"/>
       <path d="M 18.2,5.2 A 17,17 0 1,0 18.2,38.8 A 17,17 0 0,1 18.2,5.2 Z"
-        fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="1.5"/>
-      <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-0.5px;"
+        fill="rgba(24,112,108,0.18)" stroke="#c9a84c" stroke-width="1.5"/>
+      <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#c9a84c;letter-spacing:-0.5px;"
         x="50" y="29" text-anchor="start">Lune</text>
     </svg>
   </div>
@@ -620,11 +620,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     <button class="profile-nav-back" id="profileBack">← Back</button>
     <div class="profile-nav-logo" style="display:flex;align-items:center;">
       <svg width="100" height="32" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="17" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
-        <circle cx="29" cy="22" r="17" fill="none" stroke="#18706C" stroke-width="1.2" opacity="0.25"/>
+        <circle cx="17" cy="22" r="17" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.25"/>
+        <circle cx="29" cy="22" r="17" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.25"/>
         <path d="M 18.2,5.2 A 17,17 0 1,0 18.2,38.8 A 17,17 0 0,1 18.2,5.2 Z"
-          fill="rgba(24,112,108,0.18)" stroke="#18706C" stroke-width="1.5"/>
-        <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#18706C;letter-spacing:-0.5px;"
+          fill="rgba(24,112,108,0.18)" stroke="#c9a84c" stroke-width="1.5"/>
+        <text style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:700;font-style:italic;fill:#c9a84c;letter-spacing:-0.5px;"
           x="50" y="29" text-anchor="start">Lune</text>
       </svg>
     </div>
@@ -721,10 +721,10 @@ function initProfileUI() {
 function getMoodLabel(profile) {
   var why = (profile.whyFirst || '').toLowerCase();
   if (why.includes('urgent') || why.includes('fast')) return { label: 'Came in urgently', dot: '#e05a3a', type: 'urgent' };
-  if (why.includes('feels off') || why.includes('stuck') || why.includes('change')) return { label: 'Came in searching', dot: '#18706C', type: 'stuck' };
+  if (why.includes('feels off') || why.includes('stuck') || why.includes('change')) return { label: 'Came in searching', dot: '#c9a84c', type: 'stuck' };
   if (why.includes('good') || why.includes('exploring') || why.includes('curious')) return { label: 'Came in curious', dot: '#5a9e6f', type: 'happy' };
   if (why.includes('know what') || why.includes('direction')) return { label: 'Came in with direction', dot: '#7a6bbf', type: 'directed' };
-  return { label: 'Came in open', dot: '#18706C', type: 'open' };
+  return { label: 'Came in open', dot: '#c9a84c', type: 'open' };
 }
 
 function renderProfilePage() {
@@ -1641,7 +1641,7 @@ function showOptions(options, onSelect, singleSelect, suppressAck) {
           if (!confirmBtn) {
             confirmBtn = document.createElement('button');
             confirmBtn.className = 'multi-confirm';
-            confirmBtn.style.cssText = 'margin-top:8px;padding:11px 22px;background:var(--accent);border:none;border-radius:10px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;';
+            confirmBtn.style.cssText = 'margin-top:8px;padding:11px 22px;background:var(--accent);border:none;border-radius:10px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;width:100%;';
             confirmBtn.textContent = 'Continue →';
 // Ack for multi-select combinations -- reads the full combined value.
 // Combos checked first (order matters), then falls back to single-pick logic.
@@ -2677,11 +2677,11 @@ async function showVerticalMatches() {
       msg.style.animationDelay = (i * 0.15) + 's';
       var card = document.createElement('div');
       card.style.cssText = isFirst
-        ? 'background:linear-gradient(135deg,#ffffff,#f5f3ef);border:1px solid rgba(24,112,108,0.4);border-radius:16px;padding:22px 24px;max-width:92%;'
+        ? 'background:linear-gradient(135deg,#1a1a1a,#141414);border:1px solid rgba(201,168,76,0.4);border-radius:16px;padding:22px 24px;max-width:92%;'
         : 'background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;max-width:92%;opacity:0.6;filter:blur(1.5px);user-select:none;';
 
-      var label = isFirst ? '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(24,112,108,0.1);color:var(--accent);padding:4px 12px;border-radius:100px;margin-bottom:14px;">Your next rung</div>'
-        : isSurprise ? '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(24,112,108,0.1);color:var(--accent);padding:4px 12px;border-radius:100px;margin-bottom:14px;">The one nobody told you about</div>'
+      var label = isFirst ? '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(201,168,76,0.1);color:var(--accent);padding:4px 12px;border-radius:100px;margin-bottom:14px;">Your next rung</div>'
+        : isSurprise ? '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(201,168,76,0.1);color:var(--accent);padding:4px 12px;border-radius:100px;margin-bottom:14px;">The one nobody told you about</div>'
         : '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(26,25,22,0.06);color:var(--muted);padding:4px 12px;border-radius:100px;margin-bottom:14px;">🔒 Unlock to see</div>';
 
       var linkedinUrl = buildLinkedInURL(m.title, '', responses.location);
@@ -2692,9 +2692,9 @@ async function showVerticalMatches() {
         '<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">' + (m.company || '') + ' · ' + (m.type || '') + '</div>' +
         '<div style="font-size:13px;color:var(--muted);font-weight:500;margin-bottom:12px;">' + (m.salary_range || '') + '</div>' +
         (isFirst ? '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:12px;">' + (m.description || '') + '</div>' : '') +
-        (isFirst && m.reason ? '<div style="font-size:13px;color:var(--text);font-style:italic;border-top:1px solid rgba(24,112,108,0.15);padding-top:10px;margin-bottom:12px;line-height:1.55;">' + m.reason + '</div>' : '') +
-        (isFirst && m.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(24,112,108,0.05);border:1px solid rgba(24,112,108,0.15);border-radius:8px;padding:10px 14px;margin-bottom:12px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to describe yourself for this role</span>' + m.bridge + '</div>' : '') +
-        (isFirst ? '<div style="display:flex;gap:8px;flex-wrap:wrap;"><a href="' + linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#f7f6f3;font-size:12px;font-weight:500;text-decoration:none;">Search LinkedIn →</a><a href="' + indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;">Search Indeed →</a></div>' : '');
+        (isFirst && m.reason ? '<div style="font-size:13px;color:var(--text);font-style:italic;border-top:1px solid rgba(201,168,76,0.15);padding-top:10px;margin-bottom:12px;line-height:1.55;">' + m.reason + '</div>' : '') +
+        (isFirst && m.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:10px 14px;margin-bottom:12px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to describe yourself for this role</span>' + m.bridge + '</div>' : '') +
+        (isFirst ? '<div style="display:flex;gap:8px;flex-wrap:wrap;"><a href="' + linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0d0d0d;font-size:12px;font-weight:500;text-decoration:none;">Search LinkedIn →</a><a href="' + indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;">Search Indeed →</a></div>' : '');
 
       msg.appendChild(card);
       chat.appendChild(msg);
@@ -3485,8 +3485,8 @@ async function generateReveal() {
   var happyMode = isHappyUser();
 
   var prompt = happyMode
-    ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven\'t been able to say themselves -- not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically -- not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said -- a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a closing question that comes from the most specific thing you just named -- not a CTA to save the profile but a question that makes them sit with what you observed. Something like: Does that feel like the right name for what you have built? Or: When did you first realize the work actually fit? The question should feel earned not prompted.\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
-    : "You are the core AI behind Lune, a career alignment product. You just finished a 10-exchange conversation with someone. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened -- not a chatbot.\n\nTHE CORE RULE: Stay in observation mode. Describe who this person is and what is actually true about them. Do NOT prescribe a direction, recommend industries, or tell them what to do. The matches do that job. The summary only job is to make someone feel genuinely seen -- like someone finally named the thing they could not name themselves.\n\nThe paragraph should:\n- Open with the most specific true thing you noticed -- name a pattern they probably have not articulated themselves\n- Reference specific things they said. If they mentioned a specific moment, story, or person -- reference it by name or detail. A summary that names Maya is worth ten that say you care about peoples growth\n- Name what they actually have -- not what they lack, not what they should do next\n- If they expressed frustration, distinguish clearly between hating the work itself versus hating the conditions around it. You do not hate work you hate what is being done around it is a real insight. Name it if true.\n- NEVER mention specific cities, industries, job titles, or career paths -- that is the match engines job\n- NEVER say things like your city has a strong market or your background translates well to X -- that is prescription not observation\n- STRUCTURED AUTONOMY SIGNAL: If someone picked autonomy on the energy question AND micromanagement on the never-again list -- or expressed both wanting independence AND needing clear direction anywhere in their answers -- name it explicitly. The sentence is: You do not need someone to tell you how. You need someone to tell you what and then get out of the way. That is not a contradiction -- that is one of the clearest working profiles there is. This profile needs roles with clear outcomes and autonomous process. Name it if you see it.\n- THE GAP IS THE INSIGHT: Look for the difference between what they said they love and what their best day actually reveals. These are often different things and that difference is the most important thing you can name. If someone says they love helping people but their best day was about being recognized as someone who develops people -- name the development instinct not the helping instinct. If you see that gap, name it. That gap is where the real insight lives.\n- CLOSING QUESTION -- THIS IS THE MOST IMPORTANT LINE: The closing question is the therapist moment. It is the one question that makes someone sit with what you just named before they do anything else. Rules: (1) It must come directly from the most specific thing you just observed -- not from the matches, not from the next step, from the truth you just named. (2) If you found a clear gap between what they said they love and what their best day actually reveals -- ask about that gap specifically. (3) If the gap is unclear or weak -- do NOT force it. Ask something simple that stays close to what you know is true. A question that gets it slightly wrong breaks the spell. A question that stays close keeps it. (4) Never ask ready to see your matches or anything that sounds like a CTA. (5) The question should feel like something a therapist or trusted mentor would ask -- something that makes the person pause, feel understood, and want to answer honestly. Examples of the right spirit: Is that the thing you have been looking for -- work where developing someone is the actual job, not a side effect? Or: When was the last time a job made you feel the way Maya made you feel? Or: Does that feel like the right name for it? Wrong spirit: Ready to find your next role? or Want to see what fits? or Shall we look at some options?\n- LATE-CAREER COURAGE: If the person appears to be over 40 making a significant pivot, add one sentence acknowledging the courage not the logic. What you are describing takes something most people talk themselves out of.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, add one warm sentence before the closing question signaling there is something reachable right now.\n- RELOCATION: if relocationType is active orient ALL geography to target location. If urgent mix current and target. If eventual focus on current but end with one warm sentence about the future goal.\n\nDo NOT use bullet points. Do NOT say Based on your responses. Do NOT be generic. Do NOT give career advice. Do NOT name cities or industries. Write one paragraph of 4-6 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they are here: " + responses.why + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy vs drains them: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
+    ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven\'t been able to say themselves -- not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically -- not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said -- a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a closing question that comes from the most specific thing you just named -- not a CTA to save the profile but a question that makes them sit with what you observed. Something like: Does that feel like the right name for what you have built? Or: When did you first realize the work actually fit? The question should feel earned not prompted.\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + (responses.background || responses.verticalRole || "not specified") + (responses.verticalMoment ? "\nMoment they operated above their title: " + responses.verticalMoment : "") + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
+    : "You are the core AI behind Lune, a career alignment product. You just finished a 10-exchange conversation with someone. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened -- not a chatbot.\n\nTHE CORE RULE: Stay in observation mode. Describe who this person is and what is actually true about them. Do NOT prescribe a direction, recommend industries, or tell them what to do. The matches do that job. The summary only job is to make someone feel genuinely seen -- like someone finally named the thing they could not name themselves.\n\nThe paragraph should:\n- Open with the most specific true thing you noticed -- name a pattern they probably have not articulated themselves\n- Reference specific things they said. If they mentioned a specific moment, story, or person -- reference it by name or detail. A summary that names Maya is worth ten that say you care about peoples growth\n- Name what they actually have -- not what they lack, not what they should do next\n- If they expressed frustration, distinguish clearly between hating the work itself versus hating the conditions around it. You do not hate work you hate what is being done around it is a real insight. Name it if true.\n- NEVER mention specific cities, industries, job titles, or career paths -- that is the match engines job\n- NEVER say things like your city has a strong market or your background translates well to X -- that is prescription not observation\n- STRUCTURED AUTONOMY SIGNAL: If someone picked autonomy on the energy question AND micromanagement on the never-again list -- or expressed both wanting independence AND needing clear direction anywhere in their answers -- name it explicitly. The sentence is: You do not need someone to tell you how. You need someone to tell you what and then get out of the way. That is not a contradiction -- that is one of the clearest working profiles there is. This profile needs roles with clear outcomes and autonomous process. Name it if you see it.\n- THE GAP IS THE INSIGHT: Look for the difference between what they said they love and what their best day actually reveals. These are often different things and that difference is the most important thing you can name. If someone says they love helping people but their best day was about being recognized as someone who develops people -- name the development instinct not the helping instinct. If you see that gap, name it. That gap is where the real insight lives.\n- CLOSING QUESTION -- THIS IS THE MOST IMPORTANT LINE: The closing question is the therapist moment. It is the one question that makes someone sit with what you just named before they do anything else. Rules: (1) It must come directly from the most specific thing you just observed -- not from the matches, not from the next step, from the truth you just named. (2) If you found a clear gap between what they said they love and what their best day actually reveals -- ask about that gap specifically. (3) If the gap is unclear or weak -- do NOT force it. Ask something simple that stays close to what you know is true. A question that gets it slightly wrong breaks the spell. A question that stays close keeps it. (4) Never ask ready to see your matches or anything that sounds like a CTA. (5) The question should feel like something a therapist or trusted mentor would ask -- something that makes the person pause, feel understood, and want to answer honestly. Examples of the right spirit: Is that the thing you have been looking for -- work where developing someone is the actual job, not a side effect? Or: When was the last time a job made you feel the way Maya made you feel? Or: Does that feel like the right name for it? Wrong spirit: Ready to find your next role? or Want to see what fits? or Shall we look at some options?\n- LATE-CAREER COURAGE: If the person appears to be over 40 making a significant pivot, add one sentence acknowledging the courage not the logic. What you are describing takes something most people talk themselves out of.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, add one warm sentence before the closing question signaling there is something reachable right now.\n- RELOCATION: if relocationType is active orient ALL geography to target location. If urgent mix current and target. If eventual focus on current but end with one warm sentence about the future goal.\n\nDo NOT use bullet points. Do NOT say Based on your responses. Do NOT be generic. Do NOT give career advice. Do NOT name cities or industries. Write one paragraph of 4-6 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they are here: " + responses.why + (responses.verticalFlag ? " [VERTICAL: wants to go up, role: " + (responses.verticalRole||"not specified") + ", direction: " + (responses.verticalMode||"not specified") + "]" : "") + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy vs drains them: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
 
   try {
     var data = await callAI({
@@ -3515,12 +3515,12 @@ async function generateReveal() {
     saveRow.style.cssText = 'display:flex;gap:10px;margin-top:10px;max-width:92%;flex-wrap:wrap;opacity:0;animation:fadeUp 0.4s ease 0.3s forwards;';
 
     var copyBtn = document.createElement('button');
-    copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
     copyBtn.textContent = 'Copy my summary';
     copyBtn.addEventListener('click', function() {
       navigator.clipboard.writeText(summaryText).then(function() {
         copyBtn.textContent = 'Copied ✓';
-        copyBtn.style.background = 'rgba(24,112,108,0.1)';
+        copyBtn.style.background = 'rgba(201,168,76,0.1)';
         setTimeout(function() { copyBtn.textContent = 'Copy my summary'; copyBtn.style.background = 'transparent'; }, 2000);
       }).catch(function() {
         var ta = document.createElement('textarea');
@@ -3537,16 +3537,16 @@ async function generateReveal() {
     });
 
     var emailSaveBtn = document.createElement('button');
-    emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+    emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
     emailSaveBtn.textContent = 'Email it to me';
     emailSaveBtn.addEventListener('click', function() {
       saveRow.style.display = 'none';
       var emailSaveCard = document.createElement('div');
-      emailSaveCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.2);border-radius:12px;padding:18px 20px;max-width:92%;margin-top:10px;';
+      emailSaveCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:18px 20px;max-width:92%;margin-top:10px;';
       emailSaveCard.innerHTML =
         '<div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Where should we send this?</div>' +
         '<input id="saveEmailInput" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
-        '<button id="saveEmailSubmit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Send it →</button>';
+        '<button id="saveEmailSubmit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Send it →</button>';
       msg.appendChild(emailSaveCard);
       setTimeout(function() {
         var se = document.getElementById('saveEmailSubmit');
@@ -3594,7 +3594,7 @@ async function generateReveal() {
                     '<div style="font-size:13px;color:var(--muted);">-- ' + (responses.neverAgain2 || '') + '</div>' +
                   '</div>' +
                   '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;">We\'re building the full match database right now. You\'ll be first to know when roles that match your profile open up.</div>' +
-                  '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#f7f6f3;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
+                  '<a href="#" style="display:inline-block;padding:10px 20px;background:var(--accent);border-radius:8px;color:#0d0d0d;font-size:12px;font-weight:500;text-decoration:none;">See your matches →</a>' +
                   '<div style="margin-top:20px;font-size:11px;color:var(--muted);">Lune · Your resume tells half the story<a href="#" style="color:var(--muted);">Unsubscribe</a></div>' +
                 '</div>' +
               '</div>';
@@ -3631,7 +3631,7 @@ async function generateReveal() {
     var errBubble = document.createElement('div');
     errBubble.className = 'bubble';
     errBubble.style.cssText = 'max-width:92%;';
-    errBubble.innerHTML = '<div style="margin-bottom:12px;color:var(--muted);font-size:14px;">Something went wrong generating your summary. Your answers are saved -- just try again.</div><button id="retryBtn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Try again →</button>';
+    errBubble.innerHTML = '<div style="margin-bottom:12px;color:var(--muted);font-size:14px;">Something went wrong generating your summary. Your answers are saved -- just try again.</div><button id="retryBtn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Try again →</button>';
     errMsg.appendChild(errBubble);
     chat.appendChild(errMsg);
     scrollToBottom();
@@ -3654,12 +3654,12 @@ async function showHappyEndActions(summaryText) {
   saveMsg.className = 'msg ai';
   saveMsg.style.animationDelay = '0s';
   var saveCard = document.createElement('div');
-  saveCard.style.cssText = 'background:linear-gradient(135deg,#ffffff,#f5f3ef);border:1px solid rgba(24,112,108,0.3);border-radius:16px;padding:24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
+  saveCard.style.cssText = 'background:linear-gradient(135deg,#1a1a1a,#141414);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
   saveCard.innerHTML =
     '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
     '<div style="font-family:Instrument Serif,serif;font-size:18px;color:var(--text);margin-bottom:8px;line-height:1.3;">Save this while it\'s accurate.</div>' +
     '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto;">Most people only do this when things fall apart. You get to do it from clarity -- which means the profile is actually true.</div>' +
-    '<button id="happySaveBtn" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:10px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;">Save my profile →</button>' +
+    '<button id="happySaveBtn" style="width:100%;padding:13px;background:var(--accent);border:none;border-radius:10px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;">Save my profile →</button>' +
     '<div style="font-size:11px;color:var(--muted);font-style:italic;">Free. No resume required. Come back anytime things change.</div>';
   saveMsg.appendChild(saveCard);
   chat.appendChild(saveMsg);
@@ -3685,14 +3685,14 @@ async function showHappyEndActions(summaryText) {
   contribMsg.className = 'msg ai';
   contribMsg.style.animationDelay = '0s';
   var contribCard = document.createElement('div');
-  contribCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.15);border-radius:14px;padding:22px 24px;max-width:92%;';
+  contribCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(201,168,76,0.15);border-radius:14px;padding:22px 24px;max-width:92%;';
   contribCard.innerHTML =
     '<div style="font-size:14px;color:var(--text);margin-bottom:8px;line-height:1.5;">One optional thing, if you\'re open to it.</div>' +
     '<div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">We\'re building a database of what good work actually looks like from the inside -- not from HR job descriptions, but from people who are genuinely thriving. If you\'d share your job title and one thing you like about your work, you\'d be helping us show other people what great looks like in your field.</div>' +
     '<input id="contribTitle" type="text" placeholder="Your job title" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px;" />' +
     '<textarea id="contribLikes" placeholder="What I actually like about it…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;resize:none;min-height:60px;margin-bottom:10px;"></textarea>' +
     '<div style="display:flex;gap:8px;">' +
-      '<button id="contribSubmit" style="flex:1;padding:10px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Share it →</button>' +
+      '<button id="contribSubmit" style="flex:1;padding:10px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;">Share it →</button>' +
       '<button id="contribSkip" style="padding:10px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Skip</button>' +
     '</div>';
   contribMsg.appendChild(contribCard);
@@ -3830,7 +3830,7 @@ function injectProofSentence(card, job) {
   
   // Create the proof element
   var proofEl = document.createElement('div');
-  proofEl.style.cssText = 'font-size:12px;color:var(--muted);background:rgba(24,112,108,0.04);border-left:2px solid var(--accent);border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:12px;line-height:1.55;opacity:0;transition:opacity 0.6s ease;';
+  proofEl.style.cssText = 'font-size:12px;color:var(--muted);background:rgba(201,168,76,0.04);border-left:2px solid var(--accent);border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:12px;line-height:1.55;opacity:0;transition:opacity 0.6s ease;';
   proofEl.textContent = proof;
   
   // Find where to insert — after the bridge div if it exists, else before the links
@@ -4327,9 +4327,9 @@ await showAIMessage(bridgeIntroMsg, 400);
       bridgeMsg.className = 'msg ai';
       bridgeMsg.style.animationDelay = '0s';
       var bridgeCard = document.createElement('div');
-      bridgeCard.style.cssText = 'background:var(--surface);border:1px solid rgba(24,112,108,0.3);border-left:3px solid var(--accent);border-radius:14px;padding:24px 26px;max-width:92%;';
+      bridgeCard.style.cssText = 'background:var(--surface);border:1px solid rgba(201,168,76,0.3);border-left:3px solid var(--accent);border-radius:14px;padding:24px 26px;max-width:92%;';
       bridgeCard.innerHTML =
-        '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(24,112,108,0.1);color:var(--accent);padding:4px 12px;border-radius:100px;margin-bottom:14px;">' + (constraints.timeline === 'immediate' ? 'Move on this now' : constraints.hardLimitType === 'credential' ? 'Build toward it' : 'Start here') + '</div>' +
+        '<div style="display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(201,168,76,0.1);color:var(--accent);padding:4px 12px;border-radius:100px;margin-bottom:14px;">' + (constraints.timeline === 'immediate' ? 'Move on this now' : constraints.hardLimitType === 'credential' ? 'Build toward it' : 'Start here') + '</div>' +
         '<div style="font-family:Instrument Serif,serif;font-size:18px;color:var(--text);margin-bottom:3px;line-height:1.2;">' + (bridgeJob.title || '') + '</div>' +
         '<div style="font-size:12px;color:var(--accent);font-weight:500;margin-bottom:10px;">' + (bridgeJob.company || '') + '</div>' +
         '<div style="font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-bottom:14px;">' + bridgeTypeStr + '</div>' +
@@ -4338,8 +4338,8 @@ await showAIMessage(bridgeIntroMsg, 400);
         (bridgeJob.bridge_note ? '<div style="font-size:13px;color:var(--accent);line-height:1.6;font-weight:500;">' + bridgeJob.bridge_note + '</div>' : '') +
         (needsTranslation && bridgeJob.bridge ? '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">How to frame it: ' + bridgeJob.bridge + '</div>' : '') +
         '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
-          '<a href="' + buildLinkedInURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;text-decoration:none;cursor:pointer;">Search LinkedIn →</a>' +
-          '<a href="' + buildIndeedURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;text-decoration:none;cursor:pointer;">Search Indeed →</a>' +
+          '<a href="' + buildLinkedInURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;text-decoration:none;cursor:pointer;">Search LinkedIn →</a>' +
+          '<a href="' + buildIndeedURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;text-decoration:none;cursor:pointer;">Search Indeed →</a>' +
         '</div>';
       bridgeMsg.appendChild(bridgeCard);
       chat.appendChild(bridgeMsg);
@@ -4355,23 +4355,23 @@ await showAIMessage(bridgeIntroMsg, 400);
     cardMsg.className = 'msg ai';
     cardMsg.style.animationDelay = '0s';
     var card = document.createElement('div');
-    card.style.cssText = 'background:linear-gradient(135deg,#ffffff,#f5f3ef);border:1px solid rgba(24,112,108,0.4);border-radius:16px;padding:22px 24px;max-width:92%;position:relative;overflow:hidden;';
+    card.style.cssText = 'background:linear-gradient(135deg,#1a1a1a,#141414);border:1px solid rgba(201,168,76,0.4);border-radius:16px;padding:22px 24px;max-width:92%;position:relative;overflow:hidden;';
     card.innerHTML =
       '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
       '<div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;">' + surpriseJob.title + '</div>' +
       '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">' + surpriseJob.company + ' · ' + surpriseJob.type + '</div>' +
       '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:14px;">' + surpriseJob.description + '</div>' +
-      (surpriseJob.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(24,112,108,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + surpriseJob.reason + '"</div>' : '') +
-      (surpriseJob.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(24,112,108,0.05);border:1px solid rgba(24,112,108,0.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to describe your background for this role</span>' + surpriseJob.bridge + '</div>' : '') +
+      (surpriseJob.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(201,168,76,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + surpriseJob.reason + '"</div>' : '') +
+      (surpriseJob.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to describe your background for this role</span>' + surpriseJob.bridge + '</div>' : '') +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
-      '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#f7f6f3;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
-      '<a href="' + surpriseJob.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
+      '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0d0d0d;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
+      '<a href="' + surpriseJob.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
       '</div>' +
-      '<div style="font-size:12px;color:var(--muted);background:rgba(24,112,108,0.04);border:1px solid rgba(24,112,108,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;">' +
+      '<div style="font-size:12px;color:var(--muted);background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;">' +
         '<span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">🔒 How to say this in an interview</span>' +
         'Unlocked with your full matches -- exactly how to describe your background for this role in language hiring managers search for.' +
       '</div>' +
-      '<button id="saveMatchBtn" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(24,112,108,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.5px;">Save this match →</button>';
+      '<button id="saveMatchBtn" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;letter-spacing:0.5px;">Save this match →</button>';
     // Theo Fix: track card views, inject proof sentence on 2nd+ view if lowConfidence
     card.setAttribute('data-match-card', 'free');
     cardMsg.appendChild(card);
@@ -4402,7 +4402,7 @@ await showAIMessage(bridgeIntroMsg, 400);
       if (saveBtn) {
         saveBtn.addEventListener('click', function() {
           saveBtn.textContent = 'Saved ✓';
-          saveBtn.style.background = 'rgba(24,112,108,0.1)';
+          saveBtn.style.background = 'rgba(201,168,76,0.1)';
           saveBtn.style.pointerEvents = 'none';
           document.getElementById('profileModal').style.display = 'flex';
           setTimeout(function() {
@@ -4420,12 +4420,12 @@ await showAIMessage(bridgeIntroMsg, 400);
     emailCapMsg.className = 'msg ai';
     emailCapMsg.style.animationDelay = '0s';
     var emailCapCard = document.createElement('div');
-    emailCapCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(24,112,108,0.15);border-radius:12px;padding:18px 20px;max-width:92%;';
+    emailCapCard.style.cssText = 'background:var(--surface2);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:18px 20px;max-width:92%;';
     emailCapCard.innerHTML =
       '<div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.55;">Drop your email and we\'ll send your summary so you don\'t lose it. We\'ll also let you know when your full matches unlock.</div>' +
       '<div style="display:flex;gap:8px;">' +
         '<input id="earlyEmailInput" type="email" placeholder="your@email.com" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" />' +
-        '<button id="earlyEmailBtn" style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Save it →</button>' +
+        '<button id="earlyEmailBtn" style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Save it →</button>' +
         '<button id="earlyEmailSkip" style="padding:9px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Skip</button>' +
       '</div>';
     emailCapMsg.appendChild(emailCapCard);
@@ -4505,7 +4505,7 @@ await showAIMessage(bridgeIntroMsg, 400);
     paywallMsg.className = 'msg ai';
     paywallMsg.style.animationDelay = '0s';
     var paywallCard = document.createElement('div');
-    paywallCard.style.cssText = 'background:linear-gradient(135deg,#f0eeea,#e8e5e0);border:1px solid rgba(24,112,108,0.25);border-radius:16px;padding:28px 24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
+    paywallCard.style.cssText = 'background:linear-gradient(135deg,#1a1a1a,#141414);border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:28px 24px;max-width:92%;position:relative;overflow:hidden;text-align:center;';
     var framing = getMatchFraming();
     paywallCard.innerHTML =
       '<div style="position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>' +
@@ -4515,7 +4515,7 @@ await showAIMessage(bridgeIntroMsg, 400);
         '<span style="font-family:Instrument Serif,serif;font-size:38px;color:var(--accent);line-height:1;">$' + (getFoundingCount() < FOUNDING_LIMIT ? '7' : '19') + '</span>' +
         '<span style="font-size:12px;color:var(--muted);text-align:left;line-height:1.5;">per month<br>cancel anytime</span>' +
       '</div>' +
-      '<a href="' + getActiveStripeLink() + '" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#f7f6f3;font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">' + framing.paywallCta + '</a>' +
+      '<a href="' + getActiveStripeLink() + '" target="_blank" style="display:block;padding:13px 28px;background:var(--accent);border-radius:10px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;text-decoration:none;margin-bottom:12px;">' + framing.paywallCta + '</a>' +
       '<div style="font-size:11px;color:var(--muted);font-style:italic;">The conversation is always free. No resume required.</div>';
     paywallMsg.appendChild(paywallCard);
     chat.appendChild(paywallMsg);
@@ -4653,21 +4653,35 @@ var FOUNDING_PRICE_LINK = 'https://buy.stripe.com/dRm28rbBHbxl2tK7oLdby00'; // $
 var REGULAR_PRICE_LINK = 'https://buy.stripe.com/bJe28rdJP6d16K08sPdby02';   // $19/month standard
 
 function getFoundingCount() {
-  // In production this would be a Supabase query
-  // For now uses localStorage as a proxy -- resets per browser
-  // Replace with: fetch('/api/founding-count') once Supabase is set up
+  // Try localStorage first for instant render
   try {
     return parseInt(localStorage.getItem('lune_founding_count') || '3', 10);
   } catch(e) { return 3; }
 }
 
-function initFoundingBanner() {
+async function fetchFoundingCount() {
+  // Fetch real count from a simple API endpoint
+  // Until Supabase is set up, this falls back to localStorage
+  try {
+    var res = await fetch('/api/founding-count');
+    if (res.ok) {
+      var data = await res.json();
+      var count = parseInt(data.count || '3', 10);
+      localStorage.setItem('lune_founding_count', count);
+      return count;
+    }
+  } catch(e) {}
+  return getFoundingCount();
+}
+
+async function initFoundingBanner() {
   var banner = document.getElementById('foundingBanner');
   var spotsLeft = document.getElementById('foundingSpotsLeft');
   var claimBtn = document.getElementById('foundingClaimBtn');
   if (!banner) return;
 
-  var count = getFoundingCount();
+  // Fetch real count
+  var count = await fetchFoundingCount();
   var remaining = FOUNDING_LIMIT - count;
 
   // Hide banner if founding period is over
