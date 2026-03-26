@@ -2439,7 +2439,7 @@ async function stepVertical2() {
   // Have they looked above them — what do they see
   var q = await getAdaptiveQuestion(
     "whether they have looked at what the role above them looks like and what it pays -- curious not clinical",
-    "Have you ever looked up what the person above you actually makes?",
+    "Have you ever looked up what the person above you makes?",
     "Honestly..."
   );
   await showAIMessage(q);
@@ -2465,8 +2465,6 @@ async function stepVertical2() {
 async function stepVertical3() {
   updateProgress(4);
   // Stay or go -- the key fork
-  await showAIMessage("One more thing before I show you what the path looks like.", 400);
-  await delay(500);
   showOptions([
     "Go higher where I am -- I like this place",
     "Find somewhere new that starts me higher",
@@ -2509,13 +2507,9 @@ async function stepVertical4() {
 
 async function stepVertical5() {
   updateProgress(6);
-  // Location for market-specific ladder data
-  var q = await getAdaptiveQuestion(
-    "what city or region they are in -- for market-specific salary and ladder info",
-    "Almost there -- where are you based?",
-    "I'm in..."
-  );
-  await showAIMessage(q);
+  // Location for market-specific ladder data -- genuinely the last question
+  await showAIMessage("Last one — where are you based?", 400);
+  await delay(400);
   showTextInput("I'm in...", async function(val) {
     responses.location = val;
     addMessage(val, 'user');
@@ -2572,7 +2566,7 @@ async function stepVerticalReveal() {
     'Logistics/warehouse: Associate -> Lead -> Supervisor -> Ops Mgr -> Dir of Ops -> VP',
     '',
     'Be specific about the market. A GM in NYC earns more than one in Knoxville. Name real numbers.',
-    'Do NOT use bullet points. One warm paragraph, then the specific ladder as a simple list, then the differentiator, then the closing question.',
+    'Do NOT use bullet points. Keep it tight -- one warm paragraph (3-4 sentences max), then the ladder as a clean simple list (4-5 rungs max with salary ranges), then ONE sentence naming the differentiator, then one closing question. No more than that. Less is more here.',
     'Feel like a mentor who has seen the ladder from both sides telling them the truth for the first time.'
   ];
   var prompt = promptParts.join('\n');
@@ -2845,7 +2839,7 @@ async function step3() {
       "🌿 Something physical or hands-on",
       "✨ Something else -- it\'s hard to put in a box"
     ],
-    "What kind of work actually lights you up?",
+    "What kind of work lights you up?",
     [
       "🎨 Creative -- making and designing things",
       "🤝 People-focused -- helping and connecting",
@@ -3004,7 +2998,7 @@ async function step5() {
         "It fits my life outside of work too",
         "✨ Something specific I want to say"
       ],
-      "What makes your current situation actually work for you?",
+      "What makes your current situation work for you?",
       [
         "I have real autonomy",
         "The people around me are great",
@@ -3214,7 +3208,7 @@ async function step7() {
   var backgroundQs = [
     "What does a typical day look like for you right now?",
     "Walk me through what your days look like.",
-    "What does most of your day actually involve -- the real version?"
+    "What does a typical day look like for you right now?"
   ];
   var q = backgroundQs[Math.floor(Math.random() * backgroundQs.length)];
   await showAIMessage(q, 400);
@@ -3303,7 +3297,7 @@ async function step9b() {
       "Autonomy -- I run on trust, micromanagement shuts me down completely",
       "🎯 It's more complicated than that"
     ],
-    "What actually gives you energy at work?",
+    "What gives you energy at work?",
     [
       "People -- I think better around others",
       "Hard problems -- the harder the better",
