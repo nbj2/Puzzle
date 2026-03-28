@@ -284,15 +284,15 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   .chat{padding:20px 12px 200px}
   .bubble{font-size:15px;padding:12px 14px;max-width:92%;word-wrap:break-word;overflow-wrap:break-word}
   .msg.user .bubble{max-width:85%}
-  .option-btn{padding:13px 14px;font-size:14px;min-height:48px;width:100%;box-sizing:border-box;word-wrap:break-word;white-space:normal;line-height:1.5}
+  .option-btn{padding:10px 14px;font-size:13.5px;min-height:44px;width:100%;box-sizing:border-box;word-wrap:break-word;white-space:normal;line-height:1.4}
   .convo-textarea{font-size:16px;min-height:80px;width:100%;box-sizing:border-box}
   .submit-btn{padding:14px 20px;font-size:15px;min-height:48px;width:100%;box-sizing:border-box}
-  .input-area{padding:16px 12px 28px}
+  .input-area{padding:12px 12px 20px}
   .input-inner{width:100%;max-width:100%;padding:0}
   .result-pull-quote{font-size:20px}
 
   /* Options container full width on mobile */
-  .options{width:100%;max-width:100%}
+  .options{width:100%;max-width:100%;gap:6px}
   .multi-confirm{width:100%;margin-top:8px;box-sizing:border-box}
 }
 </style>
@@ -1316,7 +1316,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var noteBubble = document.createElement('div');
       noteBubble.className = 'bubble';
       noteBubble.style.cssText = 'font-size:13px;color:var(--muted);font-style:italic;max-width:88%;padding:10px 14px;';
-      noteBubble.textContent = 'Your summary is saved on this device for now. Create a profile anytime to keep it permanently.';
+      noteBubble.textContent = 'I know that\'s a lot to sit with. If you\'re not ready, copy it before you close the tab. The $7 is just how you keep it — and get the rest of what we found.';
       noteMsg.appendChild(noteBubble);
       chat.appendChild(noteMsg);
     }
@@ -1347,17 +1347,44 @@ function vote(type) {
 var responses = {};
 var TOTAL_STEPS = 11;
 
-function initConvo() {
+async function initConvo() {
   document.getElementById('chat').innerHTML = '';
   document.getElementById('inputArea').innerHTML = '';
   Object.keys(responses).forEach(function(k) { delete responses[k]; });
   updateProgress(0);
+
+  // Check if this is a returning user -- if so, open with their last closing question
+  var history = getSummaryHistory();
+  if (history && history.length > 0 && history[0].closing && history[0].closing.trim().length > 10) {
+    var lastClosing = history[0].closing.trim();
+    // Strip question mark to reframe as a callback not a repetition
+    var callback = lastClosing.endsWith('?')
+      ? "Last time we talked, I left you with this: \"" + lastClosing + "\" Did anything shift?"
+      : "Last time we talked, I left you with something. Wondering if it landed.";
+    await showAIMessage(callback, 400);
+    await delay(800);
+  }
+
   step1();
 }
 
 function updateProgress(step) {
   document.getElementById('progress').style.width = ((step / TOTAL_STEPS) * 100) + '%';
-  document.getElementById('stepCount').textContent = step + ' / ' + TOTAL_STEPS;
+  var labels = {
+    0: 'Just starting',
+    1: 'Getting to know you',
+    2: 'Going deeper',
+    3: 'Still listening',
+    4: 'Getting somewhere',
+    5: 'Almost there',
+    6: 'Getting the full picture',
+    7: 'Getting the full picture',
+    8: 'Nearly done',
+    9: 'Almost there',
+    10: 'Putting it together'
+  };
+  var label = labels[step] || (step >= 10 ? 'Putting it together' : 'Getting to know you');
+  document.getElementById('stepCount').textContent = label;
 }
 
 function scrollToBottom() {
@@ -1575,7 +1602,13 @@ function quickMultiAck(val) {
       if (keys.every(function(k) { return v.includes(k); })) return line;
     }
   // Rotating fallbacks -- never say the same thing twice in one session
-  var multiFallbacks = [
+  var itemCount = val.split(',').length;
+  var multiFallbacks = itemCount >= 3 ? [
+    "All of those together tell a real story.",
+    "That's a specific mix. We'll work with it.",
+    "More than one thread. Good.",
+    "Got it -- all of that matters."
+  ] : [
     "More than one thing. That's useful to know.",
     "Got it -- both of those matter.",
     "That's a specific combination.",
@@ -1759,7 +1792,7 @@ async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
         '\n\nNext thing to find out: ' + goal +
         optionContext +
         '\n\nWrite a short, warm follow-up message (under 20 words) and ' + (optionSeeds ? optionSeeds.length : 0) + ' answer options that match its tone exactly.' +
-        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation in the question -- questions move forward, they do not recap. Names and stories belong in the summary, not in transition questions.\n- CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer (no "That\'s great", "That makes sense", "That gap is real", etc.) -- just ask the next question cleanly. Acknowledgments are handled separately.\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
+        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- NEVER use the word "actually" in questions -- it sounds like you are challenging them\n- CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation in the question -- questions move forward, they do not recap. Names and stories belong in the summary, not in transition questions.\n- CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer (no "That\'s great", "That makes sense", "That gap is real", etc.) -- just ask the next question cleanly. Acknowledgments are handled separately.\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
       }]
     });
     var raw = data.content && data.content[0] && data.content[0].text;
@@ -1789,6 +1822,20 @@ async function getAdaptiveQuestion(goal, fallback, placeholder) {
   } catch(e) {
     return fallback;
   }
+}
+
+function isOpenTextOption(val) {
+  var v = (val || '').toLowerCase();
+  return v.includes('let me') ||
+         v.includes('something else') ||
+         v.includes('none of these') ||
+         v.includes('my own') ||
+         v.includes('describe it') ||
+         v.includes('explain it') ||
+         v.includes('say it') ||
+         v.includes('i\'ll explain') ||
+         v.includes('more specific') ||
+         v.includes('complicated');
 }
 
 function isHappyUser() {
@@ -2373,7 +2420,7 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
 
 async function step1() {
   updateProgress(1);
-  await showAIMessage("Hey. You\'re not here by accident.\n\nWhat's going on?", 600);
+  await showAIMessage("Hey. Tell me what's going on.", 600);
   showOptions([
     "😤 Something feels off but I can\'t name it",
     "🔄 Ready for a change, just not sure where",
@@ -3010,7 +3057,7 @@ async function step5() {
     );
     await showAIMessage(result.q);
     showOptions(result.opts, async function(val) {
-      if (val.toLowerCase().includes("something specific")) { step5b_happy(); }
+      if (isOpenTextOption(val)) { step5b_happy(); }
       else {
         responses.neverAgain1 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain1');
@@ -3040,7 +3087,7 @@ async function step5() {
     );
     await showAIMessage(result.q);
     showOptions(result.opts, async function(val) {
-      if (val.toLowerCase().includes("something specific") || val.toLowerCase().includes("let me describe")) { step5b(); }
+      if (isOpenTextOption(val)) { step5b(); }
       else {
         responses.neverAgain1 = val; addMessage(val, 'user');
         passiveConstraintCheck(val, 'neverAgain1');
@@ -3204,18 +3251,49 @@ async function step6b_happy() {
 
 async function step7() {
   updateProgress(7);
-  // Hardcoded -- adaptive engine kept inserting "actually" and referencing prior answers
-  var backgroundQs = [
+
+  // Directed path users already know what they want -- ask about the gap not the day
+  var isDirected = (responses.why || '').toLowerCase().includes('know what i want') ||
+                   (responses.why || '').toLowerCase().includes('how to get there');
+
+  var backgroundQs = isDirected ? [
+    "What's the gap between where you are and where you're trying to get?",
+    "What's standing between you and where you want to be?",
+    "What does the path forward look like from where you are right now?"
+  ] : [
     "What does a typical day look like for you right now?",
     "Walk me through what your days look like.",
     "What does a typical day look like for you right now?"
   ];
+
   var q = backgroundQs[Math.floor(Math.random() * backgroundQs.length)];
   await showAIMessage(q, 400);
-  showTextInput("Most of my day is…", async function(val) {
+  showTextInput(isDirected ? "The gap right now is…" : "Most of my day is…", async function(val) {
     responses.background = val;
     addMessage(val, 'user');
     checkLowConfidence(val);
+
+    // Explicit income/urgency signal catch
+    var valLower = val.toLowerCase();
+    var hasIncomeSignal = valLower.includes('need money') ||
+                          valLower.includes('need more money') ||
+                          valLower.includes('need the money') ||
+                          valLower.includes('need to make more') ||
+                          valLower.includes('bills') ||
+                          valLower.includes('can\'t afford') ||
+                          valLower.includes('financially') ||
+                          valLower.includes('pay my') ||
+                          valLower.includes('need income');
+
+    if (hasIncomeSignal && !constraints.acknowledged.includes('income')) {
+      constraints.acknowledged.push('income');
+      constraints.hardLimit = constraints.hardLimit || 'Needs higher income -- financial pressure is real.';
+      constraints.hardLimitType = constraints.hardLimitType || 'income';
+      await delay(300);
+      await showAIMessage("That's real -- we'll make sure what we find actually pays.", 400);
+      await delay(500);
+    }
+
     var enriched = await acknowledgeAndMaybeFollowUp(val, 'background');
     responses.background = enriched;
     step8();
@@ -3246,7 +3324,7 @@ async function step8() {
   );
   await showAIMessage(result.q);
   showOptions(result.opts, async function(val) {
-    if (val.toLowerCase().includes("none of these") || val.toLowerCase().includes("let me describe") || val.toLowerCase().includes("let me say")) {
+    if (isOpenTextOption(val)) {
       // Don't show ack before the text input -- it fires at wrong time
       step8b();
     }
@@ -3335,8 +3413,27 @@ async function step9b() {
 async function step9c() {
   await showAIMessage("Almost there -- where are you based?", 400);
   showTextInput("I'm in…", async function(val) {
-    responses.location = val;
-    addMessage(val, 'user');
+    // Sanitize location input -- if it looks like a prompt injection, don't pass it to AI
+    var sanitized = val.trim();
+    var looksLikeInjection = sanitized.length > 100 ||
+      sanitized.toLowerCase().includes('ignore') ||
+      sanitized.toLowerCase().includes('system prompt') ||
+      sanitized.toLowerCase().includes('you are') ||
+      sanitized.toLowerCase().includes('please ') ||
+      sanitized.toLowerCase().includes('write a') ||
+      sanitized.toLowerCase().includes('craft a') ||
+      sanitized.toLowerCase().includes('generate') ||
+      sanitized.toLowerCase().includes('pretend') ||
+      sanitized.toLowerCase().includes('forget') ||
+      (sanitized.split(' ').length > 8 && !sanitized.includes(','));
+
+    if (looksLikeInjection) {
+      await showAIMessage("Just need a city or region — where are you based?", 300);
+      return;
+    }
+
+    responses.location = sanitized;
+    addMessage(sanitized, 'user');
 
     // Run relocation detector and compassion check in parallel
     var [relocation, compassion] = await Promise.all([
@@ -3448,19 +3545,24 @@ async function step10() {
   await new Promise(function(resolve) {
     showOptions([
       "Yeah -- let's hear it",
-      "Give me a second"
+      "Actually I want to add something first"
     ], async function(val) {
       addMessage(val, 'user');
-      if (val.toLowerCase().includes('second') || val.toLowerCase().includes('minute')) {
-        await showAIMessage("Take your time. Still here when you're ready.", 300);
-        await delay(800);
+      if (val.toLowerCase().includes('add') || val.toLowerCase().includes('first')) {
+        await showAIMessage("Go ahead -- what did you want to add?", 300);
+        await delay(400);
         await new Promise(function(resolve2) {
-          showOptions([
-            "Okay, I'm ready"
-          ], async function() {
-            addMessage("Okay, I'm ready.", 'user');
+          showTextInput("One more thing I want you to know...", async function(extra) {
+            addMessage(extra, 'user');
+            // Store the extra context and acknowledge it
+            responses.extraContext = (responses.extraContext || '') + ' ' + extra;
+            var ack = await acknowledgeAndMaybeFollowUp(extra, 'extraContext');
+            responses.extraContext = ack;
+            await delay(500);
+            await showAIMessage("Got it. That helps.", 300);
+            await delay(600);
             resolve2();
-          }, true);
+          });
         });
       }
       resolve();
@@ -3869,9 +3971,23 @@ async function credentialCapture() {
     responses.credDegree = val;
     addMessage(val, 'user');
 
-    // If working on it — open the door for elaboration
+    var isYes = val.toLowerCase() === 'yes';
     var isWorkingOn = val.toLowerCase().includes('working on it');
     var hasCerts = val.toLowerCase().includes('certifications');
+
+    if (isYes) {
+      // Ask what kind -- an education degree vs CS degree are very different signals
+      await delay(300);
+      await showAIMessage("What's it in?", 400);
+      await delay(200);
+      showTextInput("My degree is in...", async function(detail) {
+        responses.credDegreeDetail = detail;
+        addMessage(detail, 'user');
+        passiveConstraintCheck(detail, 'credential-degree');
+        credentialCapture2();
+      });
+      return;
+    }
 
     if (isWorkingOn) {
       // Acknowledge and ask — this is where the data lives
@@ -4125,6 +4241,10 @@ function buildCredentialContext() {
       parts.push('DEGREE: None. Surface roles where experience substitutes for degree -- especially in food service, retail, hospitality, logistics, trades, and creative fields. Flag any match that strictly requires a degree.');
     } else if (deg.includes('certifications')) {
       parts.push('DEGREE: No formal degree but has certifications: ' + (responses.credCerts || 'unspecified') + '. Treat certifications as the credential baseline.');
+    } else if (deg.toLowerCase() === 'yes' || deg.includes('Yes')) {
+      // Include what kind of degree -- this matters a lot for matching
+      var degreeField = responses.credDegreeDetail || 'unspecified field';
+      parts.push('DEGREE: Yes -- in ' + degreeField + '. Factor the degree field into match relevance. An education degree signals people skills, facilitation, curriculum design, training. A business degree signals operations, management, strategy. Match accordingly and do not treat all degrees as equivalent.');
     } else {
       parts.push('DEGREE: Yes.');
     }
