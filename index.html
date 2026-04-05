@@ -647,18 +647,132 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   </div>
 </div>
 
-<!-- PRE-CONVERSATION EMAIL — load saved profile from Supabase if any -->
+<!-- PRE-CONVERSATION EMAIL — magic link via Supabase Auth, then load profile -->
 <div id="preConvoModal" class="profile-modal-overlay" style="display:none;">
   <div class="profile-modal">
-    <div class="profile-modal-title">Before we start</div>
-    <div class="profile-modal-sub">Enter your email. If you already saved a Lune summary, we&apos;ll show it here so you don&apos;t repeat the conversation.</div>
-    <input type="email" id="preConvoEmailInput" placeholder="your@email.com" autocomplete="email" />
-    <button class="profile-modal-save" id="preConvoEmailContinue">Continue →</button>
-    <button class="profile-modal-skip" id="preConvoEmailSkip" type="button">Skip — start a new conversation</button>
+    <div id="preConvoFormBlock">
+      <div class="profile-modal-title">Before we start</div>
+      <div class="profile-modal-sub">Enter your email. We&apos;ll send a sign-in link. If you already saved a Lune summary, you&apos;ll pick up where you left off.</div>
+      <input type="email" id="preConvoEmailInput" placeholder="your@email.com" autocomplete="email" />
+      <button class="profile-modal-save" id="preConvoEmailContinue">Continue →</button>
+      <button class="profile-modal-skip" id="preConvoEmailSkip" type="button">Skip — start a new conversation</button>
+    </div>
+    <div id="preConvoOtpSent" style="display:none;">
+      <div class="profile-modal-title" style="font-size:22px;">Check your email — we sent you a link to continue.</div>
+      <div class="profile-modal-sub" style="margin-top:10px;">Open the link on this device to sign in.</div>
+      <button type="button" class="profile-modal-save" id="preConvoOtpResend">Resend link</button>
+      <button type="button" class="profile-modal-skip" id="preConvoOtpChangeEmail">Use a different email</button>
+      <button type="button" class="profile-modal-skip" id="preConvoOtpSkip" style="margin-top:6px;">Skip — start without signing in</button>
+    </div>
   </div>
 </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Public Supabase project values (safe in browser). Set from Supabase dashboard → Project Settings → API.
+const LUNE_SUPABASE_URL = 'https://igthqqwhlajgoypwzskt.supabase.co';
+const LUNE_SUPABASE_ANON_KEY = 'sb_publishable_Wf_AvawvnAR-k5r59FSI9Q_PX71oQwU';
+
+var luneSupabasePromise = null;
+var luneMagicLinkResumeDone = false;
+
+function getLuneSupabase() {
+  if (!LUNE_SUPABASE_URL || !LUNE_SUPABASE_ANON_KEY) return Promise.resolve(null);
+  if (!luneSupabasePromise) {
+    luneSupabasePromise = import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function(m) {
+      return m.createClient(LUNE_SUPABASE_URL, LUNE_SUPABASE_ANON_KEY, {
+        auth: {
+          flowType: 'pkce',
+          detectSessionInUrl: true,
+          persistSession: true,
+          storage: typeof window !== 'undefined' ? window.localStorage : undefined
+        }
+      });
+    });
+  }
+  return luneSupabasePromise;
+}
+
+function resetPreConvoModalPanels() {
+  var form = document.getElementById('preConvoFormBlock');
+  var sent = document.getElementById('preConvoOtpSent');
+  if (form) form.style.display = 'block';
+  if (sent) sent.style.display = 'none';
+}
+
+async function resolveAuthEmailForSave(typedEmail) {
+  try {
+    var client = await getLuneSupabase();
+    if (!client) return (typedEmail || '').trim();
+    var _ref = await client.auth.getSession();
+    var session = _ref && _ref.data && _ref.data.session;
+    if (session && session.user && session.user.email) return session.user.email.trim().toLowerCase();
+  } catch (e) {}
+  return (typedEmail || '').trim();
+}
+
+function syncProfileEmailFieldFromAuth() {
+  getLuneSupabase().then(async function(client) {
+    if (!client) return;
+    var inp = document.getElementById('profileEmailInput');
+    if (!inp) return;
+    try {
+      var _ref2 = await client.auth.getSession();
+      var session = _ref2 && _ref2.data && _ref2.data.session;
+      if (session && session.user && session.user.email) {
+        inp.value = session.user.email;
+        inp.readOnly = true;
+        inp.style.opacity = '0.88';
+      } else {
+        inp.readOnly = false;
+        inp.style.opacity = '';
+      }
+    } catch (e) {}
+  });
+}
+
+async function loadProfileForAuthenticatedUser(user) {
+  var email = (user && user.email ? String(user.email) : '').trim().toLowerCase();
+  if (!email) return;
+  var profile = null;
+  var client = await getLuneSupabase();
+  if (client) {
+    try {
+      var sel = await client.from('profiles').select('email, name, summary, closing_question').eq('email', email).maybeSingle();
+      if (!sel.error && sel.data) profile = sel.data;
+    } catch (e) {}
+  }
+  if (!profile) {
+    try {
+      var res = await fetch('/api/get-profile?email=' + encodeURIComponent(email));
+      if (res.ok) {
+        var j = await res.json();
+        profile = j.profile;
+      }
+    } catch (e) {}
+  }
+  var modal = document.getElementById('preConvoModal');
+  if (modal) modal.style.display = 'none';
+  if (profile && profile.summary && String(profile.summary).trim()) {
+    showExistingProfileSummary(profile);
+  } else {
+    enterConversationFresh();
+  }
+}
+
+async function handleAuthUserForPreConvo(user) {
+  if (luneMagicLinkResumeDone) return;
+  var pending = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('luneAwaitingMagicReturn') === '1';
+  var h = window.location.hash || '';
+  var hashAuth = h.indexOf('access_token') !== -1 || h.indexOf('type=magiclink') !== -1 || h.indexOf('type=signup') !== -1;
+  if (!pending && !hashAuth) return;
+  luneMagicLinkResumeDone = true;
+  try { sessionStorage.removeItem('luneAwaitingMagicReturn'); } catch (e) {}
+  try {
+    if (h) history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch (e2) {}
+  await loadProfileForAuthenticatedUser(user);
+}
+
 // PAGE SWITCHING
 function escapeHtml(str) {
   if (str == null || str === '') return '';
@@ -668,6 +782,7 @@ function escapeHtml(str) {
 }
 
 function openPreConvoEmailGate() {
+  resetPreConvoModalPanels();
   document.getElementById('preConvoModal').style.display = 'flex';
   setTimeout(function() {
     var el = document.getElementById('preConvoEmailInput');
@@ -676,6 +791,8 @@ function openPreConvoEmailGate() {
 }
 
 function enterConversationFresh() {
+  try { sessionStorage.removeItem('luneAwaitingMagicReturn'); } catch (e) {}
+  luneMagicLinkResumeDone = false;
   document.getElementById('preConvoModal').style.display = 'none';
   document.getElementById('pitchPage').style.display = 'none';
   document.getElementById('profilePage').style.display = 'none';
@@ -785,13 +902,14 @@ function saveProfile(data) {
   try { localStorage.setItem('lune_profile', JSON.stringify(data)); } catch(e) {}
 }
 
-function postSaveProfileToServer(email, name, summary, closingQuestion) {
-  if (!email || !email.includes('@')) return;
+async function postSaveProfileToServer(email, name, summary, closingQuestion) {
+  var effEmail = await resolveAuthEmailForSave(email);
+  if (!effEmail || !effEmail.includes('@')) return;
   fetch('/api/save-profile', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: email.trim(),
+      email: effEmail,
       name: name || '',
       summary: summary || '',
       closing_question: closingQuestion || ''
@@ -1254,23 +1372,26 @@ function showProfileModal(summaryText, closingQuestion, responsesSnap) {
   var profile = getProfile();
   if (profile) {
     saveSummaryToHistory(summaryText, closingQuestion, responsesSnap);
-    postSaveProfileToServer(profile.email, profile.name, summaryText, closingQuestion);
+    postSaveProfileToServer(profile.email, profile.name, summaryText, closingQuestion).catch(function() {});
     initProfileUI();
     return;
   }
+  syncProfileEmailFieldFromAuth();
   document.getElementById('profileModal').style.display = 'flex';
   setTimeout(function() { document.getElementById('profileNameInput').focus(); }, 100);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('profileModalSave').addEventListener('click', function() {
+  document.getElementById('profileModalSave').addEventListener('click', async function() {
     var name = document.getElementById('profileNameInput').value.trim();
-    var email = document.getElementById('profileEmailInput').value.trim();
+    var typedEmail = document.getElementById('profileEmailInput').value.trim();
+    var email = await resolveAuthEmailForSave(typedEmail);
+    if (!email) email = typedEmail;
     if (!name) { document.getElementById('profileNameInput').style.borderColor = 'var(--accent)'; return; }
     saveProfile({ name: name, email: email, created: new Date().toISOString(), relocationType: responses.relocationType || null, relocationMemory: responses.relocationMemory || null, targetLocation: responses.targetLocation || null, currentLocation: responses.currentLocation || null, whyFirst: responses.why || null });
     storeConversationMood();
     if (email && email.includes('@') && pendingSummaryData) {
-      postSaveProfileToServer(email, name, pendingSummaryData.summaryText, pendingSummaryData.closingQuestion);
+      postSaveProfileToServer(typedEmail, name, pendingSummaryData.summaryText, pendingSummaryData.closingQuestion).catch(function() {});
     }
 
     // ── SEND WELCOME EMAIL via Resend ─────────────────────────────────────────
@@ -1460,16 +1581,36 @@ document.addEventListener('DOMContentLoaded', function() {
     if (emailInput) emailInput.style.borderColor = '';
     var btn = document.getElementById('preConvoEmailContinue');
     var prev = btn.textContent;
-    btn.textContent = 'Checking…';
+    btn.textContent = 'Sending…';
     btn.disabled = true;
     try {
-      var res = await fetch('/api/get-profile?email=' + encodeURIComponent(email));
-      var data = await res.json();
-      if (res.ok && data.profile && data.profile.summary && String(data.profile.summary).trim()) {
-        showExistingProfileSummary(data.profile);
-      } else {
-        enterConversationFresh();
+      if (!LUNE_SUPABASE_URL || !LUNE_SUPABASE_ANON_KEY) {
+        var res = await fetch('/api/get-profile?email=' + encodeURIComponent(email));
+        var data = await res.json();
+        if (res.ok && data.profile && data.profile.summary && String(data.profile.summary).trim()) {
+          showExistingProfileSummary(data.profile);
+        } else {
+          enterConversationFresh();
+        }
+        return;
       }
+      var client = await getLuneSupabase();
+      if (!client) {
+        enterConversationFresh();
+        return;
+      }
+      var redirectTo = window.location.origin + window.location.pathname;
+      var otpResult = await client.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: redirectTo }
+      });
+      if (otpResult.error) {
+        alert(otpResult.error.message || 'Could not send email. Try again.');
+        return;
+      }
+      try { sessionStorage.setItem('luneAwaitingMagicReturn', '1'); } catch (e) {}
+      document.getElementById('preConvoFormBlock').style.display = 'none';
+      document.getElementById('preConvoOtpSent').style.display = 'block';
     } catch (e) {
       enterConversationFresh();
     } finally {
@@ -1480,6 +1621,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('preConvoEmailSkip').addEventListener('click', function() {
     enterConversationFresh();
+  });
+
+  document.getElementById('preConvoOtpResend').addEventListener('click', async function() {
+    var emailInput = document.getElementById('preConvoEmailInput');
+    var email = emailInput ? emailInput.value.trim() : '';
+    if (!email || !email.includes('@')) return;
+    var client = await getLuneSupabase();
+    if (!client) return;
+    var b = document.getElementById('preConvoOtpResend');
+    var p = b.textContent;
+    b.textContent = 'Sending…';
+    b.disabled = true;
+    try {
+      await client.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: window.location.origin + window.location.pathname }
+      });
+    } finally {
+      b.textContent = p;
+      b.disabled = false;
+    }
+  });
+
+  document.getElementById('preConvoOtpChangeEmail').addEventListener('click', async function() {
+    try {
+      var c = await getLuneSupabase();
+      if (c) await c.auth.signOut();
+    } catch (e) {}
+    try { sessionStorage.removeItem('luneAwaitingMagicReturn'); } catch (e2) {}
+    luneMagicLinkResumeDone = false;
+    document.getElementById('preConvoOtpSent').style.display = 'none';
+    document.getElementById('preConvoFormBlock').style.display = 'block';
+  });
+
+  document.getElementById('preConvoOtpSkip').addEventListener('click', async function() {
+    try {
+      var c = await getLuneSupabase();
+      if (c) await c.auth.signOut();
+    } catch (e) {}
+    try { sessionStorage.removeItem('luneAwaitingMagicReturn'); } catch (e2) {}
+    luneMagicLinkResumeDone = false;
+    enterConversationFresh();
+  });
+
+  getLuneSupabase().then(function(client) {
+    if (!client) return;
+    client.auth.onAuthStateChange(async function(event, session) {
+      if (!session || !session.user) return;
+      if (event === 'TOKEN_REFRESHED') return;
+      await handleAuthUserForPreConvo(session.user);
+    });
   });
 });
 
