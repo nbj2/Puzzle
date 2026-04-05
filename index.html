@@ -450,7 +450,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
       <div class="try-it-title">What would Lune<br>say about <em>you?</em></div>
       <div class="try-it-sub">Ten questions nobody else thought to ask. A summary that finally says the thing you've been trying to say about yourself.</div>
       <button class="try-it-btn" id="tryItBtn">I'm ready — let's talk →</button>
-      <div style="margin-top:14px;font-size:13px;color:var(--muted);">Not urgently searching? <button onclick="startConversation()" style="font-size:13px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;padding:0;">Just curious works too.</button></div>
+      <div style="margin-top:14px;font-size:13px;color:var(--muted);">Not urgently searching? <button onclick="enterConversationFresh()" style="font-size:13px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;padding:0;">Just curious works too.</button></div>
       <span class="try-it-note">Always free. No resume required.</span>
     </div>
 
@@ -647,15 +647,112 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   </div>
 </div>
 
+<!-- PRE-CONVERSATION EMAIL — load saved profile from Supabase if any -->
+<div id="preConvoModal" class="profile-modal-overlay" style="display:none;">
+  <div class="profile-modal">
+    <div class="profile-modal-title">Before we start</div>
+    <div class="profile-modal-sub">Enter your email. If you already saved a Lune summary, we&apos;ll show it here so you don&apos;t repeat the conversation.</div>
+    <input type="email" id="preConvoEmailInput" placeholder="your@email.com" autocomplete="email" />
+    <button class="profile-modal-save" id="preConvoEmailContinue">Continue →</button>
+    <button class="profile-modal-skip" id="preConvoEmailSkip" type="button">Skip — start a new conversation</button>
+  </div>
+</div>
+
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // PAGE SWITCHING
-function startConversation() {
+function escapeHtml(str) {
+  if (str == null || str === '') return '';
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function openPreConvoEmailGate() {
+  document.getElementById('preConvoModal').style.display = 'flex';
+  setTimeout(function() {
+    var el = document.getElementById('preConvoEmailInput');
+    if (el) el.focus();
+  }, 100);
+}
+
+function enterConversationFresh() {
+  document.getElementById('preConvoModal').style.display = 'none';
   document.getElementById('pitchPage').style.display = 'none';
   document.getElementById('profilePage').style.display = 'none';
   var cp = document.getElementById('convoPage');
   cp.style.display = 'flex';
   window.scrollTo(0, 0);
   initConvo();
+}
+
+function showExistingProfileSummary(profile) {
+  document.getElementById('preConvoModal').style.display = 'none';
+  document.getElementById('pitchPage').style.display = 'none';
+  document.getElementById('profilePage').style.display = 'none';
+  document.getElementById('convoPage').style.display = 'flex';
+  window.scrollTo(0, 0);
+  document.getElementById('chat').innerHTML = '';
+  document.getElementById('inputArea').innerHTML = '';
+  updateProgress(10);
+
+  var mainText = profile.summary || '';
+  var lastLine = profile.closing_question || '';
+  var summaryFull = mainText + (lastLine ? '\n\n' + lastLine : '');
+
+  var welcome = document.createElement('div');
+  welcome.className = 'msg ai';
+  welcome.innerHTML = '<div class="bubble" style="max-width:92%">Welcome back' + (profile.name ? ', ' + escapeHtml(profile.name) : '') + '. Here\'s your saved summary.</div>';
+  document.getElementById('chat').appendChild(welcome);
+
+  var msg = document.createElement('div');
+  msg.className = 'msg ai';
+  var bubble = document.createElement('div');
+  bubble.className = 'reveal-bubble';
+  bubble.innerHTML = '<p style="margin-bottom:16px">' + escapeHtml(mainText).replace(/\n/g, '<br>') + '</p>' +
+    (lastLine ? '<p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + escapeHtml(lastLine) + '</p>' : '');
+  msg.appendChild(bubble);
+
+  var saveRow = document.createElement('div');
+  saveRow.style.cssText = 'display:flex;gap:10px;margin-top:10px;max-width:92%;flex-wrap:wrap;';
+  var copyBtn = document.createElement('button');
+  copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+  copyBtn.textContent = 'Copy my summary';
+  copyBtn.addEventListener('click', function() {
+    navigator.clipboard.writeText(summaryFull).then(function() {
+      copyBtn.textContent = 'Copied ✓';
+      setTimeout(function() { copyBtn.textContent = 'Copy my summary'; }, 2000);
+    }).catch(function() {});
+  });
+  saveRow.appendChild(copyBtn);
+  msg.appendChild(saveRow);
+  document.getElementById('chat').appendChild(msg);
+
+  var againRow = document.createElement('div');
+  againRow.className = 'msg ai';
+  againRow.style.marginTop = '8px';
+  var againBtn = document.createElement('button');
+  againBtn.style.cssText = 'padding:10px 18px;background:transparent;border:1px solid rgba(201,168,76,0.35);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;';
+  againBtn.textContent = 'Take the conversation again →';
+  againBtn.addEventListener('click', function() {
+    enterConversationFresh();
+  });
+  againRow.appendChild(againBtn);
+  document.getElementById('chat').appendChild(againRow);
+
+  scrollToBottom();
+
+  var merged = getProfile() || {};
+  saveProfile(Object.assign({}, merged, {
+    email: profile.email,
+    name: profile.name || merged.name,
+    created: merged.created || new Date().toISOString()
+  }));
+  saveSummaryToHistory(summaryFull, lastLine, {});
+  initProfileUI();
+}
+
+function startConversation() {
+  openPreConvoEmailGate();
 }
 
 function backToPitch() {
@@ -686,6 +783,20 @@ function setProfile(data) {
 
 function saveProfile(data) {
   try { localStorage.setItem('lune_profile', JSON.stringify(data)); } catch(e) {}
+}
+
+function postSaveProfileToServer(email, name, summary, closingQuestion) {
+  if (!email || !email.includes('@')) return;
+  fetch('/api/save-profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email.trim(),
+      name: name || '',
+      summary: summary || '',
+      closing_question: closingQuestion || ''
+    })
+  }).catch(function() {});
 }
 
 function getSummaryHistory() {
@@ -1143,6 +1254,7 @@ function showProfileModal(summaryText, closingQuestion, responsesSnap) {
   var profile = getProfile();
   if (profile) {
     saveSummaryToHistory(summaryText, closingQuestion, responsesSnap);
+    postSaveProfileToServer(profile.email, profile.name, summaryText, closingQuestion);
     initProfileUI();
     return;
   }
@@ -1157,6 +1269,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!name) { document.getElementById('profileNameInput').style.borderColor = 'var(--accent)'; return; }
     saveProfile({ name: name, email: email, created: new Date().toISOString(), relocationType: responses.relocationType || null, relocationMemory: responses.relocationMemory || null, targetLocation: responses.targetLocation || null, currentLocation: responses.currentLocation || null, whyFirst: responses.why || null });
     storeConversationMood();
+    if (email && email.includes('@') && pendingSummaryData) {
+      postSaveProfileToServer(email, name, pendingSummaryData.summaryText, pendingSummaryData.closingQuestion);
+    }
 
     // ── SEND WELCOME EMAIL via Resend ─────────────────────────────────────────
     // Fires once when profile is first created with an email address
@@ -1334,6 +1449,38 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('voteMaybe').addEventListener('click', function() { vote('maybe'); });
   document.getElementById('voteNo').addEventListener('click', function() { vote('no'); });
   document.getElementById('maybeConvoBtn').addEventListener('click', startConversation);
+
+  document.getElementById('preConvoEmailContinue').addEventListener('click', async function() {
+    var emailInput = document.getElementById('preConvoEmailInput');
+    var email = emailInput ? emailInput.value.trim() : '';
+    if (!email || !email.includes('@')) {
+      if (emailInput) emailInput.style.borderColor = 'var(--accent)';
+      return;
+    }
+    if (emailInput) emailInput.style.borderColor = '';
+    var btn = document.getElementById('preConvoEmailContinue');
+    var prev = btn.textContent;
+    btn.textContent = 'Checking…';
+    btn.disabled = true;
+    try {
+      var res = await fetch('/api/get-profile?email=' + encodeURIComponent(email));
+      var data = await res.json();
+      if (res.ok && data.profile && data.profile.summary && String(data.profile.summary).trim()) {
+        showExistingProfileSummary(data.profile);
+      } else {
+        enterConversationFresh();
+      }
+    } catch (e) {
+      enterConversationFresh();
+    } finally {
+      btn.textContent = prev;
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('preConvoEmailSkip').addEventListener('click', function() {
+    enterConversationFresh();
+  });
 });
 
 function vote(type) {
@@ -1345,9 +1492,11 @@ function vote(type) {
 }
 
 var responses = {};
+var foundingIncrementSent = false;
 var TOTAL_STEPS = 11;
 
 async function initConvo() {
+  foundingIncrementSent = false;
   document.getElementById('chat').innerHTML = '';
   document.getElementById('inputArea').innerHTML = '';
   Object.keys(responses).forEach(function(k) { delete responses[k]; });
@@ -1357,12 +1506,13 @@ async function initConvo() {
   var history = getSummaryHistory();
   if (history && history.length > 0 && history[0].closing && history[0].closing.trim().length > 10) {
     var lastClosing = history[0].closing.trim();
-    // Strip question mark to reframe as a callback not a repetition
+    // Strip markdown asterisks for plain text display
+    lastClosing = lastClosing.replace(/\*/g, '');
     var callback = lastClosing.endsWith('?')
       ? "Last time we talked, I left you with this: \"" + lastClosing + "\" Did anything shift?"
       : "Last time we talked, I left you with something. Wondering if it landed.";
     await showAIMessage(callback, 400);
-    await delay(800);
+    await delay(1200);
   }
 
   step1();
@@ -3708,6 +3858,20 @@ async function generateReveal() {
     scrollToBottom();
     await delay(1000);
 
+    if (!foundingIncrementSent) {
+      try {
+        var incRes = await fetch('/api/founding-count', { method: 'POST' });
+        if (incRes.ok) {
+          foundingIncrementSent = true;
+          var incData = await incRes.json();
+          var newFc = parseInt(incData.count !== undefined && incData.count !== null ? incData.count : 0, 10);
+          try { localStorage.setItem('lune_founding_count', String(newFc)); } catch(e0) {}
+          renderFoundingSpotsDisplay(newFc);
+          updateVotePricing();
+        }
+      } catch(eInc) {}
+    }
+
     var responsesSnap = Object.assign({}, responses);
     showProfileModal(mainText, lastLine, responsesSnap);
 
@@ -4758,7 +4922,7 @@ function showEndActions(retryMatches) {
   scrollToBottom();
 }
 // ── FOUNDING MEMBER SYSTEM ────────────────────────────────────────────────────
-// Tracks founding member count in localStorage (real version needs Supabase)
+// Count comes from GET/POST /api/founding-count (Supabase founding_count table)
 // Banner auto-hides when 100 founding members claimed
 // Founding price: $7/month for life | Regular price: $12/month
 
@@ -4767,70 +4931,63 @@ var FOUNDING_PRICE_LINK = 'https://buy.stripe.com/dRm28rbBHbxl2tK7oLdby00'; // $
 var REGULAR_PRICE_LINK = 'https://buy.stripe.com/bJe28rdJP6d16K08sPdby02';   // $19/month standard
 
 function getFoundingCount() {
-  // Try localStorage first for instant render
   try {
-    return parseInt(localStorage.getItem('lune_founding_count') || '3', 10);
-  } catch(e) { return 3; }
+    return parseInt(localStorage.getItem('lune_founding_count') || '0', 10);
+  } catch(e) { return 0; }
 }
 
 async function fetchFoundingCount() {
-  // Fetch real count from a simple API endpoint
-  // Until Supabase is set up, this falls back to localStorage
   try {
     var res = await fetch('/api/founding-count');
     if (res.ok) {
       var data = await res.json();
-      var count = parseInt(data.count || '3', 10);
-      localStorage.setItem('lune_founding_count', count);
+      var count = parseInt(data.count !== undefined && data.count !== null ? data.count : 0, 10);
+      localStorage.setItem('lune_founding_count', String(count));
       return count;
     }
   } catch(e) {}
   return getFoundingCount();
 }
 
-async function initFoundingBanner() {
+function renderFoundingSpotsDisplay(count) {
   var banner = document.getElementById('foundingBanner');
   var spotsLeft = document.getElementById('foundingSpotsLeft');
-  var claimBtn = document.getElementById('foundingClaimBtn');
   if (!banner) return;
-
-  // Fetch real count
-  var count = await fetchFoundingCount();
   var remaining = FOUNDING_LIMIT - count;
-
-  // Hide banner if founding period is over
   if (remaining <= 0) {
     banner.style.display = 'none';
     return;
   }
-
-  // Update spots remaining
-  if (spotsLeft) spotsLeft.textContent = remaining;
-
-  // Add urgency tones at different thresholds
-  if (remaining <= 10) {
-    spotsLeft.style.color = '#e05a3a';
-    if (spotsLeft.parentElement) {
-      spotsLeft.parentElement.querySelector('.founding-spots').textContent = 'spots left -- almost gone';
-    }
-  } else if (remaining <= 25) {
-    if (spotsLeft.parentElement) {
-      spotsLeft.parentElement.querySelector('.founding-spots').textContent = 'spots remaining';
-    }
+  banner.style.display = '';
+  if (spotsLeft) {
+    spotsLeft.textContent = remaining;
+    spotsLeft.style.color = '';
   }
+  var spotsLabel = spotsLeft && spotsLeft.parentElement ? spotsLeft.parentElement.querySelector('.founding-spots') : null;
+  if (remaining <= 10) {
+    if (spotsLeft) spotsLeft.style.color = '#e05a3a';
+    if (spotsLabel) spotsLabel.textContent = 'spots left -- almost gone';
+  } else if (remaining <= 25) {
+    if (spotsLabel) spotsLabel.textContent = 'spots remaining';
+  } else {
+    if (spotsLabel) spotsLabel.textContent = 'spots left';
+  }
+}
 
-  // Claim button -- goes to $7 Stripe link
+async function initFoundingBanner() {
+  var banner = document.getElementById('foundingBanner');
+  var claimBtn = document.getElementById('foundingClaimBtn');
+  if (!banner) return;
+
+  var count = await fetchFoundingCount();
+  renderFoundingSpotsDisplay(count);
+
   if (claimBtn) {
     claimBtn.addEventListener('click', function() {
       var current = getFoundingCount();
       if (current < FOUNDING_LIMIT) {
-        var newCount = current + 1;
-        localStorage.setItem('lune_founding_count', newCount);
-        // Mark this browser session as a founding member claim
-        // Full membership confirmed after Stripe payment completes
-        // In production: POST to /api/claim-founding with member number
         localStorage.setItem('lune_founding_claimed', JSON.stringify({
-          number: newCount,
+          number: current + 1,
           claimedAt: new Date().toISOString()
         }));
       }
