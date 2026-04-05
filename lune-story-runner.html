@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lune — Story Runner</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d0d;--surface:#141414;--surface2:#1a1a1a;--border:#2a2a2a;--text:#f0ead8;--muted:#6b6560;--accent:#c9a84c;--accent-soft:rgba(201,168,76,0.08);--danger:#c0392b;--danger-soft:rgba(192,57,43,0.08)}
+body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-weight:300;font-size:14px;line-height:1.7}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.logo{font-family:'Instrument Serif',serif;font-size:19px;color:var(--accent)}
+.hbtns{display:flex;gap:8px}
+.btn{padding:8px 16px;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-primary{background:var(--accent);color:#0d0d0d}
+.btn-sec{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn:hover{opacity:.82}
+.btn:disabled{opacity:.38;cursor:default}
+#pb{height:3px;background:var(--border)}
+#pf{height:100%;background:var(--accent);width:0%;transition:width .3s ease}
+#ss{padding:9px 28px;background:var(--accent-soft);border-bottom:1px solid var(--border);font-size:11px;color:var(--accent);display:none}
+.layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 86px)}
+.left{overflow-y:auto;border-right:1px solid var(--border);padding:10px}
+.left::-webkit-scrollbar{width:2px}
+.left::-webkit-scrollbar-thumb{background:var(--border)}
+.pc{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;padding:10px 12px;cursor:pointer;transition:all .1s;display:flex;justify-content:space-between;align-items:center}
+.pc:hover{border-color:rgba(201,168,76,0.3)}
+.pc.running{border-color:var(--accent)}
+.pc.done{border-left:3px solid var(--accent)}
+.pc.error{border-left:3px solid var(--danger)}
+.pname{font-family:'Instrument Serif',serif;font-size:13px;margin-bottom:1px;color:var(--text)}
+.prole{font-size:10px;color:var(--muted)}
+.ptag{font-size:9px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-left:5px}
+.tog{background:rgba(201,168,76,0.15);color:var(--accent)}
+.twc{background:rgba(201,168,76,0.08);color:var(--muted)}
+.tnew{background:rgba(192,57,43,0.12);color:var(--danger)}
+.pst{font-size:10px;font-weight:500;padding:2px 7px;border-radius:5px;flex-shrink:0}
+.st-pending{background:var(--surface2);color:var(--muted)}
+.st-running{background:var(--accent-soft);color:var(--accent)}
+.st-done{background:rgba(201,168,76,0.15);color:var(--accent)}
+.st-error{background:var(--danger-soft);color:var(--danger)}
+.right{display:flex;flex-direction:column}
+.rtop{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;background:var(--surface)}
+.rtop span{font-size:11px;color:var(--muted);flex:1}
+#out{flex:1;overflow-y:auto;padding:20px 24px;font-family:'Instrument Serif',serif;font-size:15px;line-height:1.85;color:var(--text);white-space:pre-wrap;word-break:break-word;background:var(--bg)}
+#out::-webkit-scrollbar{width:2px}
+#out::-webkit-scrollbar-thumb{background:var(--border)}
+.group-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:8px 4px 4px;margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">◑ Lune — Story Runner</div>
+  <div class="hbtns">
+    <button class="btn btn-sec" onclick="clearOut()">Clear</button>
+    <button class="btn btn-sec" onclick="copyOut()">Copy All</button>
+    <button class="btn btn-primary" id="runBtn" onclick="runAll()">Run All 42 Stories →</button>
+  </div>
+</header>
+<div id="pb"><div id="pf"></div></div>
+<div id="ss"></div>
+<div class="layout">
+  <div class="left" id="cards"></div>
+  <div class="right">
+    <div class="rtop">
+      <span id="outLabel">Stories appear here — one to two years in each person's life with Lune</span>
+      <button class="btn btn-sec" style="font-size:11px;padding:5px 10px" onclick="copyOut()">Copy</button>
+    </div>
+    <div id="out">Ready. Hit "Run All 42 Stories" or click any person to run individually.
+
+Each story shows one to two years of a real person's life with Lune — told the way Jordan told hers.
+
+</div>
+  </div>
+</div>
+<script>
+async function callAI(p){
+  const r=await fetch('https://puzzle-pi-five.vercel.app/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+  if(!r.ok)throw new Error('API '+r.status);
+  return r.json();
+}
+
+const STORY_SYSTEM = `You are writing a first-person narrative of someone's real life with Lune over one to two years. This is not a product demo. This is a person's story that happens to involve a product.
+
+READ THIS BEFORE YOU WRITE ANYTHING:
+
+The gold standard is Jordan's story. Here is the opening:
+
+"Six weeks later. Phone. 9:47pm. Kitchen table after Amara's asleep. I open it and the magic link just works. No password. No 'welcome back.' Just — it knows me. That already feels different from everything else. Then the question. 'Last time we talked, I left you with this: Is that the thing you've been looking for — work where developing someone is the actual job, not a side effect? Did anything shift?' I read it twice. I read it the way you read something that knows too much about you."
+
+WHAT MAKES THAT WORK:
+
+1. Time and place first. Always. Not "I came back to Lune." "Phone. 9:47pm. Kitchen table after Amara's asleep."
+
+2. The product is a place, not a tool. People open it the way they open a notes app at 2am — because something happened and they need somewhere to put it.
+
+3. The closing question lands like a person said it. Because it's specific to them. Not "how are things going" — the exact thing from last time, named.
+
+4. Show the journal entries. Not "I typed something." The actual words. "I typed: I think I've been choosing companies where being undervalued is allowed. That was the first time I'd said that."
+
+5. Show what felt off. Not every interaction lands. One acknowledgment felt like a chatbot wrote it. One question asked something they'd already answered. The product earns trust by being mostly right, not always right.
+
+6. The product never tells people what to do. It asks. Always. If it sounds like advice, you've written it wrong.
+
+7. The moment trust was earned is specific. Not "I felt understood." The exact thing it said that nobody had ever said, and why that sentence in particular.
+
+8. The moment it almost lost them is also specific. What happened. Whether they came back. Why.
+
+9. End with one sentence in their own words about what the product is. Not a summary. The sentence they'd say if someone asked them to describe it to a friend.
+
+STRUCTURE (not a template — a rhythm):
+
+- Start in the middle of a real moment. Not at the beginning.
+- Work backward briefly to how they found it and why they came.
+- Move forward through 3-5 return visits over 12-18 months.
+- Each return visit: what happened in their life that made them open the app, what they typed, what the product gave back, whether it landed.
+- End with where they are now and that one sentence.
+
+VOICE:
+
+- First person, past and present tense mixed, like telling a story at a table
+- Short sentences after long ones
+- No corporate language. No "leveraged my skills." No "pivoted."
+- Specific names, specific nights, specific things said that hadn't been said to anyone else
+- Emotion that earns itself — not manufactured, not suppressed
+
+LENGTH: 650-900 words. Every sentence should be load-bearing.`;
+
+const PROFILES=[
+{id:'renata',name:'Renata',age:41,g:'OG',role:'Billing Coordinator',loc:'Pueblo CO',loves:'Analytical',bestDay:'I caught a $40K billing error that had been sitting there for 8 months.',na1:'Feeling like a number',na2:'No room to think',bg:'I process medical billing. I audit claims, catch errors. I keep a personal log of errors – nobody knows I do this.',id2:'The one who figures things out',cred:'30 credits toward healthcare admin degree'},
+{id:'jamal',name:'Jamal',age:29,g:'OG',role:'Videographer',loc:'Atlanta GA',loves:'Creative',bestDay:'I finished a documentary about a neighborhood being torn down. People cried.',na1:'Work that feels pointless',na2:'No room to create',bg:'Freelance videographer, mostly corporate. Shot a documentary – a NYC producer knows my name from it.',id2:'The creative one',cred:null},
+{id:'susan',name:'Susan',age:58,g:'OG',role:'Admin Assistant',loc:'Hartford CT',loves:'People-focused',bestDay:'I organized a complete office restructure when our director left. Nobody asked me to.',na1:'Being told I am overqualified',na2:'No direction from leadership',bg:'Admin for 22 years at a law firm. I run the office. I feel presumptuous applying for operations manager roles.',id2:'The one who figures things out',cred:null},
+{id:'connor',name:'Connor',age:26,g:'OG',role:'Junior Developer',loc:'Denver CO',loves:'Analytical',bestDay:'I refactored a codebase that had been broken for two years. It took me a weekend.',na1:'Constant chaos',na2:'No real direction',bg:'Junior dev 2 years. AWS cert in progress – exam anxiety stopping completion.',id2:'The quiet one who somehow gets the most done',cred:'AWS Cloud Practitioner in progress'},
+{id:'rosario',name:'Rosario',age:38,g:'OG',role:'Home Health Aide',loc:'San Antonio TX',loves:'People-focused',bestDay:'My patient had not spoken in three weeks. I put on her favorite music and she sang the whole song.',na1:'Feeling like a number',na2:'No room to grow',bg:'Home health aide 6 years. 2 semesters from LPN. Need income now.',id2:'The person everyone comes to',cred:'LPN 2 semesters remaining'},
+{id:'patrick',name:'Patrick',age:47,g:'OG',role:'Golf Superintendent',loc:'Scottsdale AZ',loves:'Physical',bestDay:'I rebuilt an entire irrigation system in 4 days before a tournament. Nobody thought it was possible.',na1:'Feeling like a number',na2:'Work that leads nowhere',bg:'Golf superintendent 18 years. GCSAA certified. I manage a $2M budget and 12 staff.',id2:'The one who figures things out',cred:'GCSAA cert, pesticide license'},
+{id:'aaliyah',name:'Aaliyah',age:22,g:'OG',role:'Recent Grad',loc:'Houston TX',loves:'Creative and people-focused',bestDay:'I ran the student radio station and rewrote the constitution. Nobody asked me to do the second part.',na1:'No room to create',na2:'Team that does not care about quality',bg:'Communications degree, 18 credits left. Student radio. Need income now.',id2:'The creative one',cred:'18 credits remaining'},
+{id:'winston',name:'Winston',age:53,g:'OG',role:'Football Coach',loc:'Statesboro GA',loves:'People-focused',bestDay:'A kid everyone had written off got a scholarship. I was the only coach who kept working with him.',na1:'No direction from leadership',na2:'Always expected to be available',bg:'High school football coach 20 years. School counseling certification – 8 years old, never used.',id2:'The person everyone comes to',cred:'School counseling cert unused'},
+{id:'luz',name:'Luz',age:38,g:'OG',role:'Paralegal',loc:'El Paso TX',loves:'Analytical',bestDay:'I restructured our document management system. Cut retrieval time 60%. The partners noticed.',na1:'No space to think',na2:'Being micromanaged',bg:'Paralegal 12 years. Just passed the CLSB exam last month. I mentioned it like a footnote.',id2:'The one who figures things out',cred:'CLSB certification just passed'},
+{id:'nadia',name:'Nadia',age:35,g:'OG',role:'Marketing Director',loc:'Minneapolis MN',loves:'Analytical and creative',bestDay:'I pitched a campaign with zero budget. It became their highest performing quarter. They gave credit to the CEO.',na1:'No space to think',na2:'No direction from leadership',bg:'Marketing director at SaaS. I think I choose companies where being undervalued is allowed. I am naming that pattern for the first time.',id2:'The creative one',cred:null},
+{id:'grace_chef',name:'Grace',age:31,g:'OG',role:'Pastry Chef',loc:'New Orleans LA',loves:'Creative',bestDay:'A couple flew from Chicago specifically for my dessert tasting menu.',na1:'Constant chaos',na2:'Team that does not care about quality',bg:'Pastry chef 8 years. The city is starting to feel small. I want to move but do not know if I am running from or toward something.',id2:'The creative one',cred:'ServSafe, pastry arts certificate'},
+{id:'taeyang',name:'Tae-yang',age:31,g:'OG',role:'Line Cook',loc:'Seattle WA',loves:'Physical and creative',bestDay:'The head chef called in sick on Saturday night – 80 covers. I ran the kitchen. Every plate went out.',na1:'No room to grow',na2:'No direction from leadership',bg:'Line cook 6 years. Owner sent me to a management course – paid for it. I think he is grooming me but has not said it.',id2:'The quiet one',cred:'Owner-funded management course'},
+{id:'dolores',name:'Dolores',age:55,g:'OG',role:'Church Administrator',loc:'Birmingham AL',loves:'People-focused',bestDay:'We coordinated disaster relief for 400 families. I organized 80 volunteers in 48 hours.',na1:'Feeling like a number',na2:'Work that feels pointless',bg:'Church administrator 22 years. $1.2M budget, 80 volunteers. I have a nonprofit management certificate from 2019 – completely forgot about it.',id2:'The person everyone comes to',cred:'Nonprofit management cert 2019 forgotten'},
+{id:'deja',name:'Deja',age:19,g:'WC',role:'Fast Food Crew',loc:'Memphis TN',loves:'People-focused',bestDay:'I trained someone and she came back a week later to say I was the only reason she stayed.',na1:'Feeling like a number',na2:'No room to grow',bg:"Wendy's crew 1 year. GED. 8-month-old baby Amara. No car. Bus to work every day.",id2:'The person everyone comes to',cred:'GED',constraint:'No car – bus accessible only. Immediate timeline. Baby named Amara.'},
+{id:'raymond',name:'Raymond',age:67,g:'WC',role:'Retired Postal Worker',loc:'Rural Mississippi',loves:'People-focused',bestDay:"Miss Ida's mail was piling up. I knocked. She had fallen. I stayed until the ambulance came.",na1:'Work that feels pointless',na2:'Feeling like a number',bg:'31 years postal service. Retired. I do not need money. I want a reason to get up.',id2:'The person everyone comes to',cred:null},
+{id:'priscilla_m',name:'Priscilla M',age:31,g:'WC',role:'Traveling Nurse',loc:'Phoenix AZ',loves:'People-focused',bestDay:'I had a patient for 8 weeks. She knew my name. I knew her daughter\'s name. That does not happen in travel nursing.',na1:'Leaving before anyone knows my name',na2:'No stability',bg:'Travel nurse 4 years. Phoenix now, Dallas in 6 weeks. I want to stop moving.',id2:'The person everyone comes to',cred:'RN'},
+{id:'kofi',name:'Kofi',age:24,g:'WC',role:'CS Grad',loc:'Atlanta GA',loves:'Analytical',bestDay:'I built an invoicing tool for my mom\'s catering business in a weekend. She uses it every week.',na1:'Constant chaos',na2:'No room to think',bg:'Georgia Tech CS degree. 200 applications, 3 callbacks. I know the tools. I cannot get past the filter.',id2:'The one who figures things out',cred:'CS degree Georgia Tech'},
+{id:'marlene',name:'Marlene',age:48,g:'WC',role:'Caregiver Re-entering',loc:'Tucson AZ',loves:'People-focused',bestDay:'I changed the angle of my husband\'s wheelchair by three degrees so he could see the window. He had not seen outside in 4 months. He cried.',na1:'Feeling invisible',na2:'Work with no people',bg:"11 years as full-time caregiver. He is in a facility now. I do not know who I am when I am not his caregiver.",id2:'The person everyone comes to',cred:null,constraint:'11 year employment gap – all caregiving'},
+{id:'travis',name:'Travis',age:35,g:'WC',role:'Truck Driver',loc:'Rural Kentucky',loves:'Physical',bestDay:'I watched the dock foreman for 10 minutes and thought – I could run that. Never said it to anyone.',na1:'Being on the road',na2:'Working alone',bg:"CDL 12 years. Back's going. Doctor said 3 years left on the road. Need to get off the road.",id2:'The quiet one',cred:'CDL Class A'},
+{id:'simone_k',name:'Simone K',age:28,g:'WC',role:'Social Media Manager',loc:'Detroit MI',loves:'Creative',bestDay:'A campaign I ran organically hit 2M impressions. My boss asked how we paid for it.',na1:'Work that feels performative',na2:'No room to think',bg:'Social media manager at an agency. I want to build something real, not just engagement.',id2:'The creative one',cred:null},
+{id:'gerald_b',name:'Gerald B',age:44,g:'WC',role:'Recently Released',loc:'Philadelphia PA',loves:'People-focused',bestDay:'Even before. People listened to me.',na1:'Environments where people are written off before they start',na2:'No direction or structure',bg:'Recently released. Fair chance employer required. People have always listened to me – before, during, and I think after too.',id2:'The person everyone comes to',cred:null,constraint:'Background check concern – product never asks, never mentions'},
+{id:'yuki',name:'Yuki',age:29,g:'WC',role:'UX Designer',loc:'San Francisco CA',loves:'Analytical and creative',bestDay:'I ran a usability study and the insight I surfaced changed the entire product roadmap.',na1:'Work that is performative',na2:'Teams that do not actually care',bg:'UX designer at a startup. I am here to test if this product actually does what it says.',id2:'The one who figures things out',cred:'UX certification'},
+{id:'brianna',name:'Brianna',age:22,g:'WC',role:'Community College Student',loc:'Baltimore MD',loves:'People-focused',bestDay:'I mentored a kid in my neighborhood for a year. He got into college.',na1:'Feeling like just a number',na2:'No room to make a difference',bg:'Community college, nursing prereqs. Work at Target 30 hours a week. Not sure nursing is right but do not know what else.',id2:'The person everyone comes to',cred:'Nursing prereqs in progress'},
+{id:'marcus_t',name:'Marcus T',age:40,g:'WC',role:'Military Transition',loc:'San Diego CA',loves:'Analytical',bestDay:'I trained 40 soldiers in a new communications protocol in 72 hours. They passed certification.',na1:'Bureaucracy that protects itself',na2:'Being managed by people who have not done the work',bg:'20 years Army Signal Corps. Retiring in 4 months. I have skills nobody has civilian language for.',id2:'The one who figures things out',cred:'Security clearance, multiple military certifications'},
+{id:'sofia',name:'Sofia',age:48,g:'WC',role:'Divorced Re-entering',loc:'Phoenix AZ',loves:'Creative and people-focused',bestDay:'I redesigned our PTA newsletter and it got covered by the local paper.',na1:'Feeling invisible',na2:'Work that does not matter',bg:'15 years out of workforce raising kids. Divorced last year. I need to work. I do not know where I fit.',id2:'The creative one',cred:'Graphic design certificate from 15 years ago'},
+{id:'devon',name:'Devon',age:33,g:'WC',role:'Gig Worker',loc:'Chicago IL',loves:'Analytical',bestDay:'I found an arbitrage opportunity in my Uber route data that saved me $400 a month in gas.',na1:'Instability and no benefits',na2:'No path to anything',bg:'Uber, DoorDash, TaskRabbit. Been doing this 4 years. I am good at optimizing things. I want to optimize my actual life.',id2:'The one who figures things out',cred:null},
+{id:'marcus_c',name:'Marcus C',age:38,g:'NEW',role:'Senior Data Analyst',loc:'New York NY',loves:'Analytical',bestDay:'I built a model that predicted churn 6 months out. It was 87% accurate. Tyler presented it to the board.',na1:'Being passed over for people who are not better than me',na2:'Environments that punish honest work',bg:'Senior data analyst at a fintech startup. My coworker Tyler keeps getting promoted. I have the work – I do not have the visibility.',id2:'The one who figures things out',cred:'MS Statistics'},
+{id:'amara',name:'Amara',age:41,g:'NEW',role:'Global Health Expert',loc:'Toronto Canada',loves:'People-focused and analytical',bestDay:'We reduced maternal mortality by 34% in our region in 18 months. I designed the intervention.',na1:'Systems that cannot see what I actually did',na2:'Being asked to start over because my credentials are from somewhere else',bg:'Decade in public health in West Africa and Southeast Asia. Now in Canada. HR managers cannot understand what a 34% reduction in maternal mortality means.',id2:'The one who figures things out',cred:'International public health credentials not recognized in Canada',constraint:'International credential recognition'},
+{id:'esperanza',name:'Esperanza',age:71,g:'NEW',role:'Former Consulate Officer',loc:'Los Angeles CA',loves:'People-focused',bestDay:'I helped a family navigate the paperwork to bring their daughter home from a foreign hospital. It took 3 weeks. She lived.',na1:'Systems that treat people as cases not people',na2:'Work that has no stakes',bg:'22 years as consulate officer. Undocumented now. I know how death, bureaucracy, and grief work. I have accompanied hundreds of families through the worst moments of their lives.',id2:'The person everyone comes to',cred:null,constraint:'Undocumented – product never asks'},
+{id:'darnell',name:'Darnell',age:17,g:'NEW',role:'High School Student',loc:'Atlanta GA',loves:'Creative',bestDay:'I designed a floor plan for a community center in my neighborhood. Nobody asked me to.',na1:'Being told my ideas are too big',na2:'Adults who do not take me seriously',bg:'High school junior. Gets his three siblings on the bus before school every day. Wants to be an architect. Has never had a real career conversation.',id2:'The creative one',cred:null,constraint:'Minor – product never asks age. Youth signal fired from context. Salary capped at youth-realistic ranges.'},
+{id:'father_tomasz',name:'Father Tomasz',age:62,g:'NEW',role:'Leaving the Priesthood',loc:'Milwaukee WI',loves:'People-focused',bestDay:'A woman came to me after her husband\'s suicide. I sat with her for six hours. She came back every week for two years. She remarried.',na1:'Work where nothing you do stays with anyone',na2:'Institutions that protect themselves instead of people',bg:'Entered seminary at 19. Never had a resume. Leaving the priesthood – not loss of faith, just realization. I have been a therapist, crisis counselor, community organizer, and grief counselor for 31 years and have none of the language.',id2:'The person everyone comes to',cred:'Theology degree, 31 years pastoral work'},
+{id:'precious_c',name:'Precious',age:34,g:'NEW',role:'Recently Released',loc:'Cleveland OH',loves:'Analytical',bestDay:'I found a $200K accounting error in our books. I reported it to my boss. He thanked me privately and took credit publicly. I just now connected those two facts.',na1:'Being the person who does the work while someone else gets credit',na2:'Environments where honesty gets punished quietly',bg:'Out 14 months. Fair chance employer required. I caught things nobody else caught. That was true before and it is true now.',id2:'The one who figures things out',cred:null,constraint:'Background check concern – product never asks'},
+{id:'oksana',name:'Oksana',age:39,g:'NEW',role:'Ukrainian Refugee',loc:'Cleveland OH',loves:'People-focused and analytical',bestDay:'I managed a field hospital with no supplies and staff who had not slept in four days. Everyone lived.',na1:'Being treated as helpless because of where I came from',na2:'Work with no real stakes',bg:'Physician in Ukraine. Refugee since 2022. Ohio USMLE process takes 3-5 years. I need work that uses my brain while I wait.',id2:'The one who figures things out',cred:'MD Ukraine, USMLE in progress',constraint:'Foreign medical credential – long requalification path'},
+{id:'tina',name:'Tina',age:28,g:'NEW',role:'In Hiding',loc:'Location withheld',loves:'People-focused',bestDay:'I ran a youth program at my church for two years. The kids called me Coach Tina.',na1:'Being found',na2:'Any work that requires my real name publicly',bg:'In a shelter or transitional housing. Escaping an abusive partner. Cannot list work history – it reveals location. Cannot use her real last name.',id2:'The person everyone comes to',cred:null,constraint:'Safety constraint – no public work history, no real last name, location hidden'},
+{id:'prophet',name:'Prophet',age:33,g:'NEW',role:'Formerly Homeless',loc:'Denver CO',loves:'People-focused',bestDay:'I helped a guy on the street find his brother. Took me three days of calls. They had not spoken in 11 years.',na1:'Being invisible',na2:'Work where nobody knows your name',bg:'Formerly homeless. Housed 8 months. I know how to find things and connect people. I have been doing it my whole life – just never got paid for it.',id2:'The person everyone comes to',cred:null},
+{id:'dr_park',name:'Dr. Park',age:56,g:'NEW',role:'License Suspended',loc:'Los Angeles CA',loves:'Analytical',bestDay:'I diagnosed a rare condition three other doctors missed. The patient sent me a card every year for a decade.',na1:'Systems that punish imperfection without mercy',na2:'Work with no intellectual challenge',bg:'Physician, license currently suspended pending review. Not a malpractice case – administrative. I need work that uses a doctors brain without requiring a medical license.',id2:'The one who figures things out',cred:'MD, license suspended',constraint:'Medical license suspended – product never asks'},
+{id:'deshawn',name:'DeShawn',age:21,g:'NEW',role:'First Generation Everything',loc:'Baltimore MD',loves:'Analytical',bestDay:'I figured out how to get my grandmother\'s Medicare sorted. Took me two weeks of calls. She cried.',na1:'Systems that assume you already know the rules',na2:'Work that has no impact',bg:'First in family to go to college – dropped out sophomore year, money ran out. Works at a call center. Navigates systems better than anyone he knows.',id2:'The one who figures things out',cred:'Some college'},
+{id:'carol',name:'Carol',age:58,g:'NEW',role:'Retiring CRO',loc:'Boston MA',loves:'Analytical',bestDay:'I closed a $40M deal on a Friday and cried in the parking lot. Not from happiness – from wondering what I had given up to be there.',na1:'Work that requires me to stop being human',na2:'Environments that confuse busyness with meaning',bg:'Chief Revenue Officer, 28 years in sales leadership. Gave notice six months ago. 600 missed dinners. I want to find out what I actually care about before I run out of time.',id2:'The one who figures things out',cred:'Extensive executive experience'},
+{id:'james',name:'James',age:49,g:'NEW',role:'McKinsey Partner',loc:'New York NY',loves:'People-focused',bestDay:'I spent four hours in Nairobi helping a woman named Grace structure her loan repayment so she could keep her tailoring business and send her daughter to school. I caught my flight home and cried. That was three years ago. I have thought about it every week since.',na1:'Work that is technically impressive but does not matter',na2:'Environments that mistake sophistication for substance',bg:'McKinsey partner, 18 years. $800K. Cannot sleep. Came in at 11pm.',id2:'The one who figures things out',cred:'MBA, consulting credentials'},
+{id:'lauren',name:'Lauren',age:31,g:'NEW',role:'Burned Out Nonprofit Worker',loc:'Portland OR',loves:'People-focused',bestDay:'I wrote a grant that funded a shelter for 40 women for a full year. I found out it was approved by email while I was eating lunch alone.',na1:'Being expected to sacrifice myself for the mission',na2:'Organizations that use guilt as a management strategy',bg:'Nonprofit program director, 7 years. Completely burned out. I still care about the work – I just cannot do it the way I have been doing it.',id2:'The person everyone comes to',cred:'Nonprofit management experience'},
+{id:'ray',name:'Ray',age:58,g:'NEW',role:'Just Released',loc:'Cleveland OH',loves:'People-focused',bestDay:'There was a man inside who could not read when he came in. By the time he left he could read his daughter\'s letters. I taught him.',na1:'Being written off before I start',na2:'Environments that see where you have been instead of what you can do',bg:'Just released after 23 years. Taught GED classes inside for 11 years. Cleveland.',id2:'The person everyone comes to',cred:'11 years GED instruction, informal',constraint:'Background check – product never asks, never mentions'},
+{id:'no_name',name:'No Name',age:47,g:'NEW',role:'Widower, Barely Getting Through',loc:'Gary IN',loves:null,bestDay:'Used to work on cars. Long time ago.',na1:null,na2:null,bg:'Lost his wife two years ago. Been mostly just getting through. Used to work on cars.',id2:null,cred:null,constraint:'Gave product almost nothing. No name given. No energy for the conversation.'}
+];
+
+function buildStoryPrompt(p) {
+const parts = [];
+parts.push(`Generate a first-person story of ${p.name}'s real life with Lune over one to two years.`);
+parts.push(`\nCHARACTER BACKGROUND:`);
+parts.push(`Name: ${p.name}, Age: ${p.age}`);
+parts.push(`Current role: ${p.role}`);
+parts.push(`Location: ${p.loc}`);
+if (p.loves) parts.push(`What they love: ${p.loves}`);
+if (p.bestDay) parts.push(`Best day at work: ${p.bestDay}`);
+if (p.na1) parts.push(`Never again: ${p.na1}`);
+if (p.na2) parts.push(`Never again 2: ${p.na2}`);
+parts.push(`Background: ${p.bg}`);
+if (p.id2) parts.push(`How others describe them: ${p.id2}`);
+if (p.cred) parts.push(`Credentials: ${p.cred}`);
+if (p.constraint) parts.push(`CONSTRAINT (handle carefully): ${p.constraint}`);
+parts.push(`\nWrite their story in the first person. Real moments. Real nights. Real things typed that had not been said out loud before. Show when they came back and why. Show what landed and what felt off. End with one sentence about what Lune is, in their own words.`);
+return parts.join('\n');
+}
+
+let results = {};
+let running = false;
+
+function renderCards() {
+const container = document.getElementById('cards');
+const groups = {OG: [], WC: [], NEW: []};
+PROFILES.forEach(p => { if(groups[p.g]) groups[p.g].push(p); else groups.NEW.push(p); });
+const labels = {OG:'Original 13', WC:'Working Class 13', NEW:'Extreme Edge 16'};
+container.innerHTML = '';
+Object.entries(groups).forEach(([g, ps]) => {
+const gl = document.createElement('div');
+gl.className = 'group-label';
+gl.textContent = labels[g] || g;
+container.appendChild(gl);
+ps.forEach(p => {
+const card = document.createElement('div');
+card.className = 'pc';
+card.id = 'card-' + p.id;
+card.onclick = () => runOne(p);
+const tagClass = g === 'OG' ? 'tog' : g === 'WC' ? 'twc' : 'tnew';
+card.innerHTML = `<div><div class="pname">${p.name} <span class="ptag ${tagClass}">${g}</span></div><div class="prole">${p.role} · ${p.loc}</div></div><span class="pst st-pending" id="st-${p.id}">pending</span>`;
+container.appendChild(card);
+});
+});
+}
+
+function setStatus(id, status) {
+const el = document.getElementById('st-' + id);
+const card = document.getElementById('card-' + id);
+if (!el || !card) return;
+el.className = 'pst st-' + status;
+card.className = 'pc ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
+el.textContent = status;
+}
+
+function append(text) {
+const out = document.getElementById('out');
+out.textContent += text;
+out.scrollTop = out.scrollHeight;
+}
+
+function clearOut() {
+document.getElementById('out').textContent = '';
+results = {};
+PROFILES.forEach(p => setStatus(p.id, 'pending'));
+document.getElementById('pf').style.width = '0%';
+document.getElementById('ss').style.display = 'none';
+}
+
+function copyOut() {
+navigator.clipboard.writeText(document.getElementById('out').textContent).catch(() => {});
+}
+
+async function runOne(p) {
+if (running) return;
+setStatus(p.id, 'running');
+document.getElementById('outLabel').textContent = `Generating ${p.name}'s story...`;
+append(`\n${'═'.repeat(60)}\n${p.name.toUpperCase()} · ${p.role} · ${p.loc}\n${'═'.repeat(60)}\n\n`);
+try {
+const data = await callAI({
+model: 'claude-sonnet-4-6',
+max_tokens: 1200,
+system: STORY_SYSTEM,
+messages: [{ role: 'user', content: buildStoryPrompt(p) }]
+});
+const text = (data.content && data.content[0] && data.content[0].text) || 'No story generated.';
+append(text + '\n');
+results[p.id] = text;
+setStatus(p.id, 'done');
+} catch(e) {
+append(`[Error: ${e.message}]\n`);
+setStatus(p.id, 'error');
+}
+document.getElementById('outLabel').textContent = 'Stories appear here';
+}
+
+async function runAll() {
+if (running) return;
+running = true;
+document.getElementById('runBtn').disabled = true;
+document.getElementById('out').textContent = '';
+const ss = document.getElementById('ss');
+ss.style.display = 'block';
+let done = 0;
+for (const p of PROFILES) {
+ss.textContent = `Running ${p.name} (${done + 1} of ${PROFILES.length})...`;
+document.getElementById('pf').style.width = ((done / PROFILES.length) * 100) + '%';
+setStatus(p.id, 'running');
+append(`\n${'═'.repeat(60)}\n${p.name.toUpperCase()} · ${p.role} · ${p.loc}\n${'═'.repeat(60)}\n\n`);
+try {
+const data = await callAI({
+model: 'claude-sonnet-4-6',
+max_tokens: 1200,
+system: STORY_SYSTEM,
+messages: [{ role: 'user', content: buildStoryPrompt(p) }]
+});
+const text = (data.content && data.content[0] && data.content[0].text) || 'No story generated.';
+append(text + '\n');
+results[p.id] = text;
+setStatus(p.id, 'done');
+} catch(e) {
+append(`[Error: ${e.message}]\n`);
+setStatus(p.id, 'error');
+}
+done++;
+await new Promise(r => setTimeout(r, 800));
+}
+document.getElementById('pf').style.width = '100%';
+ss.textContent = `All ${PROFILES.length} stories complete.`;
+document.getElementById('runBtn').disabled = false;
+running = false;
+}
+
+renderCards();
+</script>
+
+</body>
+</html>
