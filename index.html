@@ -238,15 +238,16 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .bubble { max-width:88%; padding:14px 18px; border-radius:18px; font-size:15px; line-height:1.65; }
 .msg.ai .bubble { background:var(--bubble-ai); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text); }
 .msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(201,168,76,0.2); border-bottom-right-radius:4px; color:var(--text); }
-/* ── Landing page chat preview (loops; no input) ── */
-.landing-chat-preview-wrap { width:100%; max-width:860px; margin:0 auto; padding:0 40px 56px; position:relative; z-index:1; }
-.landing-chat-preview-wrap .landing-chat-preview-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:18px; opacity:0.65; text-align:center; }
-.landing-chat-preview-wrap .chat.landing-chat-preview-mount { width:100%; max-width:100%; padding:28px 24px 36px; min-height:300px; border:1px solid var(--border); border-radius:16px; background:var(--surface); gap:20px; flex:initial; }
-.landing-chat-preview-wrap .chat.landing-chat-preview-mount .msg { opacity:0; transform:translateY(10px); animation:none; }
-.landing-chat-preview-wrap .chat.landing-chat-preview-mount .msg.lcp-visible { animation:lcpBubbleIn 0.5s ease forwards; }
-@keyframes lcpBubbleIn { to { opacity:1; transform:translateY(0); } }
-.landing-chat-preview-wrap .chat.landing-chat-preview-mount .msg.lcp-out { animation:lcpBubbleOut 0.55s ease forwards !important; }
-@keyframes lcpBubbleOut { to { opacity:0; transform:translateY(-10px); } }
+/* ── Hero cinematic chat preview (fixed height; loop; no input) ── */
+.hero-cinematic-preview { width:100%; max-width:520px; margin:28px auto 0; height:300px; overflow:hidden; position:relative; z-index:1; border-radius:22px; background:radial-gradient(ellipse 85% 70% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 55%), linear-gradient(180deg, rgba(26,26,26,0.5) 0%, rgba(13,13,13,0.92) 100%); border:1px solid rgba(201,168,76,0.14); box-shadow:inset 0 0 80px rgba(0,0,0,0.45), 0 24px 48px rgba(0,0,0,0.35); opacity:1; transition:opacity 1s ease; }
+.hero-cinematic-preview.lcp-scene-out { opacity:0; pointer-events:none; }
+.hero-cinematic-preview::after { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03); }
+.hero-cinematic-preview-inner { height:100%; padding:18px 18px 14px; overflow:hidden; display:flex; flex-direction:column; }
+.hero-cinematic-preview-inner .chat.hero-cinematic-chat { flex:1; min-height:0; width:100%; max-width:100%; padding:0; gap:12px; justify-content:flex-start; overflow:hidden; }
+.hero-cinematic-preview-inner .chat.hero-cinematic-chat .msg { opacity:0; transform:translateY(14px) scale(0.98); animation:none; filter:blur(4px); }
+.hero-cinematic-preview-inner .chat.hero-cinematic-chat .msg.lcp-bubble-in { animation:cinematicBubbleIn 0.85s cubic-bezier(0.22,1,0.36,1) forwards; }
+@keyframes cinematicBubbleIn { 0%{opacity:0;transform:translateY(14px) scale(0.98);filter:blur(4px)} 100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)} }
+.hero-cinematic-preview-inner .bubble { font-size:14px; line-height:1.6; padding:11px 15px; max-width:90%; }
 .reveal-bubble { background:linear-gradient(135deg,#f0eeea 0%,#161410 100%); border:1px solid rgba(201,168,76,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
 .reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
@@ -299,8 +300,9 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   .input-area{padding:12px 12px 20px}
   .input-inner{width:100%;max-width:100%;padding:0}
   .result-pull-quote{font-size:20px}
-  .landing-chat-preview-wrap{padding:0 20px 40px}
-  .landing-chat-preview-wrap .chat.landing-chat-preview-mount{min-height:260px;padding:20px 16px 28px}
+  .hero-cinematic-preview{max-width:100%;height:280px;margin-top:22px;border-radius:18px}
+  .hero-cinematic-preview-inner{padding:14px 14px 12px}
+  .hero-cinematic-preview-inner .bubble{font-size:13px;padding:10px 13px}
 
   /* Options container full width on mobile */
   .options{width:100%;max-width:100%;gap:6px}
@@ -361,6 +363,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     </div>
     <div class="hero-cta">
       <button class="cta-main" id="heroBtn">Start the conversation →</button>
+      <div class="hero-cinematic-preview" id="heroCinematicPreview" aria-hidden="true">
+        <div class="hero-cinematic-preview-inner">
+          <div class="chat hero-cinematic-chat" id="heroCinematicChat"></div>
+        </div>
+      </div>
       <span class="cta-hint">The conversation is always free.</span>
     </div>
     <div class="scroll-line">
@@ -397,11 +404,6 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 
     </svg>
   </div>
-
-  <section class="landing-chat-preview-wrap" aria-label="Sample conversation preview">
-    <div class="landing-chat-preview-label">How it feels</div>
-    <div class="chat landing-chat-preview-mount" id="landingChatPreview" aria-live="polite"></div>
-  </section>
 
   <div class="content">
 
@@ -5365,9 +5367,10 @@ function buildFoundersBadgeHTML(profile) {
     '</div>';
 }
 
-(function initLandingChatPreview() {
-  var mount = document.getElementById('landingChatPreview');
-  if (!mount) return;
+(function initHeroCinematicPreview() {
+  var mount = document.getElementById('heroCinematicChat');
+  var scene = document.getElementById('heroCinematicPreview');
+  if (!mount || !scene) return;
   var steps = [
     { role: 'ai', text: "Hey. Tell me what's going on." },
     { role: 'user', text: 'I got passed over again. Third time.' },
@@ -5378,7 +5381,6 @@ function buildFoundersBadgeHTML(profile) {
   ];
   var reduced = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var timers = [];
-  var cancelled = false;
 
   function clearTimers() {
     timers.forEach(function(id) { clearTimeout(id); });
@@ -5392,68 +5394,45 @@ function buildFoundersBadgeHTML(profile) {
   }
 
   function runCycle() {
-    if (cancelled) return;
     clearTimers();
+    scene.classList.remove('lcp-scene-out');
     mount.innerHTML = '';
-    var stepIndex = 0;
+    var i = 0;
 
-    function playNext() {
-      if (cancelled || stepIndex >= steps.length) {
-        if (!cancelled && stepIndex >= steps.length) endCycle();
+    function addBubble() {
+      if (i >= steps.length) {
+        endCycle();
         return;
       }
-      var step = steps[stepIndex];
+      var step = steps[i];
       var row = document.createElement('div');
       row.className = 'msg ' + (step.role === 'ai' ? 'ai' : 'user');
       var bubble = document.createElement('div');
       bubble.className = 'bubble';
-      var span = document.createElement('span');
-      bubble.appendChild(span);
+      bubble.textContent = step.text;
       row.appendChild(bubble);
       mount.appendChild(row);
       requestAnimationFrame(function() {
-        row.classList.add('lcp-visible');
+        row.classList.add('lcp-bubble-in');
       });
-
-      var full = step.text;
-      if (reduced) {
-        span.textContent = full;
-        stepIndex++;
-        timers.push(setTimeout(playNext, 450));
-        return;
-      }
-      var ci = 0;
-      function typeTick() {
-        if (cancelled) return;
-        if (ci >= full.length) {
-          stepIndex++;
-          timers.push(setTimeout(playNext, 520));
-          return;
-        }
-        span.textContent += full.charAt(ci);
-        ci++;
-        timers.push(setTimeout(typeTick, 19 + Math.random() * 12));
-      }
-      timers.push(setTimeout(typeTick, 120));
+      i++;
+      timers.push(setTimeout(addBubble, reduced ? 380 : 520));
     }
 
     function endCycle() {
-      if (cancelled) return;
-      delay(1100).then(function() {
-        if (cancelled) return;
-        var nodes = mount.querySelectorAll('.msg');
-        nodes.forEach(function(n) { n.classList.add('lcp-out'); });
-        return delay(580);
+      delay(950).then(function() {
+        scene.classList.add('lcp-scene-out');
+        return delay(1050);
       }).then(function() {
-        if (cancelled) return;
         mount.innerHTML = '';
-        return delay(500);
+        scene.classList.remove('lcp-scene-out');
+        return delay(450);
       }).then(function() {
-        if (!cancelled) runCycle();
+        runCycle();
       });
     }
 
-    playNext();
+    timers.push(setTimeout(addBubble, reduced ? 80 : 200));
   }
 
   if (document.readyState === 'loading') {
