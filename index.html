@@ -238,6 +238,15 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .bubble { max-width:88%; padding:14px 18px; border-radius:18px; font-size:15px; line-height:1.65; }
 .msg.ai .bubble { background:var(--bubble-ai); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text); }
 .msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(201,168,76,0.2); border-bottom-right-radius:4px; color:var(--text); }
+/* ── Landing page chat preview (loops; no input) ── */
+.landing-chat-preview-wrap { width:100%; max-width:860px; margin:0 auto; padding:0 40px 56px; position:relative; z-index:1; }
+.landing-chat-preview-wrap .landing-chat-preview-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:18px; opacity:0.65; text-align:center; }
+.landing-chat-preview-wrap .chat.landing-chat-preview-mount { width:100%; max-width:100%; padding:28px 24px 36px; min-height:300px; border:1px solid var(--border); border-radius:16px; background:var(--surface); gap:20px; flex:initial; }
+.landing-chat-preview-wrap .chat.landing-chat-preview-mount .msg { opacity:0; transform:translateY(10px); animation:none; }
+.landing-chat-preview-wrap .chat.landing-chat-preview-mount .msg.lcp-visible { animation:lcpBubbleIn 0.5s ease forwards; }
+@keyframes lcpBubbleIn { to { opacity:1; transform:translateY(0); } }
+.landing-chat-preview-wrap .chat.landing-chat-preview-mount .msg.lcp-out { animation:lcpBubbleOut 0.55s ease forwards !important; }
+@keyframes lcpBubbleOut { to { opacity:0; transform:translateY(-10px); } }
 .reveal-bubble { background:linear-gradient(135deg,#f0eeea 0%,#161410 100%); border:1px solid rgba(201,168,76,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
 .reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
@@ -290,6 +299,8 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   .input-area{padding:12px 12px 20px}
   .input-inner{width:100%;max-width:100%;padding:0}
   .result-pull-quote{font-size:20px}
+  .landing-chat-preview-wrap{padding:0 20px 40px}
+  .landing-chat-preview-wrap .chat.landing-chat-preview-mount{min-height:260px;padding:20px 16px 28px}
 
   /* Options container full width on mobile */
   .options{width:100%;max-width:100%;gap:6px}
@@ -386,6 +397,11 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 
     </svg>
   </div>
+
+  <section class="landing-chat-preview-wrap" aria-label="Sample conversation preview">
+    <div class="landing-chat-preview-label">How it feels</div>
+    <div class="chat landing-chat-preview-mount" id="landingChatPreview" aria-live="polite"></div>
+  </section>
 
   <div class="content">
 
@@ -5348,6 +5364,104 @@ function buildFoundersBadgeHTML(profile) {
     ) +
     '</div>';
 }
+
+(function initLandingChatPreview() {
+  var mount = document.getElementById('landingChatPreview');
+  if (!mount) return;
+  var steps = [
+    { role: 'ai', text: "Hey. Tell me what's going on." },
+    { role: 'user', text: 'I got passed over again. Third time.' },
+    { role: 'ai', text: 'Same role or different?' },
+    { role: 'user', text: 'Different title. Same story.' },
+    { role: 'ai', text: 'What do you think they keep missing?' },
+    { role: 'user', text: "Everything that doesn't show up on paper." }
+  ];
+  var reduced = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var timers = [];
+  var cancelled = false;
+
+  function clearTimers() {
+    timers.forEach(function(id) { clearTimeout(id); });
+    timers = [];
+  }
+
+  function delay(ms) {
+    return new Promise(function(resolve) {
+      timers.push(setTimeout(resolve, ms));
+    });
+  }
+
+  function runCycle() {
+    if (cancelled) return;
+    clearTimers();
+    mount.innerHTML = '';
+    var stepIndex = 0;
+
+    function playNext() {
+      if (cancelled || stepIndex >= steps.length) {
+        if (!cancelled && stepIndex >= steps.length) endCycle();
+        return;
+      }
+      var step = steps[stepIndex];
+      var row = document.createElement('div');
+      row.className = 'msg ' + (step.role === 'ai' ? 'ai' : 'user');
+      var bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      var span = document.createElement('span');
+      bubble.appendChild(span);
+      row.appendChild(bubble);
+      mount.appendChild(row);
+      requestAnimationFrame(function() {
+        row.classList.add('lcp-visible');
+      });
+
+      var full = step.text;
+      if (reduced) {
+        span.textContent = full;
+        stepIndex++;
+        timers.push(setTimeout(playNext, 450));
+        return;
+      }
+      var ci = 0;
+      function typeTick() {
+        if (cancelled) return;
+        if (ci >= full.length) {
+          stepIndex++;
+          timers.push(setTimeout(playNext, 520));
+          return;
+        }
+        span.textContent += full.charAt(ci);
+        ci++;
+        timers.push(setTimeout(typeTick, 19 + Math.random() * 12));
+      }
+      timers.push(setTimeout(typeTick, 120));
+    }
+
+    function endCycle() {
+      if (cancelled) return;
+      delay(1100).then(function() {
+        if (cancelled) return;
+        var nodes = mount.querySelectorAll('.msg');
+        nodes.forEach(function(n) { n.classList.add('lcp-out'); });
+        return delay(580);
+      }).then(function() {
+        if (cancelled) return;
+        mount.innerHTML = '';
+        return delay(500);
+      }).then(function() {
+        if (!cancelled) runCycle();
+      });
+    }
+
+    playNext();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runCycle);
+  } else {
+    runCycle();
+  }
+})();
 
 </script>
 </body>
