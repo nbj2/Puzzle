@@ -238,15 +238,45 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 .bubble { max-width:88%; padding:14px 18px; border-radius:18px; font-size:15px; line-height:1.65; }
 .msg.ai .bubble { background:var(--bubble-ai); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text); }
 .msg.user .bubble { background:var(--accent-soft); border:1px solid rgba(201,168,76,0.2); border-bottom-right-radius:4px; color:var(--text); }
-/* ── Hero cinematic chat preview (fixed height; loop; no input) ── */
-.hero-cinematic-preview { width:100%; max-width:520px; margin:28px auto 0; height:auto; min-height:0; overflow:visible; position:relative; z-index:1; border-radius:22px; background:radial-gradient(ellipse 85% 70% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 55%), linear-gradient(180deg, rgba(26,26,26,0.5) 0%, rgba(13,13,13,0.92) 100%); border:1px solid rgba(201,168,76,0.14); box-shadow:inset 0 0 80px rgba(0,0,0,0.45), 0 24px 48px rgba(0,0,0,0.35); opacity:1; transition:opacity 1s ease; }
+/* ── Hero cinematic chat preview (fixed px height — no layout shift; loop; no input) ── */
+/* Height budget: vertical padding 18+16=34px + gaps 5×12=60px + six bubbles (14px font ×1.6 line × lines + 11px pad ×2 each). At max-width 520px, inner ~484px; longest lines wrap to ~2 lines → sum ≈ 448px content + 94 = 542px → 568px with border/safety. */
+.hero-cinematic-preview {
+  width:100%; max-width:520px; margin:28px auto 0;
+  height:568px; min-height:568px; max-height:568px;
+  box-sizing:border-box; overflow:hidden; contain:layout style;
+  position:relative; z-index:1; flex-shrink:0;
+  border-radius:22px;
+  background:radial-gradient(ellipse 85% 70% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 55%), linear-gradient(180deg, rgba(26,26,26,0.5) 0%, rgba(13,13,13,0.92) 100%);
+  border:1px solid rgba(201,168,76,0.14);
+  box-shadow:inset 0 0 80px rgba(0,0,0,0.45), 0 24px 48px rgba(0,0,0,0.35);
+  opacity:1; transition:opacity 1s ease;
+}
 .hero-cinematic-preview.lcp-scene-out { opacity:0; pointer-events:none; }
 .hero-cinematic-preview::after { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03); }
-.hero-cinematic-preview-inner { padding:18px 18px 16px; overflow:visible; display:block; }
-.hero-cinematic-preview-inner .chat.hero-cinematic-chat { width:100%; max-width:100%; padding:0; gap:12px; justify-content:flex-start; display:flex; flex-direction:column; overflow:visible; flex:none; min-height:0; }
-.hero-cinematic-preview-inner .chat.hero-cinematic-chat .msg { opacity:0; transform:translateY(14px) scale(0.98); animation:none; filter:blur(4px); }
-.hero-cinematic-preview-inner .chat.hero-cinematic-chat .msg.lcp-bubble-in { animation:cinematicBubbleIn 0.85s cubic-bezier(0.22,1,0.36,1) forwards; }
-@keyframes cinematicBubbleIn { 0%{opacity:0;transform:translateY(14px) scale(0.98);filter:blur(4px)} 100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)} }
+.hero-cinematic-preview-inner {
+  height:100%; box-sizing:border-box; padding:18px 18px 16px; overflow:hidden; display:block;
+}
+.hero-cinematic-preview-inner .chat.hero-cinematic-chat {
+  width:100%; max-width:100%; height:100%; min-height:0; padding:0; gap:12px;
+  justify-content:flex-start; align-content:flex-start;
+  display:flex; flex-direction:column; overflow:hidden; flex:none;
+  box-sizing:border-box;
+}
+/* Override global .msg fadeUp so only our keyframes run */
+.hero-cinematic-preview-inner .chat.hero-cinematic-chat .msg {
+  flex-shrink:0;
+  animation:none;
+  opacity:0;
+  transform:none;
+}
+/* Pending: full text in layout, invisible — stack height matches final (no jump) */
+.hero-cinematic-preview-inner .chat.hero-cinematic-chat .msg.lcp-pending {
+  pointer-events:none;
+}
+.hero-cinematic-preview-inner .chat.hero-cinematic-chat .msg.lcp-bubble-in {
+  animation:cinematicBubbleIn 0.85s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+@keyframes cinematicBubbleIn { 0%{opacity:0;transform:translateY(10px) scale(0.99);filter:blur(3px)} 100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)} }
 .hero-cinematic-preview-inner .bubble { font-size:14px; line-height:1.6; padding:11px 15px; max-width:90%; }
 .reveal-bubble { background:linear-gradient(135deg,#f0eeea 0%,#161410 100%); border:1px solid rgba(201,168,76,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
 .reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
@@ -300,7 +330,8 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
   .input-area{padding:12px 12px 20px}
   .input-inner{width:100%;max-width:100%;padding:0}
   .result-pull-quote{font-size:20px}
-  .hero-cinematic-preview{max-width:100%;margin-top:22px;border-radius:18px}
+  /* Narrower column → more wraps: 34 pad + 60 gaps + ~520px bubbles ≈ 648px */
+  .hero-cinematic-preview{max-width:100%;margin-top:22px;border-radius:18px;height:648px;min-height:648px;max-height:648px}
   .hero-cinematic-preview-inner{padding:14px 14px 14px}
   .hero-cinematic-preview-inner .bubble{font-size:13px;padding:10px 13px}
 
@@ -5382,6 +5413,10 @@ function buildFoundersBadgeHTML(profile) {
   var reduced = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var gapMs = 1500;
   var pauseBeforeFadeMs = 3000;
+  var bubbleAnimMs = 850;
+  var startOffsetMs = reduced ? 80 : 250;
+  var fadeOutMs = 1050;
+  var betweenLoopsMs = 450;
   var timers = [];
 
   function clearTimers() {
@@ -5393,37 +5428,41 @@ function buildFoundersBadgeHTML(profile) {
     clearTimers();
     scene.classList.remove('lcp-scene-out');
     mount.innerHTML = '';
-    var i = 0;
 
-    function addBubble() {
-      if (i >= steps.length) return;
-      var step = steps[i];
+    for (var s = 0; s < steps.length; s++) {
+      var step = steps[s];
       var row = document.createElement('div');
-      row.className = 'msg ' + (step.role === 'ai' ? 'ai' : 'user');
+      row.className = 'msg lcp-pending ' + (step.role === 'ai' ? 'ai' : 'user');
       var bubble = document.createElement('div');
       bubble.className = 'bubble';
       bubble.textContent = step.text;
       row.appendChild(bubble);
       mount.appendChild(row);
-      requestAnimationFrame(function() {
-        row.classList.add('lcp-bubble-in');
-      });
-      i++;
-      if (i >= steps.length) {
-        timers.push(setTimeout(function() {
-          scene.classList.add('lcp-scene-out');
-          timers.push(setTimeout(function() {
-            mount.innerHTML = '';
-            scene.classList.remove('lcp-scene-out');
-            timers.push(setTimeout(runCycle, 450));
-          }, 1050));
-        }, pauseBeforeFadeMs));
-      } else {
-        timers.push(setTimeout(addBubble, gapMs));
-      }
     }
 
-    timers.push(setTimeout(addBubble, reduced ? 100 : 250));
+    var rows = mount.querySelectorAll('.msg');
+    for (var j = 0; j < rows.length; j++) {
+      (function(index) {
+        timers.push(setTimeout(function() {
+          var el = rows[index];
+          el.classList.remove('lcp-pending');
+          requestAnimationFrame(function() {
+            el.classList.add('lcp-bubble-in');
+          });
+        }, startOffsetMs + index * gapMs));
+      })(j);
+    }
+
+    var lastRevealAt = startOffsetMs + (steps.length - 1) * gapMs;
+    var allVisibleAt = lastRevealAt + bubbleAnimMs;
+    timers.push(setTimeout(function() {
+      scene.classList.add('lcp-scene-out');
+      timers.push(setTimeout(function() {
+        mount.innerHTML = '';
+        scene.classList.remove('lcp-scene-out');
+        timers.push(setTimeout(runCycle, betweenLoopsMs));
+      }, fadeOutMs));
+    }, allVisibleAt + pauseBeforeFadeMs));
   }
 
   if (document.readyState === 'loading') {
