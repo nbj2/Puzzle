@@ -1791,6 +1791,10 @@ document.addEventListener('DOMContentLoaded', function() {
     client.auth.onAuthStateChange(async function(event, session) {
       if (!session || !session.user) return;
       if (event === 'TOKEN_REFRESHED') return;
+      if (event === 'SIGNED_IN') {
+        luneMagicLinkResumeDone = false;
+        try { sessionStorage.setItem('luneAwaitingMagicReturn', '1'); } catch(e) {}
+      }
       await handleAuthUserForPreConvo(session.user);
     });
   });
