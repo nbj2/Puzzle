@@ -3,5 +3,9 @@
     "api/chat.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "routes": [
+    { "src": "/robots.txt", "dest": "/robots.txt" },
+    { "src": "/llms.txt", "dest": "/llms.txt" }
+  ]
 }
