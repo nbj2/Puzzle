@@ -4203,6 +4203,7 @@ async function step10() {
 }
 
 async function generateYourWordsForTheRoom(mainSummary, closingQ) {
+  // Free for every user — not gated on founding membership (only "Your Translation" is).
   var verbatim = getUserVerbatimConvoBlob();
   if (!verbatim || verbatim.trim().length < 40) return '';
   try {
