@@ -1817,12 +1817,16 @@ function vote(type) {
 var responses = {};
 var foundingIncrementSent = false;
 var TOTAL_STEPS = 11;
+var userTurnWordCounts = [];
+var truthMomentUsedThisSession = false;
 
 async function initConvo() {
   foundingIncrementSent = false;
   document.getElementById('chat').innerHTML = '';
   document.getElementById('inputArea').innerHTML = '';
   Object.keys(responses).forEach(function(k) { delete responses[k]; });
+  userTurnWordCounts = [];
+  truthMomentUsedThisSession = false;
   updateProgress(0);
 
   // Check if this is a returning user -- if so, open with their last closing question
@@ -2249,6 +2253,25 @@ function getConvoSoFar() {
     parts.push('Location: ' + responses.location);
   }
   return parts.join('\n');
+}
+
+function getUserVerbatimConvoBlob() {
+  var keys = [
+    'why', 'duration', 'loves', 'loves_extra', 'bestDay', 'bestDay_extra',
+    'neverAgain1', 'neverAgain1_extra', 'neverAgain2', 'neverAgain2_extra',
+    'background', 'background_extra', 'identity', 'environment', 'pace', 'energy',
+    'location', 'verticalRole', 'verticalMoment', 'verticalMode', 'extraContext'
+  ];
+  var parts = [];
+  keys.forEach(function(k) {
+    if (responses[k] && String(responses[k]).trim()) parts.push(String(responses[k]).trim());
+  });
+  Object.keys(responses).forEach(function(k) {
+    if (k.indexOf('_truthMoment') !== -1 && responses[k] && String(responses[k]).trim()) {
+      parts.push(String(responses[k]).trim());
+    }
+  });
+  return parts.join('\n\n');
 }
 
 var TONE_SYSTEM = 'You are the warm, human voice behind Lune -- a career tool for people who feel stuck, overlooked, or unsure what comes next. Many of them are vulnerable. Some haven\'t told anyone they\'re thinking about leaving. Your job is to make them feel genuinely seen and safe -- like texting a trusted friend who happens to know a lot about careers. Be warm, real, and encouraging. Never clinical. Never formal. No em dashes. No bullet points. Short sentences. Match their energy -- if they\'re casual, be casual. If they\'re serious, be warm and direct. Always make them feel like their answer matters and that you\'re actually listening.';
@@ -2791,6 +2814,138 @@ async function detectReferral(whatTheyShared) {
   } catch(e) { return null; }
 }
 
+function gatherTruthMomentSignals(text, wc, avgPrev) {
+  var t = (text || '').trim();
+  var lower = t.toLowerCase();
+  var base = Math.max(avgPrev || wc, 6);
+  var lengthRatio = wc / base;
+  var lengthSpike = lengthRatio >= 1.35 ? Math.min(1, (lengthRatio - 1) / 1.2) : lengthRatio * 0.25;
+
+  var firstPerson = (t.match(/\b(I|me|my|mine|I've|I'm|myself)\b/gi) || []).length;
+  var personalDepth = Math.min(1, firstPerson / Math.max(8, wc * 0.12));
+
+  var contra = /but actually|not what i meant|i contrad|take that back|wait,|though i said|i said .* but|doesn't match what|complicates what/i;
+  var contradiction = contra.test(t) ? 0.75 : (lower.indexOf(' but ') !== -1 && wc > 12 ? 0.35 : 0);
+
+  var early = ((responses.why || '') + ' ' + (responses.duration || '') + ' ' + (responses.verticalRole || '') + ' ' + (responses.background || '')).toLowerCase();
+  var roleMismatch = 0;
+  if (early.length > 20 && wc > 15) {
+    var pivot = /\b(never wanted to be|not really a|hate(s|d)? (the )?(field|industry)|completely different|wrong path|shouldn't have|forced into)/i;
+    if (pivot.test(t)) roleMismatch = 0.7;
+    else if (/\b(actually|turns out|realized|figuring out) (that |)(I |we )/i.test(t) && lower.indexOf('?') !== -1) roleMismatch = 0.45;
+  }
+
+  var processingShift = 0;
+  if (/\b(I think|I'm trying|figuring out|not sure|maybe I|working through|sorting out|processing)\b/i.test(t)) processingShift += 0.45;
+  if (/\?/.test(t) && wc > 18) processingShift += 0.25;
+  processingShift = Math.min(1, processingShift);
+
+  var emo = /\b(scared|afraid|ashamed|exhausted|cry|cried|angry|resent|grief|heavy|weight|panic|numb|alone|love|hate|hurt|broken|hope)\b/i;
+  var emotionalLift = emo.test(t) ? Math.min(1, ((t.match(emo) || []).length) * 0.28 + 0.25) : 0;
+
+  return {
+    lengthSpike: lengthSpike,
+    personalDepth: personalDepth,
+    contradiction: contradiction,
+    roleMismatch: roleMismatch,
+    processingShift: processingShift,
+    emotionalLift: emotionalLift
+  };
+}
+
+async function evaluateTruthMomentPause(signals, messageText) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 120,
+      messages: [{ role: 'user', content:
+        'You decide whether the conversation should pause for ONE deeper follow-up question (a truth moment).\n\n' +
+        'Rules:\n' +
+        '- This is a density decision, not a single trigger. No one signal alone is enough.\n' +
+        '- Pause only when several signals together suggest something meaningful is emerging (more personal, contradictory, emotionally heavier, or they are thinking in real time).\n' +
+        '- If the message is routine or thin, return pause false.\n\n' +
+        'Signal scores (0-1 each): ' + JSON.stringify(signals) + '\n\n' +
+        'Their latest message:\n"""' + messageText.slice(0, 4000) + '"""\n\n' +
+        'Respond ONLY with JSON: {"pause":true} or {"pause":false}'
+      }]
+    });
+    var raw = data.content && data.content[0] && data.content[0].text;
+    if (!raw) return false;
+    var clean = raw.replace(/```json|```/g, '').trim();
+    var j = JSON.parse(clean);
+    return j.pause === true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function getTruthMomentFollowUpQuestion(messageText, signals) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 180,
+      messages: [{ role: 'user', content:
+        TONE_SYSTEM + '\n\nConversation context:\n' + getConvoSoFar() +
+        '\n\nSignal summary: ' + JSON.stringify(signals) +
+        '\n\nThey just said:\n"""' + messageText.slice(0, 4000) + '"""\n\n' +
+        'Write ONE follow-up question only. It must be precise to what they just said — something that could only be asked because of their specific words. ' +
+        'Not generic. Not therapy-speak. No acknowledgment prefix. Under 35 words. No em dashes. Question mark at the end. ' +
+        'Return only the question text, nothing else.'
+      }]
+    });
+    var text = data.content && data.content[0] && data.content[0].text;
+    return (text && text.trim()) || '';
+  } catch (e) {
+    return '';
+  }
+}
+
+async function applyTruthMomentDeepening(resultVal, contextKey) {
+  var wc = resultVal.trim().split(/\s+/).filter(Boolean).length;
+  if (truthMomentUsedThisSession || wc < 6) {
+    if (wc > 0) userTurnWordCounts.push(wc);
+    return resultVal;
+  }
+  var avgPrev = userTurnWordCounts.length === 0 ? wc : userTurnWordCounts.reduce(function(a, b) { return a + b; }, 0) / userTurnWordCounts.length;
+  var signals = gatherTruthMomentSignals(resultVal, wc, avgPrev);
+  var keys = ['lengthSpike', 'personalDepth', 'contradiction', 'roleMismatch', 'processingShift', 'emotionalLift'];
+  var strong = 0;
+  keys.forEach(function(k) {
+    if (signals[k] >= 0.42) strong++;
+  });
+  if (strong < 2) {
+    userTurnWordCounts.push(wc);
+    return resultVal;
+  }
+  var shouldPause = await evaluateTruthMomentPause(signals, resultVal);
+  if (!shouldPause) {
+    userTurnWordCounts.push(wc);
+    return resultVal;
+  }
+  var q = await getTruthMomentFollowUpQuestion(resultVal, signals);
+  if (!q || q.length < 10) {
+    userTurnWordCounts.push(wc);
+    return resultVal;
+  }
+  await delay(350);
+  await showAIMessage(q, 550);
+  truthMomentUsedThisSession = true;
+  return new Promise(function(resolve) {
+    showTextInput('Take your time…', async function(tmVal) {
+      addMessage(tmVal, 'user');
+      if (contextKey) responses[contextKey + '_truthMoment'] = tmVal;
+      var merged = resultVal + '\n\n—\n' + tmVal;
+      userTurnWordCounts.push(wc);
+      userTurnWordCounts.push(tmVal.trim().split(/\s+/).filter(Boolean).length);
+      resolve(merged);
+    });
+  });
+}
+
+async function finalizeAckResponse(resultVal, contextKey) {
+  return await applyTruthMomentDeepening(resultVal, contextKey);
+}
+
 // Runs compassion check (if needed) + acknowledgment + optional micro follow-up
 // Also passively checks for constraints in the background
 // Also silently detects low-confidence language for the Theo fix -- silent, non-blocking
@@ -2836,9 +2991,9 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
   // Step 2: check for a micro follow-up hook
   // Don't fire on short answers (under 4 words) -- they're usually obvious or rushed
   var wordCount = val.trim().split(/\s+/).length;
-  if (wordCount < 4) return val;
+  if (wordCount < 4) return await finalizeAckResponse(val, contextKey);
   var followUp = await getMicroFollowUp(val, getConvoSoFar());
-  if (!followUp) return val; // no hook, just return original
+  if (!followUp) return await finalizeAckResponse(val, contextKey); // no hook, just return original
 
   // Show the follow-up question and collect one more answer
   await delay(400);
@@ -2886,7 +3041,8 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
 
       var combined = val + ' -- ' + extraVal;
       if (contextKey) responses[contextKey + '_extra'] = extraVal;
-      resolve(combined);
+      var finalized = await finalizeAckResponse(combined, contextKey);
+      resolve(finalized);
     });
   });
 }
@@ -4046,6 +4202,167 @@ async function step10() {
   generateReveal();
 }
 
+async function generateYourWordsForTheRoom(mainSummary, closingQ) {
+  var verbatim = getUserVerbatimConvoBlob();
+  if (!verbatim || verbatim.trim().length < 40) return '';
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 600,
+      messages: [{ role: 'user', content:
+        'You are helping someone speak in their own voice after reading their career summary.\n\n' +
+        'Summary (context only; do not mirror its phrasing unless the user also used those words):\n"""' + (mainSummary || '').slice(0, 3500) + '"""\n\n' +
+        'Closing line:\n"""' + (closingQ || '').slice(0, 800) + '"""\n\n' +
+        'VERBATIM LANGUAGE FROM THE USER DURING THE CONVERSATION (your only source for wording and speech patterns):\n"""' + verbatim.slice(0, 12000) + '"""\n\n' +
+        'Write "Your words for the room": 3 to 5 short sentences they could say out loud in an interview or to a hiring manager when asked what they want or who they are.\n\n' +
+        'STRICT RULES:\n' +
+        '1) Every sentence must be built ONLY from words, phrases, and speech patterns the user actually used above. Compress and recombine; do not add resume-speak, LinkedIn tone, or coaching language they did not use.\n' +
+        '2) Each sentence must sound like something this person would say to another human without flinching. If it sounds corporate or generic, rewrite using only their words.\n' +
+        '3) Output ONLY 3 to 5 sentences, one sentence per line. No title. No bullets. No quotes around the block.\n' +
+        '4) If you cannot honestly satisfy rule 1, output exactly: SKIP'
+      }]
+    });
+    var text = (data.content && data.content[0] && data.content[0].text) || '';
+    var t = text.trim();
+    if (!t || /^SKIP$/i.test(t) || t.length < 25) return '';
+    return t;
+  } catch (e) {
+    return '';
+  }
+}
+
+function formatYourWordsForRoomHtml(roomRaw) {
+  if (!roomRaw) return '';
+  var lines = roomRaw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+  if (!lines.length) return '';
+  var ps = lines.map(function(line) {
+    return '<p style="margin:0 0 10px;font-size:14px;line-height:1.65;color:var(--text);">' + escapeHtml(line) + '</p>';
+  }).join('');
+  return '<div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(201,168,76,0.2);">' +
+    '<div style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;opacity:0.85;">Your words for the room</div>' +
+    ps + '</div>';
+}
+
+async function generateYourTranslationPack(mainText, lastLine, summaryFull) {
+  var verbatim = getUserVerbatimConvoBlob();
+  var structured = getConvoSoFar();
+  var data = await callAI({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 2000,
+    messages: [{ role: 'user', content:
+      'You write three deliverables for one real person. Use ONLY the conversation transcript, structured notes, and the Lune summary below. Do not invent facts. Do not use generic career language or resume templates. Every line should sound like this specific person.\n\n' +
+      'SUMMARY (main paragraph + closing line):\n"""' + (mainText || '').slice(0, 6000) + '\n---\n' + (lastLine || '').slice(0, 2000) + '"""\n\n' +
+      'FULL TEXT SHOWN TO THEM (summary + your words for the room if any):\n"""' + (summaryFull || '').slice(0, 8000) + '"""\n\n' +
+      'STRUCTURED CONTEXT:\n' + structured.slice(0, 12000) + '\n\n' +
+      'VERBATIM TRANSCRIPT BLOB:\n"""' + verbatim.slice(0, 12000) + '"""\n\n' +
+      'Respond ONLY with valid JSON, no markdown fences:\n' +
+      '{"linkedin":"","intro":"","coverLetter":""}\n\n' +
+      'linkedin: LinkedIn About — 3-4 short paragraphs separated by \\n\\n. Open with emotional truth from the summary — not a job title, not "I am a seasoned professional." First honest thing they could write about themselves professionally. End with what they are looking for now in plain human language.\n' +
+      'intro: 2-3 sentences for an interview, networking, or email — not an elevator pitch, not a cover letter. The thing they would actually say if someone asked about them.\n' +
+      'coverLetter: ONE paragraph only — opening paragraph of a cover letter. Reference something specific from their story. Do NOT start with "I am writing to apply." Start with the truth.'
+    }]
+  });
+  var raw = data.content && data.content[0] && data.content[0].text;
+  if (!raw) throw new Error('no translation');
+  var clean = raw.replace(/```json|```/g, '').trim();
+  var j = JSON.parse(clean);
+  return {
+    linkedin: (j.linkedin || '').trim(),
+    intro: (j.intro || '').trim(),
+    coverLetter: (j.coverLetter || '').trim()
+  };
+}
+
+async function showYourTranslationSectionAfterSummary(summaryText, mainText, lastLine, roomRaw) {
+  await delay(1400);
+  var chat = document.getElementById('chat');
+  var wrap = document.createElement('div');
+  wrap.className = 'msg ai';
+  var card = document.createElement('div');
+  card.style.cssText = 'background:var(--surface2);border:1px solid rgba(201,168,76,0.22);border-radius:16px;padding:22px 24px;max-width:92%;';
+
+  var title = document.createElement('div');
+  title.style.cssText = 'font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;opacity:0.9;';
+  title.textContent = 'Your Translation';
+  card.appendChild(title);
+
+  if (!isFoundingMember()) {
+    var pay = document.createElement('p');
+    pay.style.cssText = 'font-size:14px;color:var(--text);line-height:1.65;margin-bottom:16px;';
+    pay.textContent = 'Your story is ready. Let\'s make sure the world can read it.';
+    card.appendChild(pay);
+    var a = document.createElement('a');
+    a.href = 'https://buy.stripe.com/dRm28rbBHbxl2tK7oLdby00';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.cssText = 'display:inline-block;padding:11px 20px;background:var(--accent);border-radius:10px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;text-decoration:none;';
+    a.textContent = 'Unlock →';
+    card.appendChild(a);
+    wrap.appendChild(card);
+    chat.appendChild(wrap);
+    scrollToBottom();
+    return;
+  }
+
+  var loading = document.createElement('div');
+  loading.style.cssText = 'font-size:13px;color:var(--muted);font-style:italic;';
+  loading.textContent = 'Drafting your translation…';
+  card.appendChild(loading);
+  wrap.appendChild(card);
+  chat.appendChild(wrap);
+  scrollToBottom();
+
+  try {
+    var pack = await generateYourTranslationPack(mainText, lastLine, summaryText);
+    loading.remove();
+
+    function ytCopyBtn() {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = 'Copy';
+      b.style.cssText = 'padding:6px 12px;background:transparent;border:1px solid rgba(201,168,76,0.35);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:11px;cursor:pointer;';
+      return b;
+    }
+
+    function addTranslationBlock(label, bodyText) {
+      var block = document.createElement('div');
+      block.style.marginBottom = '18px';
+      var head = document.createElement('div');
+      head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap;';
+      var lab = document.createElement('span');
+      lab.style.cssText = 'font-size:13px;font-weight:600;color:var(--text);';
+      lab.textContent = label;
+      var btn = ytCopyBtn();
+      btn.addEventListener('click', function() {
+        navigator.clipboard.writeText(bodyText).then(function() {
+          btn.textContent = 'Copied ✓';
+          setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+        }).catch(function() {});
+      });
+      head.appendChild(lab);
+      head.appendChild(btn);
+      var body = document.createElement('div');
+      body.style.cssText = 'font-size:14px;line-height:1.65;color:var(--text);white-space:pre-wrap;';
+      body.textContent = bodyText;
+      block.appendChild(head);
+      block.appendChild(body);
+      card.appendChild(block);
+    }
+
+    addTranslationBlock('LinkedIn', pack.linkedin || '');
+    addTranslationBlock('Intro', pack.intro || '');
+    addTranslationBlock('Cover Letter', pack.coverLetter || '');
+
+    var foot = document.createElement('div');
+    foot.style.cssText = 'margin-top:4px;font-size:12px;color:var(--muted);font-style:italic;line-height:1.5;';
+    foot.textContent = 'These are yours. Edit them, use them, make them more you.';
+    card.appendChild(foot);
+  } catch (eT) {
+    loading.textContent = 'Could not draft your translation right now. Your summary is still above.';
+  }
+  scrollToBottom();
+}
+
 async function generateReveal() {
   var inputArea = document.getElementById('inputArea');
   inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Lune is reading everything you shared……</span></div>';
@@ -4071,13 +4388,21 @@ async function generateReveal() {
     var lastLine = lines[lines.length - 1];
     var mainText = lines.slice(0, -1).join(' ');
 
+    var roomRaw = '';
+    try {
+      roomRaw = await generateYourWordsForTheRoom(mainText, lastLine);
+    } catch (eRoom) {
+      roomRaw = '';
+    }
+    var roomHtml = formatYourWordsForRoomHtml(roomRaw);
+    var summaryText = mainText + '\n\n' + lastLine + (roomRaw ? '\n\nYour words for the room\n' + roomRaw : '');
+
     var chat = document.getElementById('chat');
     var msg = document.createElement('div');
     msg.className = 'msg ai';
     var bubble = document.createElement('div');
     bubble.className = 'reveal-bubble';
-    var summaryText = mainText + '\n\n' + lastLine;
-    bubble.innerHTML = '<p style="margin-bottom:16px">' + mainText + '</p><p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + lastLine + '</p>';
+    bubble.innerHTML = '<p style="margin-bottom:16px">' + mainText + '</p><p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + lastLine + '</p>' + roomHtml;
     msg.appendChild(bubble);
 
     var saveRow = document.createElement('div');
@@ -4195,8 +4520,10 @@ async function generateReveal() {
       } catch(eInc) {}
     }
 
+    await showYourTranslationSectionAfterSummary(summaryText, mainText, lastLine, roomRaw);
+
     var responsesSnap = Object.assign({}, responses);
-    showProfileModal(mainText, lastLine, responsesSnap);
+    showProfileModal(mainText + (roomRaw ? '\n\nYour words for the room\n' + roomRaw : ''), lastLine, responsesSnap);
 
     if (isHappyUser()) {
       // Happy path -- don\'t show job matches, show data contribution + profile save
