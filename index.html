@@ -1819,6 +1819,8 @@ var foundingIncrementSent = false;
 var TOTAL_STEPS = 11;
 var userTurnWordCounts = [];
 var truthMomentUsedThisSession = false;
+var lastTruthMomentSignalsSnapshot = null;
+var truthMomentElevatedNoPauseSummaryNotes = [];
 
 async function initConvo() {
   foundingIncrementSent = false;
@@ -1827,6 +1829,8 @@ async function initConvo() {
   Object.keys(responses).forEach(function(k) { delete responses[k]; });
   userTurnWordCounts = [];
   truthMomentUsedThisSession = false;
+  lastTruthMomentSignalsSnapshot = null;
+  truthMomentElevatedNoPauseSummaryNotes = [];
   updateProgress(0);
 
   // Check if this is a returning user -- if so, open with their last closing question
@@ -2853,6 +2857,63 @@ function gatherTruthMomentSignals(text, wc, avgPrev) {
   };
 }
 
+function copyTruthMomentSignals(s) {
+  return {
+    lengthSpike: s.lengthSpike,
+    personalDepth: s.personalDepth,
+    contradiction: s.contradiction,
+    roleMismatch: s.roleMismatch,
+    processingShift: s.processingShift,
+    emotionalLift: s.emotionalLift
+  };
+}
+
+// Delta vs prior user-turn signal snapshot for summary only (not shown to user). No user message text.
+function buildTruthMomentDeltaForSummary(prev, curr, wc, avgPrev) {
+  var keys = ['lengthSpike', 'personalDepth', 'contradiction', 'roleMismatch', 'processingShift', 'emotionalLift'];
+  var parts = [];
+  if (avgPrev > 0 && wc / avgPrev >= 1.35) {
+    parts.push('Turn length notably above their running average for user messages (~' + (wc / avgPrev).toFixed(2) + '×).');
+  }
+  if (!prev) {
+    keys.forEach(function(k) {
+      if (curr[k] >= 0.42) parts.push(k + ' is elevated (' + curr[k].toFixed(2) + ').');
+    });
+    return parts.length ? parts.join(' ') : 'Composite signal density crossed the elevated band vs earlier turns (no prior snapshot).';
+  }
+  keys.forEach(function(k) {
+    var d = curr[k] - (prev[k] || 0);
+    if (k === 'personalDepth' && d >= 0.18 && curr[k] >= 0.35) {
+      parts.push('More first-person / ownership weight than prior turns (personalDepth Δ +' + d.toFixed(2) + ').');
+    } else if (k === 'emotionalLift' && d >= 0.15 && curr[k] >= 0.25) {
+      parts.push('Emotional register intensified vs prior turns (emotionalLift Δ +' + d.toFixed(2) + ').');
+    } else if (k === 'contradiction' && (d >= 0.15 || (curr[k] >= 0.35 && prev[k] < 0.2))) {
+      parts.push('Contradiction or reframing signal stronger than before (possible tension with something said earlier).');
+    } else if (k === 'roleMismatch' && d >= 0.12 && curr[k] >= 0.3) {
+      parts.push('Role or path tension surfaced more than in prior turns.');
+    } else if (k === 'processingShift' && d >= 0.12 && curr[k] >= 0.3) {
+      parts.push('More in-the-moment processing language than prior turns.');
+    } else if (k === 'lengthSpike' && d >= 0.15) {
+      parts.push('Expansiveness vs their usual turn length (lengthSpike Δ +' + d.toFixed(2) + ').');
+    }
+  });
+  if (!parts.length) {
+    parts.push('Several signal channels rose together vs the prior turn; composite elevation without a single dominant channel.');
+  }
+  return parts.join(' ');
+}
+
+function truthMomentNearMissPromptBlock() {
+  if (!truthMomentElevatedNoPauseSummaryNotes.length) return '';
+  var lines = truthMomentElevatedNoPauseSummaryNotes.map(function(n, i) {
+    return '— Instance ' + (i + 1) + ': ' + n.delta + ' [signal picture: ' + JSON.stringify(n.signals) + ']';
+  });
+  return '\n\nINTERNAL (for shaping your summary only — do not quote, name, or explain this block to the reader): ' +
+    'One or more user turns had elevated truth-signal density but the conversation did not pause there. ' +
+    'Use the deltas below to notice emphasis, tension, or shifts; write as if you intuited them from their words alone.\n' +
+    lines.join('\n');
+}
+
 async function evaluateTruthMomentPause(signals, messageText) {
   try {
     var data = await callAI({
@@ -2914,16 +2975,24 @@ async function applyTruthMomentDeepening(resultVal, contextKey) {
     if (signals[k] >= 0.42) strong++;
   });
   if (strong < 2) {
+    lastTruthMomentSignalsSnapshot = copyTruthMomentSignals(signals);
     userTurnWordCounts.push(wc);
     return resultVal;
   }
   var shouldPause = await evaluateTruthMomentPause(signals, resultVal);
   if (!shouldPause) {
+    var deltaLine = buildTruthMomentDeltaForSummary(lastTruthMomentSignalsSnapshot, signals, wc, avgPrev);
+    truthMomentElevatedNoPauseSummaryNotes.push({
+      delta: deltaLine,
+      signals: copyTruthMomentSignals(signals)
+    });
+    lastTruthMomentSignalsSnapshot = copyTruthMomentSignals(signals);
     userTurnWordCounts.push(wc);
     return resultVal;
   }
   var q = await getTruthMomentFollowUpQuestion(resultVal, signals);
   if (!q || q.length < 10) {
+    lastTruthMomentSignalsSnapshot = copyTruthMomentSignals(signals);
     userTurnWordCounts.push(wc);
     return resultVal;
   }
@@ -2937,6 +3006,9 @@ async function applyTruthMomentDeepening(resultVal, contextKey) {
       var merged = resultVal + '\n\n—\n' + tmVal;
       userTurnWordCounts.push(wc);
       userTurnWordCounts.push(tmVal.trim().split(/\s+/).filter(Boolean).length);
+      var mergedWc = merged.trim().split(/\s+/).filter(Boolean).length;
+      var mergedSignals = gatherTruthMomentSignals(merged, mergedWc, avgPrev);
+      lastTruthMomentSignalsSnapshot = copyTruthMomentSignals(mergedSignals);
       resolve(merged);
     });
   });
@@ -4374,6 +4446,7 @@ async function generateReveal() {
   var prompt = happyMode
     ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven\'t been able to say themselves -- not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically -- not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said -- a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a closing question that comes from the most specific thing you just named -- not a CTA to save the profile but a question that makes them sit with what you observed. Something like: Does that feel like the right name for what you have built? Or: When did you first realize the work actually fit? The question should feel earned not prompted.\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + (responses.background || responses.verticalRole || "not specified") + (responses.verticalMoment ? "\nMoment they operated above their title: " + responses.verticalMoment : "") + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
     : "You are the core AI behind Lune, a career alignment product. You just finished a 10-exchange conversation with someone. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened -- not a chatbot.\n\nTHE CORE RULE: Stay in observation mode. Describe who this person is and what is actually true about them. Do NOT prescribe a direction, recommend industries, or tell them what to do. The matches do that job. The summary only job is to make someone feel genuinely seen -- like someone finally named the thing they could not name themselves.\n\nThe paragraph should:\n- Open with the most specific true thing you noticed -- name a pattern they probably have not articulated themselves\n- Reference specific things they said. If they mentioned a specific moment, story, or person -- reference it by name or detail. A summary that names Maya is worth ten that say you care about peoples growth\n- Name what they actually have -- not what they lack, not what they should do next\n- If they expressed frustration, distinguish clearly between hating the work itself versus hating the conditions around it. You do not hate work you hate what is being done around it is a real insight. Name it if true.\n- NEVER mention specific cities, industries, job titles, or career paths -- that is the match engines job\n- NEVER say things like your city has a strong market or your background translates well to X -- that is prescription not observation\n- STRUCTURED AUTONOMY SIGNAL: If someone picked autonomy on the energy question AND micromanagement on the never-again list -- or expressed both wanting independence AND needing clear direction anywhere in their answers -- name it explicitly. The sentence is: You do not need someone to tell you how. You need someone to tell you what and then get out of the way. That is not a contradiction -- that is one of the clearest working profiles there is. This profile needs roles with clear outcomes and autonomous process. Name it if you see it.\n- THE GAP IS THE INSIGHT: Look for the difference between what they said they love and what their best day actually reveals. These are often different things and that difference is the most important thing you can name. If someone says they love helping people but their best day was about being recognized as someone who develops people -- name the development instinct not the helping instinct. If you see that gap, name it. That gap is where the real insight lives.\n- CLOSING QUESTION -- THIS IS THE MOST IMPORTANT LINE: The closing question is the therapist moment. It is the one question that makes someone sit with what you just named before they do anything else. Rules: (1) It must come directly from the most specific thing you just observed -- not from the matches, not from the next step, from the truth you just named. (2) If you found a clear gap between what they said they love and what their best day actually reveals -- ask about that gap specifically. (3) If the gap is unclear or weak -- do NOT force it. Ask something simple that stays close to what you know is true. A question that gets it slightly wrong breaks the spell. A question that stays close keeps it. (4) Never ask ready to see your matches or anything that sounds like a CTA. (5) The question should feel like something a therapist or trusted mentor would ask -- something that makes the person pause, feel understood, and want to answer honestly. Examples of the right spirit: Is that the thing you have been looking for -- work where developing someone is the actual job, not a side effect? Or: When was the last time a job made you feel the way Maya made you feel? Or: Does that feel like the right name for it? Wrong spirit: Ready to find your next role? or Want to see what fits? or Shall we look at some options?\n- LATE-CAREER COURAGE: If the person appears to be over 40 making a significant pivot, add one sentence acknowledging the courage not the logic. What you are describing takes something most people talk themselves out of.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, add one warm sentence before the closing question signaling there is something reachable right now.\n- RELOCATION: if relocationType is active orient ALL geography to target location. If urgent mix current and target. If eventual focus on current but end with one warm sentence about the future goal.\n\nDo NOT use bullet points. Do NOT say Based on your responses. Do NOT be generic. Do NOT give career advice. Do NOT name cities or industries. Write one paragraph of 4-6 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they are here: " + responses.why + (responses.verticalFlag ? " [VERTICAL: wants to go up, role: " + (responses.verticalRole||"not specified") + ", direction: " + (responses.verticalMode||"not specified") + "]" : "") + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy vs drains them: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
+  prompt += truthMomentNearMissPromptBlock();
 
   try {
     var data = await callAI({
