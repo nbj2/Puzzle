@@ -1,0 +1,13 @@
+Lune
+Lune is a conversational AI career tool that replaces the resume with a real 10-question conversation. No forms, no keyword boxes, no resume required.
+What Lune does
+    ∙    Asks 10 questions nobody else thought to ask
+    ∙    Returns a summary of who you actually are professionally — not what your job title says
+    ∙    Matches you to jobs based on who you actually are, not keywords
+    ∙    Builds a living record of your professional identity over time
+Who Lune is for
+People whose experience doesn’t translate on paper — career changers, burned out workers, people with non-linear paths, caregivers re-entering the workforce, military veterans, anyone who has been overlooked by traditional hiring systems.
+How it works
+The conversation is always free. No resume required. No signup required to start.
+Where to find Lune
+https://www.trylune.app
