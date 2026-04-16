@@ -4359,7 +4359,7 @@ async function showYourTranslationSectionAfterSummary(summaryText, mainText, las
   title.textContent = 'Your Translation';
   card.appendChild(title);
 
-  if (!isFoundingMember()) {
+  if (!(await isFoundingMember())) {
     var pay = document.createElement('p');
     pay.style.cssText = 'font-size:14px;color:var(--text);line-height:1.65;margin-bottom:16px;';
     pay.textContent = 'Your story is ready. Let\'s make sure the world can read it.';
@@ -5750,11 +5750,28 @@ document.addEventListener('DOMContentLoaded', function() {
 // ── FOUNDERS CLUB SYSTEM ──────────────────────────────────────────────────────
 // Founding 100: $7/month for life, special badge, tailored emails, opt-out anytime
 
-function isFoundingMember() {
+async function isFoundingMember() {
   try {
     var p = getProfile();
-    return p && p.foundingMember === true;
-  } catch(e) { return false; }
+    if (p && p.foundingMember === true) return true;
+    var client = await getLuneSupabase();
+    if (!client) return false;
+    var email = '';
+    if (p && p.email) email = String(p.email).trim().toLowerCase();
+    if (!email) {
+      var _ref = await client.auth.getSession();
+      var session = _ref && _ref.data && _ref.data.session;
+      if (session && session.user && session.user.email) {
+        email = String(session.user.email).trim().toLowerCase();
+      }
+    }
+    if (!email) return false;
+    var sel = await client.from('profiles').select('founding_member').eq('email', email).maybeSingle();
+    if (sel.error) return false;
+    return !!(sel.data && sel.data.founding_member === true);
+  } catch (e) {
+    return false;
+  }
 }
 
 function setFoundingMember(val) {
