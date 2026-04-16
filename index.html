@@ -340,7 +340,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
 }
 @keyframes cinematicBubbleIn { 0%{opacity:0;transform:translateY(10px) scale(0.99);filter:blur(3px)} 100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)} }
 .hero-cinematic-preview-inner .bubble { font-size:14px; line-height:1.6; padding:11px 15px; max-width:90%; }
-.reveal-bubble { background:linear-gradient(135deg,#f0eeea 0%,#161410 100%); border:1px solid rgba(201,168,76,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:var(--text); position:relative; overflow:hidden; }
+.reveal-bubble { background:linear-gradient(165deg,#1c1813 0%,#13100d 42%,#0f0d0b 100%); border:1px solid rgba(201,168,76,0.35); border-radius:18px; border-bottom-left-radius:4px; padding:22px 24px; max-width:92%; font-size:15px; line-height:1.75; color:#f4efe6; position:relative; overflow:hidden; }
 .reveal-bubble::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
 .options { display:flex; flex-direction:column; gap:8px; max-width:88%; opacity:0; animation:fadeUp 0.4s ease 0.2s forwards; }
 .option-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'Sora',sans-serif; font-size:14px; font-weight:300; cursor:pointer; text-align:left; line-height:1.4; }
@@ -902,6 +902,14 @@ function escapeHtml(str) {
   return d.innerHTML;
 }
 
+function renderInlineMarkdownText(str) {
+  if (str == null || str === '') return '';
+  var safe = escapeHtml(String(str));
+  safe = safe.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  safe = safe.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  return safe.replace(/\n/g, '<br>');
+}
+
 function openPreConvoEmailGate() {
   resetPreConvoModalPanels();
   document.getElementById('preConvoModal').style.display = 'flex';
@@ -948,8 +956,8 @@ function showExistingProfileSummary(profile) {
   msg.className = 'msg ai';
   var bubble = document.createElement('div');
   bubble.className = 'reveal-bubble';
-  bubble.innerHTML = '<p style="margin-bottom:16px">' + escapeHtml(mainText).replace(/\n/g, '<br>') + '</p>' +
-    (lastLine ? '<p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + escapeHtml(lastLine) + '</p>' : '');
+  bubble.innerHTML = '<p style="margin-bottom:16px">' + renderInlineMarkdownText(mainText) + '</p>' +
+    (lastLine ? '<p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + renderInlineMarkdownText(lastLine) + '</p>' : '');
   msg.appendChild(bubble);
 
   var saveRow = document.createElement('div');
@@ -1113,7 +1121,7 @@ function renderProfilePage() {
     var isLatest = i === 0;
     return '<div class="profile-summary-card" style="' + (isLatest ? '' : 'opacity:0.65;') + '">' +
       '<div class="profile-summary-date">' + s.date + (isLatest ? ' · Most recent' : '') + '</div>' +
-      '<div class="profile-summary-text">' + s.summary + '</div>' +
+      '<div class="profile-summary-text">' + renderInlineMarkdownText(s.summary) + '</div>' +
       '</div>';
   }).join('');
 
@@ -2549,7 +2557,7 @@ async function getMicroFollowUp(whatTheyShared, context) {
       model: 'claude-sonnet-4-6',
       max_tokens: 120,
       messages: [{ role: 'user', content:
-        TONE_SYSTEM + '\n\nSomeone just typed a free-text answer in a career conversation. Your job is to decide if there is ONE specific hook worth following up on -- and if so, ask it in a warm, curious way.\n\nA hook is: a pronoun with no name attached ("she", "he", "they", "my boss"), an event referenced but not explained ("when it happened", "the announcement", "after that"), a job or place mentioned briefly ("the shop", "my manager"), something that would help understand their situation more fully.\n\nRULES:\n- If there is a clear hook: return ONE short warm question (under 10 words) that invites them to share more. Match their energy exactly. No em dashes. Never start with I.\n- CRITICAL TONE RULE: The question must feel genuinely curious and inviting -- never skeptical, never challenging, never like you are questioning whether what they said is true. You believe them completely. You just want to know more. The question should make them feel good about sharing more, not defensive.\n- BAD example: "are those clients actually yours?" -- sounds like you doubt them\n- GOOD example: "do they follow you specifically?" -- sounds like you want to hear more\n- BAD example: "are you sure that was your work?" -- challenging\n- GOOD example: "what did you change that made the difference?" -- curious and affirming\n- If the answer is already complete and clear: return empty string -- do NOT invent a follow-up\n- Never ask something they already answered\n- This is a conversation between friends, not an interrogation -- if in doubt, return empty string\n\nContext of conversation so far: ' + context + '\n\nWhat they just shared: ' + whatTheyShared + '\n\nRespond with ONLY the follow-up question or an empty string. Nothing else.'
+        TONE_SYSTEM + '\n\nSomeone just typed a free-text answer in a career conversation. Your job is to decide if there is ONE specific hook worth following up on -- and if so, ask it in a warm, curious way.\n\nPRIORITY RULE:\n- Follow the most emotionally weighted thread in what they said, not the most recent noun or factual detail.\n- If they mention both a fact and an emotional payoff (relief, pride, fear, frustration, meaning, pressure), follow the emotional payoff.\n- Only follow a surface detail if no emotional thread is present.\n\nA hook can be emotional significance, unresolved tension, contradiction, or a concrete detail that clearly matters.\n\nRULES:\n- If there is a clear hook: return ONE short warm question (under 10 words) that invites them to share more. Match their energy exactly. No em dashes. Never start with I.\n- CRITICAL TONE RULE: The question must feel genuinely curious and inviting -- never skeptical, never challenging, never like you are questioning whether what they said is true. You believe them completely. You just want to know more. The question should make them feel good about sharing more, not defensive.\n- If the answer is already complete and clear: return empty string -- do NOT invent a follow-up\n- Never ask something they already answered\n- This is a conversation between friends, not an interrogation -- if in doubt, return empty string\n\nContext of conversation so far: ' + context + '\n\nWhat they just shared: ' + whatTheyShared + '\n\nRespond with ONLY the follow-up question or an empty string. Nothing else.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -3018,10 +3026,15 @@ async function finalizeAckResponse(resultVal, contextKey) {
   return await applyTruthMomentDeepening(resultVal, contextKey);
 }
 
+var ackFlowSequence = 0;
+
 // Runs compassion check (if needed) + acknowledgment + optional micro follow-up
 // Also passively checks for constraints in the background
 // Also silently detects low-confidence language for the Theo fix -- silent, non-blocking
 async function acknowledgeAndMaybeFollowUp(val, contextKey) {
+  var ackSeq = ++ackFlowSequence;
+  function isCurrentAckFlow() { return ackSeq === ackFlowSequence; }
+
   // Step 0: Run passive constraint check in background -- never blocks, never changes rhythm
   // Runs in parallel with everything else so there\'s zero added latency
   passiveConstraintCheck(val, contextKey || 'conversation');
@@ -3034,10 +3047,12 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
 
   // If compassion fires and acknowledgment fires, show compassion first with a beat
   // If only one fires, show that one. Never show both if they say the same thing.
-  if (compassion && compassion.trim().length > 4) {
+  if (compassion && compassion.trim().length > 4 && isCurrentAckFlow()) {
     await showAIMessage(compassion, 500);
+    if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
     // Breathing pause after compassion -- let it land before anything else
     await delay(350);
+    if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
     // Suppress acknowledgment if it's redundant with compassion
     // Redundant means: same first 4 words OR both reference the same proper name
     var isTrulyRedundant = false;
@@ -3051,13 +3066,17 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
       var sharedName = namesInAck.some(function(n) { return namesInComp.includes(n); });
       isTrulyRedundant = sameStart || sharedName;
     }
-    if (ack && ack.trim().length > 5 && !isTrulyRedundant) {
+    if (ack && ack.trim().length > 5 && !isTrulyRedundant && isCurrentAckFlow()) {
       await showAIMessage(ack, 600);
+      if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
       await delay(400);
+      if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
     }
-  } else if (ack && ack.trim().length > 5) {
+  } else if (ack && ack.trim().length > 5 && isCurrentAckFlow()) {
     await showAIMessage(ack, 600);
+    if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
     await delay(400);
+    if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
   }
 
   // Step 2: check for a micro follow-up hook
@@ -3068,11 +3087,18 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
   if (!followUp) return await finalizeAckResponse(val, contextKey); // no hook, just return original
 
   // Show the follow-up question and collect one more answer
+  if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
   await delay(400);
+  if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
   await showAIMessage(followUp, 500);
+  if (!isCurrentAckFlow()) return await finalizeAckResponse(val, contextKey);
 
   return new Promise(function(resolve) {
     showTextInput('', async function(extraVal) {
+      if (!isCurrentAckFlow()) {
+        resolve(await finalizeAckResponse(val, contextKey));
+        return;
+      }
       addMessage(extraVal, 'user');
 
       // Acknowledge the follow-up answer if it has substance
@@ -3338,7 +3364,7 @@ async function stepVerticalReveal() {
     msg.className = 'msg ai';
     var bubble = document.createElement('div');
     bubble.className = 'reveal-bubble';
-    bubble.innerHTML = '<p style="margin-bottom:16px">' + mainText + '</p><p style="color:var(--accent);font-family:&quot;Instrument Serif&quot;,serif;font-size:17px;font-style:italic">' + lastLine + '</p>';
+    bubble.innerHTML = '<p style="margin-bottom:16px">' + renderInlineMarkdownText(mainText) + '</p><p style="color:var(--accent);font-family:&quot;Instrument Serif&quot;,serif;font-size:17px;font-style:italic">' + renderInlineMarkdownText(lastLine) + '</p>';
     msg.appendChild(bubble);
     chat.appendChild(msg);
     scrollToBottom();
@@ -3629,6 +3655,24 @@ async function step4() {
   );
   await showAIMessage(q);
   showTextInput("It was when…", async function(val) {
+    var trimmedVal = (val || '').trim();
+    var baseWords = trimmedVal.split(/\s+/).filter(Boolean);
+    var workSignals = /\b(work|job|shift|office|team|client|manager|boss|coworker|project|meeting|deadline|task|customer|store|hospital|classroom|site|floor|warehouse|role)\b/i;
+    if (baseWords.length < 4 || !workSignals.test(trimmedVal)) {
+      addMessage(val, 'user');
+      await delay(250);
+      await showAIMessage("That sounds good — tell me about a moment at work specifically, big or small.", 380);
+      await delay(180);
+      showTextInput("There was this moment at work when…", async function(v3) {
+        responses.bestDay = v3;
+        addMessage(v3, 'user');
+        var enriched3 = await acknowledgeAndMaybeFollowUp(v3, 'bestDay');
+        responses.bestDay = enriched3;
+        step5();
+      });
+      return;
+    }
+
     // No-work-history fallback — if they say they have no job moments, adapt
     var noWorkSignals = ['haven\'t had a job', 'no job', 'don\'t have work', 'just graduated',
                          'never worked', 'just started', 'can\'t think of one', 'don\'t have one'];
@@ -3677,6 +3721,43 @@ async function step4() {
       if (!shortLine) shortLine = "Tell me more about that.";
       await showAIMessage(shortLine, 400);
       await delay(500);
+      showTextInput("Tell me more about that moment…", async function(vShort) {
+        addMessage(vShort, 'user');
+        var combinedBestDay = val + ' -- ' + vShort;
+        var enrichedShort = await acknowledgeAndMaybeFollowUp(combinedBestDay, 'bestDay');
+        responses.bestDay = enrichedShort;
+        await delay(400);
+        var intentQ2 = await getAdaptiveQuestion(
+          "whether this kind of moment is something they actively look for and want more of, or whether it was meaningful but more of a one-time feeling -- keep it light and curious, not clinical",
+          "Is that something you find yourself looking for -- or did it just happen to land that way?",
+          ""
+        );
+        await showAIMessage(intentQ2, 400);
+        await new Promise(function(resolve2) {
+          showOptions([
+            "I look for those moments -- I want more of that",
+            "It was meaningful but more of a one-time thing",
+            "Somewhere in between, honestly"
+          ], async function(intentVal2) {
+            addMessage(intentVal2, 'user');
+            var iv2 = intentVal2.toLowerCase();
+            if (iv2.includes('look for') || iv2.includes('more of that')) {
+              responses.bestDayIntent = 'recurring';
+              await showAIMessage("That's the thread then. We'll follow it.", 300);
+            } else if (iv2.includes('one-time') || iv2.includes('meaningful but')) {
+              responses.bestDayIntent = 'incidental';
+              await showAIMessage("Good to know -- context, not a direction.", 300);
+            } else {
+              responses.bestDayIntent = 'unclear';
+              await showAIMessage("Honest answer. We'll see what it points to.", 300);
+            }
+            await delay(500);
+            resolve2();
+          }, true);
+        });
+        step5();
+      });
+      return;
     }
     var enriched = await acknowledgeAndMaybeFollowUp(val, 'bestDay');
     responses.bestDay = enriched;
@@ -4026,15 +4107,17 @@ async function step8() {
   await showAIMessage(result.q);
   showOptions(result.opts, async function(val) {
     if (isOpenTextOption(val)) {
-      // Don't show ack before the text input -- it fires at wrong time
       step8b();
     }
     else {
       responses.identity = val; addMessage(val, 'user');
       passiveConstraintCheck(val, 'identity');
-      setTimeout(step9, 700);
+      var idAck = quickMultiAck(val) || "That's how you show up when it matters.";
+      await showAIMessage(idAck, 340);
+      await delay(380);
+      step9();
     }
-  }, false, true); // last param: suppressAck when routing to free text
+  }, false, true); // suppress built-in option ack; identity transition is handled explicitly here
 }
 
 async function step8b() {
@@ -4062,7 +4145,19 @@ async function step9() {
     "Hybrid -- depends on the day",
     "Honestly not sure yet"
   ];
-  showOptions(envOpts, function(val) { responses.environment = val; addMessage(val, 'user'); withOptionAck(val, step9b); }, true);
+  showOptions(envOpts, async function(val) {
+    responses.environment = val;
+    addMessage(val, 'user');
+    var envLower = val.toLowerCase();
+    var envAck = "Environment noted.";
+    if (envLower.includes('remote')) envAck = "Remote focus noted -- we'll keep autonomy and focus in view.";
+    else if (envLower.includes('in person') || envLower.includes('people around')) envAck = "In-person energy matters for you -- that's a real signal.";
+    else if (envLower.includes('hybrid')) envAck = "Hybrid makes sense -- rhythm and flexibility both matter here.";
+    else if (envLower.includes('not sure')) envAck = "Not sure yet is a real answer -- we can hold that open.";
+    await showAIMessage(envAck, 320);
+    await delay(360);
+    step9b();
+  }, true);
 }
 
 async function step9b() {
@@ -4090,15 +4185,16 @@ async function step9b() {
   showOptions(result.opts, async function(val) {
     responses.energy = val;
     // Derive pace signal from energy answer for backward compatibility
-    if (val.toLowerCase().includes('chaos') || val.toLowerCase().includes('problem')) {
+    var energyLower = val.toLowerCase();
+    if (energyLower.includes('chaos') || energyLower.includes('problem')) {
       responses.pace = 'Fast';
-    } else if (val.toLowerCase().includes('routine') || val.toLowerCase().includes('consistency')) {
+    } else if (energyLower.includes('routine') || energyLower.includes('consistency')) {
       responses.pace = 'Steady';
     } else {
       responses.pace = 'Flexible';
     }
     addMessage(val, 'user');
-    if (val.toLowerCase().includes('complicated')) {
+    if (energyLower.includes('complicated')) {
       showTextInput("Tell me more about what fills you up vs drains you...", async function(freeVal) {
         responses.energy = freeVal;
         addMessage(freeVal, 'user');
@@ -4108,7 +4204,7 @@ async function step9b() {
     } else {
       withOptionAck(val, step9c);
     }
-  }, true);
+  }, false);
 }
 
 async function step9c() {
@@ -4476,7 +4572,7 @@ async function generateReveal() {
     msg.className = 'msg ai';
     var bubble = document.createElement('div');
     bubble.className = 'reveal-bubble';
-    bubble.innerHTML = '<p style="margin-bottom:16px">' + mainText + '</p><p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + lastLine + '</p>' + roomHtml;
+    bubble.innerHTML = '<p style="margin-bottom:16px">' + renderInlineMarkdownText(mainText) + '</p><p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + renderInlineMarkdownText(lastLine) + '</p>' + roomHtml;
     msg.appendChild(bubble);
 
     var saveRow = document.createElement('div');
