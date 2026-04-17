@@ -2984,6 +2984,63 @@ async function evaluateShortExitRouting() {
   }
 }
 
+// After standard summary + short-exit false: Claude decides if we should stop before matches.
+async function evaluateSittingRoomRouting(generatedSummaryFullText) {
+  try {
+    var transcript = getWholeConversationTextForExitEvaluation();
+    if (!transcript || transcript.trim().length < 24) return { needsSitting: false };
+    var summaryBlock = (generatedSummaryFullText || '').trim();
+    if (summaryBlock.length < 40) return { needsSitting: false };
+    var tmFired = truthMomentUsedThisSession === true;
+    var tmContext = tmFired
+      ? 'Session note: Lune already paused once for a deeper follow-up question in this conversation.\n\n'
+      : '';
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 220,
+      messages: [{ role: 'user', content:
+        'You are a silent router for Lune, a career conversation product. Read the FULL transcript and the generated summary below as one picture. Return JSON only -- holistic judgment, not keyword rules.\n\n' +
+        tmContext +
+        'Return needsSitting true when BOTH of these are true together:\n' +
+        '(A) The summary\'s closing question (usually the final line) is structurally unresolvable inside this single session -- inward, open, identity-level, or life-structure rather than a crisp actionable career next step -- AND immediate credential capture plus job match generation would compress something that needs breathing room.\n' +
+        '(B) The conversation carried real weight of the kind where rushing to "what job fits" would feel tone-deaf. Holistic signals can include: a deeper follow-up pause or comparable vulnerable disclosure; first-time naming or material that sounds never shared before; grief, identity, long-carried private material, or a structural life question they are still inside; the closing question touches any of that.\n\n' +
+        'Return needsSitting false for straightforward career sensemaking where an actionable closing question makes matches a natural next step.\n' +
+        'When uncertain, return needsSitting false.\n\n' +
+        'Transcript:\n"""' + transcript.slice(0, 120000) + '"""\n\n' +
+        'Generated summary (including closing question and any "your words for the room" block):\n"""' + summaryBlock.slice(0, 20000) + '"""\n\n' +
+        'Respond ONLY with JSON: {"needsSitting":true} or {"needsSitting":false}'
+      }]
+    });
+    var raw = data.content && data.content[0] && data.content[0].text;
+    if (!raw) return { needsSitting: false };
+    var clean = raw.replace(/```json|```/g, '').trim();
+    var j = JSON.parse(clean);
+    return { needsSitting: j.needsSitting === true };
+  } catch (e) {
+    return { needsSitting: false };
+  }
+}
+
+async function generateSittingRoomAckLine(transcript, generatedSummaryFullText) {
+  try {
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 120,
+      messages: [{ role: 'user', content:
+        TONE_SYSTEM + '\n\nWrite ONE short line only (under 26 words). It gently says that what the summary surfaced is worth sitting with before going further into job matches or logistics. The vibe can be like: this is worth sitting with before we go further, or the question this summary just posed is not one that resolves in five minutes -- but do not copy those phrases; write fresh words.\n' +
+        'Anchor the line in something SPECIFIC the person said in the transcript (a detail, rhythm, person, or phrase). Not generic. Not a question to the user. No em dashes. No bullet points.\n\n' +
+        'Transcript:\n"""' + (transcript || '').slice(0, 120000) + '"""\n\n' +
+        'Summary they just read:\n"""' + (generatedSummaryFullText || '').slice(0, 8000) + '"""\n\n' +
+        'Return only the line of text, nothing else.'
+      }]
+    });
+    var out = (data.content && data.content[0] && data.content[0].text) || '';
+    return (out && out.trim()) || '';
+  } catch (e) {
+    return '';
+  }
+}
+
 async function generateShortExitSummaryCopy() {
   var transcript = getWholeConversationTextForExitEvaluation();
   var data = await callAI({
@@ -4738,6 +4795,12 @@ async function generateReveal() {
     var roomHtml = formatYourWordsForRoomHtml(roomRaw);
     var summaryText = mainText + '\n\n' + lastLine + (roomRaw ? '\n\nYour words for the room\n' + roomRaw : '');
 
+    var needsSitting = false;
+    if (!happyMode) {
+      var sitRouteRes = await evaluateSittingRoomRouting(summaryText);
+      needsSitting = sitRouteRes && sitRouteRes.needsSitting === true;
+    }
+
     var chat = document.getElementById('chat');
     var msg = document.createElement('div');
     msg.className = 'msg ai';
@@ -4771,6 +4834,9 @@ async function generateReveal() {
       });
     });
 
+    saveRow.appendChild(copyBtn);
+
+    if (!needsSitting) {
     var emailSaveBtn = document.createElement('button');
     emailSaveBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
     emailSaveBtn.textContent = 'Email it to me';
@@ -4840,8 +4906,8 @@ async function generateReveal() {
       scrollToBottom();
     });
 
-    saveRow.appendChild(copyBtn);
     saveRow.appendChild(emailSaveBtn);
+    }
     msg.appendChild(saveRow);
     chat.appendChild(msg);
     scrollToBottom();
@@ -4859,6 +4925,24 @@ async function generateReveal() {
           updateVotePricing();
         }
       } catch(eInc) {}
+    }
+
+    if (needsSitting) {
+      var sitLine = '';
+      try {
+        sitLine = await generateSittingRoomAckLine(getWholeConversationTextForExitEvaluation(), summaryText);
+      } catch (eSitLine) {
+        sitLine = '';
+      }
+      if (!sitLine || sitLine.trim().length < 8) {
+        sitLine = 'This is worth sitting with before we go further.';
+      } else {
+        sitLine = sitLine.trim().split('\n')[0].trim();
+      }
+      await showAIMessage(sitLine, 500);
+      await delay(400);
+      appendShortConversationEndActions();
+      return;
     }
 
     await showYourTranslationSectionAfterSummary(summaryText, mainText, lastLine, roomRaw);
