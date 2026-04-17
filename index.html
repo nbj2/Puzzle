@@ -2948,6 +2948,165 @@ async function evaluateTruthMomentPause(signals, messageText) {
   }
 }
 
+function getWholeConversationTextForExitEvaluation() {
+  return getConvoSoFar() + '\n\n--- Verbatim user thread ---\n' + getUserVerbatimConvoBlob();
+}
+
+// Claude-only router: after the standard summary is generated, decides if we should
+// replace the experience with a short honest exit (no matches, profile, paywall).
+async function evaluateShortExitRouting() {
+  try {
+    var transcript = getWholeConversationTextForExitEvaluation();
+    if (!transcript || transcript.trim().length < 24) return { shortExit: false };
+    var data = await callAI({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 220,
+      messages: [{ role: 'user', content:
+        'You are a silent router for Lune, a career conversation product. Read the FULL transcript holistically. Decide if this person should receive a minimal exit: a brief honest reflection only, with no job matching, no email capture, no saved-profile prompt, and no paid unlock.\n\n' +
+        'This is a judgment call from the whole picture -- not keyword matching, not single phrases in isolation, not rigid rules.\n\n' +
+        'Return shortExit true if ANY of these patterns genuinely fits what happened:\n' +
+        'Pattern one: Low self-disclosure throughout; they framed work as instrumental (practical, transactional) rather than personally meaningful; no vulnerable reframe or truth-moment quality in how they showed up; and they never voiced dissatisfaction with their current situation or a desire to change.\n' +
+        'Pattern two: They clearly signaled they are not job hunting -- retired, settled, only along for the ride, or here for reasons other than finding new work.\n' +
+        'Pattern three: Someone else (spouse, family member, friend, colleague) effectively sent them; they did not self-select into doing this for their own career reasons.\n\n' +
+        'If they seem like a genuine job seeker, someone weighing a real move, or engaged for themselves even when brief, return shortExit false.\n' +
+        'When genuinely uncertain, return shortExit false.\n\n' +
+        'Transcript:\n"""' + transcript.slice(0, 120000) + '"""\n\n' +
+        'Respond ONLY with JSON: {"shortExit":true} or {"shortExit":false}'
+      }]
+    });
+    var raw = data.content && data.content[0] && data.content[0].text;
+    if (!raw) return { shortExit: false };
+    var clean = raw.replace(/```json|```/g, '').trim();
+    var j = JSON.parse(clean);
+    return { shortExit: j.shortExit === true };
+  } catch (e) {
+    return { shortExit: false };
+  }
+}
+
+async function generateShortExitSummaryCopy() {
+  var transcript = getWholeConversationTextForExitEvaluation();
+  var data = await callAI({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 550,
+    messages: [{ role: 'user', content:
+      TONE_SYSTEM + '\n\nSomeone just finished a Lune conversation, but they are not in the lane where job matches or a saved profile would feel right. Write a SHORT closing reflection -- clearly shorter than a full Lune summary.\n\n' +
+      'Rules:\n' +
+      '- Be honest and observational about what you actually heard: how much they opened up, how they framed work, why they seemed to be here. Do not invent emotional depth they did not offer.\n' +
+      '- Warm and respectful. Never stiff or clinical.\n' +
+      '- Do NOT pitch jobs, next steps, matching, saving a profile, email signup, or paid unlock.\n' +
+      '- Format: one tight paragraph (2-4 sentences), then a blank line, then ONE short closing line alone at the end.\n' +
+      '- The closing line must reference something SPECIFIC they said -- a project, a person, a rhythm in their days, a detail that clearly mattered to them. Not a generic sign-off. If you cannot tie it to their exact words, revise until you can.\n' +
+      '- No bullet points. No em dashes.\n\n' +
+      'Full transcript:\n"""' + transcript.slice(0, 120000) + '"""'
+    }]
+  });
+  var out = (data.content && data.content[0] && data.content[0].text) || '';
+  return out.trim();
+}
+
+function appendShortConversationEndActions() {
+  var chat = document.getElementById('chat');
+  var endWrap = document.createElement('div');
+  endWrap.className = 'end-actions';
+  var againBtn = document.createElement('button');
+  againBtn.className = 'end-btn';
+  againBtn.textContent = 'Run it again';
+  againBtn.addEventListener('click', function() { initConvo(); });
+  var backBtn = document.createElement('button');
+  backBtn.className = 'end-btn';
+  backBtn.textContent = '← Back to Lune';
+  backBtn.addEventListener('click', function() { backToPitch(); });
+  endWrap.appendChild(againBtn);
+  endWrap.appendChild(backBtn);
+  chat.appendChild(endWrap);
+  scrollToBottom();
+}
+
+async function revealShortExitAfterStandardSummaryGenerated() {
+  var inputArea = document.getElementById('inputArea');
+  inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Finishing up…</span></div>';
+  var tShort = showTyping();
+  var shortRaw;
+  try {
+    shortRaw = await generateShortExitSummaryCopy();
+  } catch (eShort) {
+    shortRaw = '';
+  }
+  removeTyping(tShort);
+  clearInput();
+  if (!shortRaw || shortRaw.length < 40) return false;
+
+  var blocks = shortRaw.split(/\n\s*\n/).map(function(b) { return b.trim(); }).filter(Boolean);
+  var lastLineShort;
+  var mainTextShort;
+  if (blocks.length >= 2) {
+    lastLineShort = blocks[blocks.length - 1];
+    mainTextShort = blocks.slice(0, -1).join('\n\n');
+  } else {
+    var linesShort = shortRaw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+    if (linesShort.length < 2) return false;
+    lastLineShort = linesShort[linesShort.length - 1];
+    mainTextShort = linesShort.slice(0, -1).join(' ');
+  }
+  if (!lastLineShort || !mainTextShort) return false;
+
+  var summaryTextShort = mainTextShort + '\n\n' + lastLineShort;
+  var chat = document.getElementById('chat');
+  var msg = document.createElement('div');
+  msg.className = 'msg ai';
+  var bubble = document.createElement('div');
+  bubble.className = 'reveal-bubble';
+  bubble.innerHTML = '<p style="margin-bottom:16px">' + renderInlineMarkdownText(mainTextShort) + '</p><p style="color:var(--accent);font-family:Instrument Serif,serif;font-size:17px;font-style:italic">' + renderInlineMarkdownText(lastLineShort) + '</p>';
+  msg.appendChild(bubble);
+
+  var saveRow = document.createElement('div');
+  saveRow.style.cssText = 'display:flex;gap:10px;margin-top:10px;max-width:92%;flex-wrap:wrap;opacity:0;animation:fadeUp 0.4s ease 0.3s forwards;';
+  var copyBtn = document.createElement('button');
+  copyBtn.style.cssText = 'padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;';
+  copyBtn.textContent = 'Copy this note';
+  copyBtn.addEventListener('click', function() {
+    function doneCopy() {
+      copyBtn.textContent = 'Copied ✓';
+      copyBtn.style.background = 'rgba(201,168,76,0.1)';
+      setTimeout(function() { copyBtn.textContent = 'Copy this note'; copyBtn.style.background = 'transparent'; }, 2000);
+    }
+    navigator.clipboard.writeText(summaryTextShort).then(doneCopy).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = summaryTextShort;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      doneCopy();
+    });
+  });
+  saveRow.appendChild(copyBtn);
+  msg.appendChild(saveRow);
+  chat.appendChild(msg);
+  scrollToBottom();
+  await delay(800);
+
+  if (!foundingIncrementSent) {
+    try {
+      var incRes = await fetch('/api/founding-count', { method: 'POST' });
+      if (incRes.ok) {
+        foundingIncrementSent = true;
+        var incData = await incRes.json();
+        var newFc = parseInt(incData.count !== undefined && incData.count !== null ? incData.count : 0, 10);
+        try { localStorage.setItem('lune_founding_count', String(newFc)); } catch(e0) {}
+        renderFoundingSpotsDisplay(newFc);
+        updateVotePricing();
+      }
+    } catch(eInc) {}
+  }
+
+  appendShortConversationEndActions();
+  return true;
+}
+
 async function getTruthMomentFollowUpQuestion(messageText, signals) {
   try {
     var data = await callAI({
@@ -3354,6 +3513,12 @@ async function stepVerticalReveal() {
     var text = (data.content && data.content[0] && data.content[0].text) || 'Having trouble generating your summary right now. Please try again.';
     removeTyping(t);
     clearInput();
+
+    var exitRouteVertical = await evaluateShortExitRouting();
+    if (exitRouteVertical && exitRouteVertical.shortExit) {
+      var shortHandledVertical = await revealShortExitAfterStandardSummaryGenerated();
+      if (shortHandledVertical) return;
+    }
 
     var lines = text.trim().split('\n').filter(function(l) { return l.trim(); });
     var lastLine = lines[lines.length - 1];
@@ -4553,6 +4718,12 @@ async function generateReveal() {
     var text = (data.content && data.content[0] && data.content[0].text) || "Having trouble generating your summary right now. Please try again.";
     removeTyping(t);
     clearInput();
+
+    var exitRoute = await evaluateShortExitRouting();
+    if (exitRoute && exitRoute.shortExit) {
+      var shortHandled = await revealShortExitAfterStandardSummaryGenerated();
+      if (shortHandled) return;
+    }
 
     var lines = text.trim().split('\n').filter(function(l) { return l.trim(); });
     var lastLine = lines[lines.length - 1];
