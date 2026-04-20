@@ -1940,6 +1940,8 @@ function quickOptionAck(val) {
     [['feels off','can\'t name it'],       "Hard to name doesn't mean it isn't real."],
     [['ready for a change'],               "Ready is enough to start with."],
     [['things are good','just exploring'], "Exploring when things are good is the smart move."],
+    [['understand myself in my work'], "Understanding yourself while things are stable is a strong position."],
+    [['what else is out there','including pay','what it pays'], "Smart to look before you need to move."],
     [['what i do to matter','matter'],     "That distinction matters more than most people admit."],
     [['know what i want','just not how'],  "Knowing the direction is already most of it."],
     [['urgent','move fast'],               "Got it -- let's move."],
@@ -2227,6 +2229,9 @@ function showTextInput(placeholder, onSubmit, rows) {
 function getConvoSoFar() {
   var parts = [];
   if (responses.why) parts.push('Why they came: ' + responses.why);
+  if (responses.openingIntent === 'market_scan') {
+    parts.push('OPENING INTENT (internal): Market scan -- generally fine with current work; primarily curious what else exists in the market, realistic compensation, and options for someone with their profile. Route toward matches, not prolonged introspection.');
+  }
   if (responses.duration) {
     var durVal = responses.duration || '';
     // Flag the conditions-vs-work signal so summary and matches use it correctly
@@ -2984,16 +2989,34 @@ async function evaluateShortExitRouting() {
   }
 }
 
+// Narrow, high-precision phrases only: used so market-scan users skip sitting by default without an LLM call.
+function transcriptSuggestsSevereCrisisOverrideForMarketScanSitting(transcript) {
+  var t = (transcript || '').toLowerCase();
+  if (t.indexOf('suicid') !== -1) return true;
+  if (t.indexOf('kill myself') !== -1 || t.indexOf('killing myself') !== -1) return true;
+  if (t.indexOf('self-harm') !== -1 || t.indexOf('self harm') !== -1) return true;
+  if (t.indexOf('hurt myself') !== -1) return true;
+  if (t.indexOf('want to die') !== -1 && t.indexOf("don't want to die") === -1 && t.indexOf('do not want to die') === -1) return true;
+  if (t.indexOf('unalive') !== -1) return true;
+  return false;
+}
+
 // After standard summary + short-exit false: Claude decides if we should stop before matches.
 async function evaluateSittingRoomRouting(generatedSummaryFullText) {
   try {
     var transcript = getWholeConversationTextForExitEvaluation();
     if (!transcript || transcript.trim().length < 24) return { needsSitting: false };
+    if (responses.openingIntent === 'market_scan' && !transcriptSuggestsSevereCrisisOverrideForMarketScanSitting(transcript)) {
+      return { needsSitting: false };
+    }
     var summaryBlock = (generatedSummaryFullText || '').trim();
     if (summaryBlock.length < 40) return { needsSitting: false };
     var tmFired = truthMomentUsedThisSession === true;
     var tmContext = tmFired
       ? 'Session note: Lune already paused once for a deeper follow-up question in this conversation.\n\n'
+      : '';
+    var marketScanSittingGuard = responses.openingIntent === 'market_scan'
+      ? 'EXPLICIT OPENING INTENT: This user chose market scan at the first screen (fine where they are; wants to see what else exists, including pay).\nHARD RULE: Return needsSitting false unless the transcript clearly contains severe crisis-adjacent material where immediate job-match flow would be actively harmful (for example: suicidal ideation, ongoing abuse they are trapped in, acute breakdown or traumatic loss as the unmistakable center of the thread). Depth, vulnerability, identity themes, or dissatisfaction with work alone never override -- return false. When uncertain, return false.\n\n'
       : '';
     var data = await callAI({
       model: 'claude-sonnet-4-6',
@@ -3001,6 +3024,7 @@ async function evaluateSittingRoomRouting(generatedSummaryFullText) {
       messages: [{ role: 'user', content:
         'You are a silent router for Lune, a career conversation product. Read the FULL transcript and the generated summary below as one picture. Return JSON only -- holistic judgment, not keyword rules.\n\n' +
         tmContext +
+        marketScanSittingGuard +
         'Return needsSitting true when BOTH of these are true together:\n' +
         '(A) The summary\'s closing question (usually the final line) is structurally unresolvable inside this single session -- inward, open, identity-level, or life-structure rather than a crisp actionable career next step -- AND immediate credential capture plus job match generation would compress something that needs breathing room.\n' +
         '(B) The conversation carried real weight of the kind where rushing to "what job fits" would feel tone-deaf. Holistic signals can include: a deeper follow-up pause or comparable vulnerable disclosure; first-time naming or material that sounds never shared before; grief, identity, long-carried private material, or a structural life question they are still inside; the closing question touches any of that.\n\n' +
@@ -3364,16 +3388,19 @@ async function acknowledgeAndMaybeFollowUp(val, contextKey) {
 async function step1() {
   updateProgress(1);
   await showAIMessage("Hey. Tell me what's going on.", 600);
+  var marketScanWhyOption = "🔭 Things are fine where I am -- I want to see what else is out there, including pay";
   showOptions([
     "😤 Something feels off but I can\'t name it",
     "🔄 Ready for a change, just not sure where",
-    "😊 Honestly things are good -- just exploring",
+    "😊 Things are mostly good -- I\'m here to understand myself in my work",
+    marketScanWhyOption,
     "🌱 Not looking for more money -- I want what I do to matter",
     "😓 I know what I want, just not how to get there",
     "🚨 Things are urgent -- I need to move fast",
     "⬆️ I want to go up -- not across"
   ], function(val) {
     responses.why = val;
+    responses.openingIntent = (val === marketScanWhyOption) ? 'market_scan' : null;
     if (val.toLowerCase().includes('good') || val.toLowerCase().includes('exploring')) {
       responses.happyFlag = true;
     }
@@ -4764,6 +4791,9 @@ async function generateReveal() {
   var prompt = happyMode
     ? "You are the warm, perceptive voice behind Lune. You just had a conversation with someone who is genuinely happy in their work. Your job is to name what's working for them in a way they haven\'t been able to say themselves -- not to push them toward change, but to give them a clear-eyed portrait of their professional strengths at their best.\n\nThe summary should:\n- Name what makes their current situation work for them specifically -- not generically\n- Identify the underlying pattern in what they value (autonomy, craft, people, growth, stability) and name it precisely\n- Reflect something specific they said -- a moment, a word, a detail\n- Tell them what this says about who they are professionally at their best\n- End with a closing question that comes from the most specific thing you just named -- not a CTA to save the profile but a question that makes them sit with what you observed. Something like: Does that feel like the right name for what you have built? Or: When did you first realize the work actually fit? The question should feel earned not prompted.\n\nDo NOT suggest they should change jobs. Do NOT use bullet points. Do NOT be generic. Write one warm paragraph of 4-6 sentences followed by one short closing line on its own line.\n\nHere is what they shared:\nWhy they're here: " + responses.why + "\nWhat they love: " + responses.loves + "\nBest moment at work: " + responses.bestDay + "\nWhat makes their situation work: " + responses.neverAgain1 + "\nWhat would break the spell: " + responses.neverAgain2 + "\nBackground: " + (responses.background || responses.verticalRole || "not specified") + (responses.verticalMoment ? "\nMoment they operated above their title: " + responses.verticalMoment : "") + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext()
     : "You are the core AI behind Lune, a career alignment product. You just finished a 10-exchange conversation with someone. Write a short, warm, specific summary paragraph that feels like it came from a person who truly listened -- not a chatbot.\n\nTHE CORE RULE: Stay in observation mode. Describe who this person is and what is actually true about them. Do NOT prescribe a direction, recommend industries, or tell them what to do. The matches do that job. The summary only job is to make someone feel genuinely seen -- like someone finally named the thing they could not name themselves.\n\nThe paragraph should:\n- Open with the most specific true thing you noticed -- name a pattern they probably have not articulated themselves\n- Reference specific things they said. If they mentioned a specific moment, story, or person -- reference it by name or detail. A summary that names Maya is worth ten that say you care about peoples growth\n- Name what they actually have -- not what they lack, not what they should do next\n- If they expressed frustration, distinguish clearly between hating the work itself versus hating the conditions around it. You do not hate work you hate what is being done around it is a real insight. Name it if true.\n- NEVER mention specific cities, industries, job titles, or career paths -- that is the match engines job\n- NEVER say things like your city has a strong market or your background translates well to X -- that is prescription not observation\n- STRUCTURED AUTONOMY SIGNAL: If someone picked autonomy on the energy question AND micromanagement on the never-again list -- or expressed both wanting independence AND needing clear direction anywhere in their answers -- name it explicitly. The sentence is: You do not need someone to tell you how. You need someone to tell you what and then get out of the way. That is not a contradiction -- that is one of the clearest working profiles there is. This profile needs roles with clear outcomes and autonomous process. Name it if you see it.\n- THE GAP IS THE INSIGHT: Look for the difference between what they said they love and what their best day actually reveals. These are often different things and that difference is the most important thing you can name. If someone says they love helping people but their best day was about being recognized as someone who develops people -- name the development instinct not the helping instinct. If you see that gap, name it. That gap is where the real insight lives.\n- CLOSING QUESTION -- THIS IS THE MOST IMPORTANT LINE: The closing question is the therapist moment. It is the one question that makes someone sit with what you just named before they do anything else. Rules: (1) It must come directly from the most specific thing you just observed -- not from the matches, not from the next step, from the truth you just named. (2) If you found a clear gap between what they said they love and what their best day actually reveals -- ask about that gap specifically. (3) If the gap is unclear or weak -- do NOT force it. Ask something simple that stays close to what you know is true. A question that gets it slightly wrong breaks the spell. A question that stays close keeps it. (4) Never ask ready to see your matches or anything that sounds like a CTA. (5) The question should feel like something a therapist or trusted mentor would ask -- something that makes the person pause, feel understood, and want to answer honestly. Examples of the right spirit: Is that the thing you have been looking for -- work where developing someone is the actual job, not a side effect? Or: When was the last time a job made you feel the way Maya made you feel? Or: Does that feel like the right name for it? Wrong spirit: Ready to find your next role? or Want to see what fits? or Shall we look at some options?\n- LATE-CAREER COURAGE: If the person appears to be over 40 making a significant pivot, add one sentence acknowledging the courage not the logic. What you are describing takes something most people talk themselves out of.\n- PLAN FRAMING: If constraints show timeline=immediate or soon, add one warm sentence before the closing question signaling there is something reachable right now.\n- RELOCATION: if relocationType is active orient ALL geography to target location. If urgent mix current and target. If eventual focus on current but end with one warm sentence about the future goal.\n\nDo NOT use bullet points. Do NOT say Based on your responses. Do NOT be generic. Do NOT give career advice. Do NOT name cities or industries. Write one paragraph of 4-6 sentences followed by one short closing question on its own line.\n\nHere is what they shared:\nWhy they are here: " + responses.why + (responses.verticalFlag ? " [VERTICAL: wants to go up, role: " + (responses.verticalRole||"not specified") + ", direction: " + (responses.verticalMode||"not specified") + "]" : "") + "\nHow long: " + responses.duration + "\nWhat they love: " + responses.loves + "\nBest day felt like: " + responses.bestDay + "\nNever again (1): " + responses.neverAgain1 + "\nNever again (2): " + responses.neverAgain2 + "\nBackground: " + responses.background + "\nHow others describe them: " + responses.identity + "\nEnvironment: " + responses.environment + "\nWhat gives them energy vs drains them: " + (responses.energy || responses.pace || "not specified") + "\nLocation: " + (responses.location || "not specified") + getConstraintContext();
+  if (!happyMode && responses.openingIntent === 'market_scan') {
+    prompt += "\n\nOPENING INTENT -- MARKET SCAN (overrides the closing-question rules above; paragraph rules unchanged): They said at the start they are fine where they are and want to see what else is out there, including pay. The body paragraph should stay reflective and grounded in what they actually said. The closing line must be actionable and market-forward: orient it toward how the market is likely to read someone with their pattern, what they most want to benchmark or compare first, what would make weighing two directions feel grounded, or what they need to see in real roles to trust a move -- a bridge toward matches, not an invitation to sit with naming alone. Avoid inward-only closings like Does that feel like the right name for what you have built? You may still avoid tacky CTAs like Ready to see your matches.";
+  }
   prompt += truthMomentNearMissPromptBlock();
 
   try {
