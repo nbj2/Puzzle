@@ -720,7 +720,7 @@ footer { text-align:center; padding:40px 24px 48px; border-top:1px solid var(--b
     </svg>
   </div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-    <div class="step-count" id="stepCount">0 / 11</div>
+    <div class="step-count" id="stepCount">0 / 12</div>
   </div>
   <div class="chat" id="chat"></div>
   <div class="input-area"><div class="input-inner" id="inputArea"></div></div>
@@ -941,7 +941,7 @@ function showExistingProfileSummary(profile) {
   window.scrollTo(0, 0);
   document.getElementById('chat').innerHTML = '';
   document.getElementById('inputArea').innerHTML = '';
-  updateProgress(10);
+  updateProgress(TOTAL_STEPS);
 
   var mainText = profile.summary || '';
   var lastLine = profile.closing_question || '';
@@ -1824,7 +1824,7 @@ function vote(type) {
 
 var responses = {};
 var foundingIncrementSent = false;
-var TOTAL_STEPS = 11;
+var TOTAL_STEPS = 12;
 var userTurnWordCounts = [];
 var truthMomentUsedThisSession = false;
 var lastTruthMomentSignalsSnapshot = null;
@@ -1870,9 +1870,10 @@ function updateProgress(step) {
     7: 'Getting the full picture',
     8: 'Nearly done',
     9: 'Almost there',
-    10: 'Putting it together'
+    10: 'One last beat',
+    11: 'Putting it together'
   };
-  var label = labels[step] || (step >= 10 ? 'Putting it together' : 'Getting to know you');
+  var label = labels[step] || (step >= 11 ? 'Putting it together' : 'Getting to know you');
   document.getElementById('stepCount').textContent = label;
 }
 
@@ -2225,6 +2226,68 @@ function showTextInput(placeholder, onSubmit, rows) {
   setTimeout(function() { ta.focus(); }, 100);
 }
 
+// Optional late open floor before summary -- skip-friendly, not wired into summary unless they type.
+function showOpenFloorInputWithSkip(placeholder, onDone) {
+  var inputArea = document.getElementById('inputArea');
+  inputArea.innerHTML = '';
+  var wrap = document.createElement('div');
+  wrap.style.width = '100%';
+  var ta = document.createElement('textarea');
+  ta.className = 'convo-textarea';
+  ta.placeholder = placeholder || 'Only if something still feels open…';
+  ta.rows = 2;
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px;';
+  var skipBtn = document.createElement('button');
+  skipBtn.type = 'button';
+  skipBtn.textContent = 'Nothing comes to mind — keep going';
+  skipBtn.style.cssText = 'padding:10px 16px;background:transparent;border:1px solid rgba(201,168,76,0.35);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;letter-spacing:0.2px;';
+  var contBtn = document.createElement('button');
+  contBtn.className = 'submit-btn';
+  contBtn.textContent = 'Add this →';
+  contBtn.style.cssText = 'padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;cursor:pointer;';
+  function finish(skip, text) {
+    inputArea.innerHTML = '';
+    onDone(skip, text);
+  }
+  skipBtn.addEventListener('click', function() { finish(true, ''); });
+  contBtn.addEventListener('click', function() {
+    var v = ta.value.trim();
+    if (!v) finish(true, '');
+    else finish(false, v);
+  });
+  ta.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); contBtn.click(); }
+  });
+  wrap.appendChild(ta);
+  row.appendChild(skipBtn);
+  row.appendChild(contBtn);
+  wrap.appendChild(row);
+  inputArea.appendChild(wrap);
+  setTimeout(function() { ta.focus(); }, 100);
+}
+
+async function runUnsaidCircleOpenFloorThen(nextFn) {
+  updateProgress(10);
+  await delay(350);
+  await showAIMessage("Before I pull it together, is there anything you have been circling on that never quite found a question? Only if it matters. Totally fine if nothing comes to mind.", 450);
+  await delay(400);
+  showOpenFloorInputWithSkip('Only if something still feels open…', function(skip, text) {
+    delete responses.unsaidCircle;
+    if (!skip && text) {
+      responses.unsaidCircle = text;
+      addMessage(text, 'user');
+    }
+    nextFn();
+  });
+}
+
+function formatUnsaidCircleForSummaryPrompt() {
+  var u = responses.unsaidCircle;
+  if (!u || !String(u).trim()) return '';
+  return '\n\nLate open floor (they chose to add this after the main questions -- fold it into the portrait and pattern naming where it fits; do not tack it on as a list or quote it mechanically):\n' + String(u).trim();
+}
+
 // ── ADAPTIVE CONVERSATION ENGINE ─────────────────────────────
 function getConvoSoFar() {
   var parts = [];
@@ -2269,6 +2332,9 @@ function getConvoSoFar() {
   } else if (responses.location) {
     parts.push('Location: ' + responses.location);
   }
+  if (responses.unsaidCircle && String(responses.unsaidCircle).trim()) {
+    parts.push('Late open floor (they chose to add): ' + String(responses.unsaidCircle).trim());
+  }
   return parts.join('\n');
 }
 
@@ -2277,7 +2343,7 @@ function getUserVerbatimConvoBlob() {
     'why', 'duration', 'loves', 'loves_extra', 'bestDay', 'bestDay_extra',
     'neverAgain1', 'neverAgain1_extra', 'neverAgain2', 'neverAgain2_extra',
     'background', 'background_extra', 'identity', 'environment', 'pace', 'energy',
-    'location', 'verticalRole', 'verticalMoment', 'verticalMode', 'extraContext'
+    'location', 'verticalRole', 'verticalMoment', 'verticalMode', 'extraContext', 'unsaidCircle'
   ];
   var parts = [];
   keys.forEach(function(k) {
@@ -2304,8 +2370,8 @@ async function getAdaptiveStep(goal, optionSeeds, fallbackQ, fallbackOpts) {
         TONE_SYSTEM + '\n\nConversation so far:\n' + getConvoSoFar() +
         '\n\nNext thing to find out: ' + goal +
         optionContext +
-        '\n\nWrite a short, warm follow-up message (under 20 words) and ' + (optionSeeds ? optionSeeds.length : 0) + ' answer options that match its tone exactly.' +
-        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- NEVER use the word "actually" in questions -- it sounds like you are challenging them\n- CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation in the question -- questions move forward, they do not recap. Names and stories belong in the summary, not in transition questions.\n- CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer (no "That\'s great", "That makes sense", "That gap is real", etc.) -- just ask the next question cleanly. Acknowledgments are handled separately.\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
+        '\n\nWrite a short, warm next question (under 20 words) and ' + (optionSeeds ? optionSeeds.length : 0) + ' answer options that match its tone exactly.' +
+        '\n\nRules:\n- Question: casual, warm, human -- never start with "I" or "So"\n- Ask for everything you need in THIS one question. Do not phrase it so they will need a second pass for an example or more detail on the same beat.\n- NEVER use the word "actually" in questions -- it sounds like you are challenging them\n- CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation in the question -- questions move forward, they do not recap. Names and stories belong in the summary, not in transition questions.\n- CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer (no "That\'s great", "That makes sense", "That gap is real", etc.) -- just ask the next question cleanly. Acknowledgments are handled separately.\n- Options: same tone as the question, first person where natural, no stiff corporate language\n- Keep each option under 10 words\n- Last option should always be an open "something else / let me describe it" option\n\nRespond ONLY with valid JSON, no markdown:\n{"q":"question here","opts":["option 1","option 2","option 3","option 4"]}'
       }]
     });
     var raw = data.content && data.content[0] && data.content[0].text;
@@ -2327,7 +2393,7 @@ async function getAdaptiveQuestion(goal, fallback, placeholder) {
       messages: [{ role: 'user', content:
         TONE_SYSTEM + '\n\nConversation so far:\n' + getConvoSoFar() +
         '\n\nNext thing to find out: ' + goal +
-        '\n\nWrite ONE warm, short follow-up message (under 20 words). No em dashes. Never start with "I" or "So". CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation -- questions move forward, they do not recap. Names and stories belong in the summary only. CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer -- just ask the next question cleanly. Just the message, nothing else.'
+        '\n\nWrite ONE warm, short next question (under 20 words). No em dashes. Never start with "I" or "So". Ask for whatever you need in this single question -- not a setup that will need an example or more detail on the same topic right after. CRITICAL: Do NOT reference any specific person\'s name or specific story from the conversation -- questions move forward, they do not recap. Names and stories belong in the summary only. CRITICAL: Do NOT open with an acknowledgment or reaction to the previous answer -- just ask the next question cleanly. Just the message, nothing else.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
@@ -2556,19 +2622,38 @@ async function getAcknowledgment(whatTheyShared) {
 // Micro follow-up -- fires ONLY on free text answers when there\'s a hook worth pulling
 // Never fires on button selections. One follow-up maximum per step.
 // Returns a short question string if there\'s a hook, null if the answer is complete.
+// Biased toward silence: never stack "tell me more / give an example" on the same beat they just answered.
+
+function shouldSuppressMicroFollowUpQuestion(q) {
+  if (!q || typeof q !== 'string') return true;
+  var t = q.trim().toLowerCase();
+  if (t.length < 3 || t.length > 80) return true;
+  var bad = [
+    'example', 'examples', 'elaborat', 'tell me more', 'say more', 'go deeper',
+    'unpack', 'expand on', 'more about that', 'more specific', 'any more',
+    'what did that look like', 'what does that look like', 'can you describe',
+    'walk me through', 'paint a', 'give me a', 'give me an', 'dig into',
+    'what happened when', 'can you share more', 'a little more', 'more detail'
+  ];
+  for (var i = 0; i < bad.length; i++) {
+    if (t.indexOf(bad[i]) !== -1) return true;
+  }
+  return false;
+}
+
 async function getMicroFollowUp(whatTheyShared, context) {
   try {
     var data = await callAI({
       model: 'claude-sonnet-4-6',
       max_tokens: 120,
       messages: [{ role: 'user', content:
-        TONE_SYSTEM + '\n\nSomeone just typed a free-text answer in a career conversation. Your job is to decide if there is ONE specific hook worth following up on -- and if so, ask it in a warm, curious way.\n\nPRIORITY RULE:\n- Follow the most emotionally weighted thread in what they said, not the most recent noun or factual detail.\n- If they mention both a fact and an emotional payoff (relief, pride, fear, frustration, meaning, pressure), follow the emotional payoff.\n- Only follow a surface detail if no emotional thread is present.\n\nA hook can be emotional significance, unresolved tension, contradiction, or a concrete detail that clearly matters.\n\nRULES:\n- If there is a clear hook: return ONE short warm question (under 10 words) that invites them to share more. Match their energy exactly. No em dashes. Never start with I.\n- CRITICAL TONE RULE: The question must feel genuinely curious and inviting -- never skeptical, never challenging, never like you are questioning whether what they said is true. You believe them completely. You just want to know more. The question should make them feel good about sharing more, not defensive.\n- If the answer is already complete and clear: return empty string -- do NOT invent a follow-up\n- Never ask something they already answered\n- This is a conversation between friends, not an interrogation -- if in doubt, return empty string\n\nContext of conversation so far: ' + context + '\n\nWhat they just shared: ' + whatTheyShared + '\n\nRespond with ONLY the follow-up question or an empty string. Nothing else.'
+        TONE_SYSTEM + '\n\nSomeone just typed a free-text answer in a career conversation.\n\nDEFAULT: Return an EMPTY STRING. Most answers are enough -- trust them and let the next scripted question move the thread forward.\n\nONLY return a non-empty question if ALL of these are true:\n(1) They clearly opened a second, distinct thread (not the main answer to what was asked) that would genuinely change how you understand them if left unexplored -- e.g. a brief aside that contradicts or reframes what they said, or a concrete constraint they dropped in passing.\n(2) Your question would NOT ask them to elaborate, give an example, go deeper, unpack, or "say more" about the SAME topic they just answered in good faith for this step.\n(3) Your question would NOT sound like an interview follow-up ("tell me more about that", "what did that look like", "give me an example").\n\nIf you return a question: ONE short warm question (under 10 words). No em dashes. Never start with I. Genuine curiosity only -- never skeptical.\n\nIf their answer already addressed what was asked, even briefly: EMPTY STRING.\n\nWhen unsure: EMPTY STRING.\n\nContext of conversation so far: ' + context + '\n\nWhat they just shared: ' + whatTheyShared + '\n\nRespond with ONLY the question text or an empty string. Nothing else.'
       }]
     });
     var text = data.content && data.content[0] && data.content[0].text;
     var q = (text && text.trim()) || '';
-    // Safety: if it returned something too long or generic, skip it
     if (q.length > 80 || q.length < 3) return null;
+    if (shouldSuppressMicroFollowUpQuestion(q)) return null;
     return q;
   } catch(e) {
     return null;
@@ -3199,6 +3284,7 @@ async function getTruthMomentFollowUpQuestion(messageText, signals) {
         '\n\nThey just said:\n"""' + messageText.slice(0, 4000) + '"""\n\n' +
         'Write ONE follow-up question only. It must be precise to what they just said — something that could only be asked because of their specific words. ' +
         'Not generic. Not therapy-speak. No acknowledgment prefix. Under 35 words. No em dashes. Question mark at the end. ' +
+        'Do not ask for an example or more detail on the same point they just made; ask the one human question their words unlock, or move sideways to what they left hanging. ' +
         'Return only the question text, nothing else.'
       }]
     });
@@ -3542,12 +3628,12 @@ async function stepVertical5() {
       }
     }
     await delay(400);
-    stepVerticalReveal();
+    runUnsaidCircleOpenFloorThen(stepVerticalReveal);
   });
 }
 
 async function stepVerticalReveal() {
-  updateProgress(10);
+  updateProgress(11);
   var inputArea = document.getElementById('inputArea');
   inputArea.innerHTML = '<div class="generating"><div class="generating-dot"></div><span>Lune is mapping the ladder above you...</span></div>';
   var t = showTyping();
@@ -3587,6 +3673,7 @@ async function stepVerticalReveal() {
     'Feel like a mentor who has seen the ladder from both sides telling them the truth for the first time.'
   ];
   var prompt = promptParts.join('\n');
+  prompt += formatUnsaidCircleForSummaryPrompt();
 
   try {
     var data = await callAI({
@@ -3711,7 +3798,7 @@ async function showVerticalMatches() {
         (isFirst ? '<div style="font-size:14px;color:#c4bfb8;line-height:1.65;margin-bottom:12px;">' + (m.description || '') + '</div>' : '') +
         (isFirst && m.reason ? '<div style="font-size:13px;color:var(--text);font-style:italic;border-top:1px solid rgba(201,168,76,0.15);padding-top:10px;margin-bottom:12px;line-height:1.55;">' + m.reason + '</div>' : '') +
         (isFirst && m.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:10px 14px;margin-bottom:12px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to describe yourself for this role</span>' + m.bridge + '</div>' : '') +
-        (isFirst ? '<div style="display:flex;gap:8px;flex-wrap:wrap;"><a href="' + linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0d0d0d;font-size:12px;font-weight:500;text-decoration:none;">Search LinkedIn →</a><a href="' + indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;">Search Indeed →</a></div>' : '');
+        (isFirst ? '<div style="display:flex;gap:8px;flex-wrap:wrap;"><a href="' + linkedinUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0d0d0d;font-size:12px;font-weight:500;text-decoration:none;">Search LinkedIn →</a><a href="' + indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;">Search Indeed →</a></div>' : '');
 
       msg.appendChild(card);
       chat.appendChild(msg);
@@ -3881,8 +3968,8 @@ async function step3() {
 
 async function step3b() {
   var q = await getAdaptiveQuestion(
-    "what their specific interest is -- encourage them, the weirder and more specific the better",
-    "Tell me more -- the more specific the better.",
+    "what their niche or mix is in ONE question -- ask for one real thing they get lost in doing (work or not), weird labels welcome. Do not ask them to elaborate in a second pass.",
+    "What is one thing you get lost in doing -- even if it is niche or hard to label?",
     "It's kind of hard to explain but…"
   );
   await showAIMessage(q);
@@ -3898,8 +3985,8 @@ async function step3b() {
 async function step4() {
   updateProgress(4);
   var q = await getAdaptiveQuestion(
-    "a specific moment at work that stuck with them -- one real memory, not a description of their job",
-    "Tell me about a moment at work that stuck with you.",
+    "one real work moment that stuck with them -- a scene, a conversation, or a turning point, not a job description. Ask in one question; do not set them up for a second pass to supply an example.",
+    "What is one work moment that stuck with you -- a scene, a line someone said, or what shifted in the room?",
     "It was when…"
   );
   await showAIMessage(q);
@@ -3910,7 +3997,7 @@ async function step4() {
     if (baseWords.length < 4 || !workSignals.test(trimmedVal)) {
       addMessage(val, 'user');
       await delay(250);
-      await showAIMessage("That sounds good — tell me about a moment at work specifically, big or small.", 380);
+      await showAIMessage("Picture one work moment for me. A shift, a conversation, anything small counts.", 380);
       await delay(180);
       showTextInput("There was this moment at work when…", async function(v3) {
         responses.bestDay = v3;
@@ -3967,45 +4054,41 @@ async function step4() {
       for (var k in shortAcks) {
         if (v.includes(k)) { shortLine = shortAcks[k]; break; }
       }
-      if (!shortLine) shortLine = "Tell me more about that.";
+      if (!shortLine) shortLine = "That tracks.";
       await showAIMessage(shortLine, 400);
       await delay(500);
-      showTextInput("Tell me more about that moment…", async function(vShort) {
-        addMessage(vShort, 'user');
-        var combinedBestDay = val + ' -- ' + vShort;
-        var enrichedShort = await acknowledgeAndMaybeFollowUp(combinedBestDay, 'bestDay');
-        responses.bestDay = enrichedShort;
-        await delay(400);
-        var intentQ2 = await getAdaptiveQuestion(
-          "whether this kind of moment is something they actively look for and want more of, or whether it was meaningful but more of a one-time feeling -- keep it light and curious, not clinical",
-          "Is that something you find yourself looking for -- or did it just happen to land that way?",
-          ""
-        );
-        await showAIMessage(intentQ2, 400);
-        await new Promise(function(resolve2) {
-          showOptions([
-            "I look for those moments -- I want more of that",
-            "It was meaningful but more of a one-time thing",
-            "Somewhere in between, honestly"
-          ], async function(intentVal2) {
-            addMessage(intentVal2, 'user');
-            var iv2 = intentVal2.toLowerCase();
-            if (iv2.includes('look for') || iv2.includes('more of that')) {
-              responses.bestDayIntent = 'recurring';
-              await showAIMessage("That's the thread then. We'll follow it.", 300);
-            } else if (iv2.includes('one-time') || iv2.includes('meaningful but')) {
-              responses.bestDayIntent = 'incidental';
-              await showAIMessage("Good to know -- context, not a direction.", 300);
-            } else {
-              responses.bestDayIntent = 'unclear';
-              await showAIMessage("Honest answer. We'll see what it points to.", 300);
-            }
-            await delay(500);
-            resolve2();
-          }, true);
-        });
-        step5();
+      var enrichedShort = await acknowledgeAndMaybeFollowUp(val, 'bestDay');
+      responses.bestDay = enrichedShort;
+      await delay(400);
+      var intentQ2 = await getAdaptiveQuestion(
+        "whether this kind of moment is something they actively look for and want more of, or whether it was meaningful but more of a one-time feeling -- keep it light and curious, not clinical",
+        "Is that something you find yourself looking for -- or did it just happen to land that way?",
+        ""
+      );
+      await showAIMessage(intentQ2, 400);
+      await new Promise(function(resolve2) {
+        showOptions([
+          "I look for those moments -- I want more of that",
+          "It was meaningful but more of a one-time thing",
+          "Somewhere in between, honestly"
+        ], async function(intentVal2) {
+          addMessage(intentVal2, 'user');
+          var iv2 = intentVal2.toLowerCase();
+          if (iv2.includes('look for') || iv2.includes('more of that')) {
+            responses.bestDayIntent = 'recurring';
+            await showAIMessage("That's the thread then. We'll follow it.", 300);
+          } else if (iv2.includes('one-time') || iv2.includes('meaningful but')) {
+            responses.bestDayIntent = 'incidental';
+            await showAIMessage("Good to know -- context, not a direction.", 300);
+          } else {
+            responses.bestDayIntent = 'unclear';
+            await showAIMessage("Honest answer. We'll see what it points to.", 300);
+          }
+          await delay(500);
+          resolve2();
+        }, true);
       });
+      step5();
       return;
     }
     var enriched = await acknowledgeAndMaybeFollowUp(val, 'bestDay');
@@ -4173,8 +4256,8 @@ async function step5b() {
 
 async function step5b_happy() {
   var q = await getAdaptiveQuestion(
-    "what specific thing makes their current situation work well for them",
-    "What is it specifically?",
+    "what makes their situation work in ONE question -- ask for one concrete thing they can name (people, autonomy, the work, life fit, or something else) and a tiny bit of what that looks like for them, not a vague tell me more",
+    "What is one concrete thing that makes this work for you right now -- and what does that look like day to day?",
     "What makes it work is…"
   );
   await showAIMessage(q);
@@ -4293,8 +4376,8 @@ async function step7() {
     "What does the path forward look like from where you are right now?"
   ] : [
     "What does a typical day look like for you right now?",
-    "Walk me through what your days look like.",
-    "What does a typical day look like for you right now?"
+    "What are you actually doing most days -- even the small stuff counts?",
+    "When does time pass fastest for you in a normal week -- what are you in the middle of?"
   ];
 
   var q = backgroundQs[Math.floor(Math.random() * backgroundQs.length)];
@@ -4444,7 +4527,7 @@ async function step9b() {
     }
     addMessage(val, 'user');
     if (energyLower.includes('complicated')) {
-      showTextInput("Tell me more about what fills you up vs drains you...", async function(freeVal) {
+      showTextInput("What fills you up at work and what quietly drains you -- messy answer is fine:", async function(freeVal) {
         responses.energy = freeVal;
         addMessage(freeVal, 'user');
         await delay(350);
@@ -4574,12 +4657,12 @@ async function step9c() {
       await delay(400);
     }
 
-    step10();
+    runUnsaidCircleOpenFloorThen(step10);
   });
 }
 
 async function step10() {
-  updateProgress(10);
+  updateProgress(11);
   var closingMessages = [
     "Okay. I think I've got a real picture of you. Can I share what I'm seeing?",
     "Okay -- I think I see you pretty clearly now. Want to hear what stands out?",
@@ -4795,6 +4878,7 @@ async function generateReveal() {
     prompt += "\n\nOPENING INTENT -- MARKET SCAN (overrides the closing-question rules above; paragraph rules unchanged): They said at the start they are fine where they are and want to see what else is out there, including pay. The body paragraph should stay reflective and grounded in what they actually said. The closing line must be actionable and market-forward: orient it toward how the market is likely to read someone with their pattern, what they most want to benchmark or compare first, what would make weighing two directions feel grounded, or what they need to see in real roles to trust a move -- a bridge toward matches, not an invitation to sit with naming alone. Avoid inward-only closings like Does that feel like the right name for what you have built? You may still avoid tacky CTAs like Ready to see your matches.";
   }
   prompt += truthMomentNearMissPromptBlock();
+  prompt += formatUnsaidCircleForSummaryPrompt();
 
   try {
     var data = await callAI({
@@ -5144,10 +5228,22 @@ function getSalaryType(category) {
 }
 
 function buildLinkedInURL(title, envPref, cityLocation) {
-  var loc = (envPref || '').toLowerCase();
-  var linkedInLoc = cityLocation || 'United States';
-  if (loc.includes('remote') && !cityLocation) linkedInLoc = 'Remote';
-  return 'https://www.linkedin.com/jobs/search/?keywords=' + encodeURIComponent(title) + '&location=' + encodeURIComponent(linkedInLoc);
+  var env = String(envPref || '').toLowerCase();
+  var locRaw = cityLocation != null && cityLocation !== undefined ? String(cityLocation) : '';
+  var locStr = locRaw.replace(/\s+/g, ' ').trim();
+  var linkedInLoc = locStr || 'United States';
+  if (env.indexOf('remote') !== -1 && !locStr) linkedInLoc = 'Remote';
+  var kwRaw = title != null && title !== undefined ? String(title) : '';
+  var kw = kwRaw.replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!kw) kw = 'jobs';
+  try {
+    var u = new URL('https://www.linkedin.com/jobs/search/');
+    u.searchParams.set('keywords', kw);
+    u.searchParams.set('location', linkedInLoc);
+    return u.toString();
+  } catch (err) {
+    return 'https://www.linkedin.com/jobs/search/?keywords=' + encodeURIComponent(kw) + '&location=' + encodeURIComponent(linkedInLoc);
+  }
 }
 
 function buildIndeedURL(title, envPref, cityLocation) {
@@ -5721,7 +5817,7 @@ await showAIMessage(bridgeIntroMsg, 400);
         (bridgeJob.bridge_note ? '<div style="font-size:13px;color:var(--accent);line-height:1.6;font-weight:500;">' + bridgeJob.bridge_note + '</div>' : '') +
         (needsTranslation && bridgeJob.bridge ? '<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">How to frame it: ' + bridgeJob.bridge + '</div>' : '') +
         '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
-          '<a href="' + buildLinkedInURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;text-decoration:none;cursor:pointer;">Search LinkedIn →</a>' +
+          '<a href="' + buildLinkedInURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" rel="noopener noreferrer" style="padding:8px 16px;background:var(--accent);border:none;border-radius:8px;color:#0d0d0d;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;text-decoration:none;cursor:pointer;">Search LinkedIn →</a>' +
           '<a href="' + buildIndeedURL(bridgeJob.title, responses.environment, responses.location) + '" target="_blank" style="padding:8px 16px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-family:DM Sans,sans-serif;font-size:12px;text-decoration:none;cursor:pointer;">Search Indeed →</a>' +
         '</div>';
       bridgeMsg.appendChild(bridgeCard);
@@ -5747,7 +5843,7 @@ await showAIMessage(bridgeIntroMsg, 400);
       (surpriseJob.reason ? '<div style="font-size:13px;font-style:italic;color:var(--accent);border-top:1px solid rgba(201,168,76,0.15);padding-top:12px;margin-bottom:14px;line-height:1.55;">"' + surpriseJob.reason + '"</div>' : '') +
       (surpriseJob.bridge ? '<div style="font-size:12px;color:var(--muted);background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">How to describe your background for this role</span>' + surpriseJob.bridge + '</div>' : '') +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
-      '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0d0d0d;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
+      '<a href="' + surpriseJob.linkedinUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:9px 18px;background:var(--accent);border-radius:8px;color:#0d0d0d;font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Find on LinkedIn →</a>' +
       '<a href="' + surpriseJob.indeedUrl + '" target="_blank" style="display:inline-block;padding:9px 18px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:8px;color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;letter-spacing:0.5px;">Search Indeed →</a>' +
       '</div>' +
       '<div style="font-size:12px;color:var(--muted);background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.1);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.6;">' +
